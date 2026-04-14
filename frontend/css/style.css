@@ -1,0 +1,413 @@
+/* Patient Management System - Login Styling */
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+}
+
+/* Login Page Background */
+.login-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main Login Container */
+.login-container {
+    width: 100%;
+    max-width: 450px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    padding: 40px 30px;
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Slide-in Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hospital Icon */
+.hospital-icon {
+    font-size: 60px;
+    color: #667eea;
+    display: inline-block;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Hospital Title */
+.hospital-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+/* Hospital Subtitle */
+.hospital-subtitle {
+    font-size: 14px;
+    color: #718096;
+    margin-bottom: 30px;
+}
+
+/* Login Form */
+.login-form {
+    width: 100%;
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-label i {
+    color: #667eea;
+    font-size: 16px;
+}
+
+/* Form Controls */
+.form-control,
+.form-control-lg {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-control-lg:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.form-control-lg {
+    height: 45px;
+    font-size: 15px;
+}
+
+/* Input Group */
+.input-group .btn-outline-secondary {
+    border-color: #e2e8f0;
+    color: #718096;
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.input-group .btn-outline-secondary:hover,
+.input-group .btn-outline-secondary:focus {
+    border-color: #667eea;
+    color: #667eea;
+    background-color: transparent;
+}
+
+/* Form Check (Checkbox) */
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-label {
+    margin-left: 8px;
+    color: #4a5568;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Login Button */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-primary:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Alert Messages */
+.alert {
+    border: none;
+    border-radius: 8px;
+    border-left: 4px solid;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-danger {
+    background-color: #fed7d7;
+    border-left-color: #f56565;
+    color: #c53030;
+}
+
+.alert-danger i {
+    margin-right: 8px;
+}
+
+.alert-success {
+    background-color: #c6f6d5;
+    border-left-color: #38a169;
+    color: #22543d;
+}
+
+.alert-success i {
+    margin-right: 8px;
+}
+
+.alert .btn-close {
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+/* Invalid Feedback */
+.invalid-feedback {
+    display: block;
+    font-size: 12px;
+    color: #f56565;
+    margin-top: 5px;
+}
+
+/* Loading Spinner */
+.spinner-border {
+    width: 35px;
+    height: 35px;
+    border-width: 3px;
+}
+
+#loadingSpinner p {
+    font-size: 13px;
+    margin-top: 10px !important;
+}
+
+/* Form Text Helper */
+.form-text {
+    font-size: 12px;
+    color: #718096;
+}
+
+/* Login Footer */
+.login-footer {
+    margin-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+}
+
+.login-footer p {
+    margin-bottom: 0;
+    font-size: 13px;
+}
+
+.login-footer a {
+    color: #667eea;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.forgot-password-link i,
+.no-account-link i {
+    margin-right: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        margin: 20px;
+        padding: 30px 20px;
+        max-width: 100%;
+    }
+
+    .hospital-title {
+        font-size: 24px;
+    }
+
+    .hospital-subtitle {
+        font-size: 12px;
+    }
+
+    .hospital-icon {
+        font-size: 48px;
+    }
+
+    .form-control-lg {
+        font-size: 14px;
+        height: 42px;
+    }
+
+    .btn-primary {
+        height: 45px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        margin: 10px;
+        padding: 25px 15px;
+        border-radius: 8px;
+    }
+
+    .hospital-title {
+        font-size: 20px;
+    }
+
+    .hospital-icon {
+        font-size: 40px;
+    }
+
+    .form-label {
+        font-size: 13px;
+    }
+
+    .form-control-lg {
+        font-size: 13px;
+        height: 40px;
+        padding: 8px 12px;
+    }
+
+    .btn-primary {
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .login-footer {
+        padding-top: 15px;
+    }
+
+    .login-footer p {
+        font-size: 12px;
+    }
+}
+
+/* Accessibility */
+.form-control:focus-visible,
+.btn-primary:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #4c5282 0%, #553399 100%);
+    }
+
+    .login-container {
+        background: #2d3748;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .hospital-title {
+        color: #f7fafc;
+    }
+
+    .hospital-subtitle {
+        color: #cbd5e0;
+    }
+
+    .form-label {
+        color: #e2e8f0;
+    }
+
+    .form-control,
+    .form-control-lg {
+        background-color: #1a202c;
+        color: #e2e8f0;
+        border-color: #4a5568;
+    }
+
+    .form-control:focus,
+    .form-control-lg:focus {
+        background-color: #1a202c;
+        border-color: #667eea;
+    }
+
+    .form-check-label {
+        color: #cbd5e0;
+    }
+
+    .login-footer {
+        border-top-color: #4a5568;
+    }
+}
