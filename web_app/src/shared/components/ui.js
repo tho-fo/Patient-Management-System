@@ -1,0 +1,228 @@
+import { escapeHtml, formatDate, formatDateTime, formatNumber, formatTime, getStatusTone } from "../../utils/formatters.js";
+
+export function renderStatusPill(status) {
+  const tone = getStatusTone(status);
+  return `<span class="status-pill ${tone}">${escapeHtml(status)}</span>`;
+}
+
+export function renderPageHero({ eyebrow, title, subtitle, actions = "" }) {
+  return `
+    <section class="hero-panel mb-4">
+      <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 align-items-start">
+        <div>
+          ${eyebrow ? `<span class="eyebrow light mb-3">${escapeHtml(eyebrow)}</span>` : ""}
+          <h1 class="page-title">${escapeHtml(title)}</h1>
+          <p class="page-subtitle mt-2 mb-0">${escapeHtml(subtitle)}</p>
+        </div>
+        <div class="hero-actions">${actions}</div>
+      </div>
+    </section>
+  `;
+}
+
+export function renderMetricCard({ label, value, note, icon = "bi-activity" }) {
+  return `
+    <article class="metric-card">
+      <div class="d-flex align-items-center justify-content-between">
+        <span class="metric-label">${escapeHtml(label)}</span>
+        <i class="bi ${escapeHtml(icon)} text-soft"></i>
+      </div>
+      <div class="metric-value">${escapeHtml(formatNumber(value))}</div>
+      <div class="metric-note">${escapeHtml(note)}</div>
+    </article>
+  `;
+}
+
+export function renderSectionCard({ title, subtitle = "", actions = "", content = "", className = "" }) {
+  return `
+    <section class="section-card ${className}">
+      <div class="section-heading">
+        <div>
+          <h2>${escapeHtml(title)}</h2>
+          ${subtitle ? `<p class="section-subtitle mb-0">${escapeHtml(subtitle)}</p>` : ""}
+        </div>
+        ${actions}
+      </div>
+      ${content}
+    </section>
+  `;
+}
+
+export function renderEmptyState({ title, description, action = "" }) {
+  return `
+    <div class="empty-state">
+      <h3 class="h5 mb-2">${escapeHtml(title)}</h3>
+      <p class="text-soft mb-3">${escapeHtml(description)}</p>
+      ${action}
+    </div>
+  `;
+}
+
+export function renderLoading(message = "Loading data...") {
+  return `
+    <div class="loading-shell">
+      <div class="d-flex align-items-center gap-3 text-soft">
+        <div class="spinner-border text-info" role="status" aria-hidden="true"></div>
+        <span>${escapeHtml(message)}</span>
+      </div>
+    </div>
+  `;
+}
+
+export function renderDataTable({ headers, rows, emptyMessage, action = "" }) {
+  if (!rows.length) {
+    return renderEmptyState({
+      title: "No records found",
+      description: emptyMessage,
+      action
+    });
+  }
+
+  return `
+    <div class="table-shell">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>${headers.map((header) => `<th scope="col">${escapeHtml(header)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${rows.join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+export function renderTimeline(items, formatter) {
+  if (!items.length) {
+    return renderEmptyState({
+      title: "Nothing to display yet",
+      description: "New activity will appear here as soon as records are created."
+    });
+  }
+
+  return `
+    <ul class="timeline-list">
+      ${items.map((item) => formatter(item)).join("")}
+    </ul>
+  `;
+}
+
+export function renderQuickAction({ title, description, href, icon = "bi-arrow-right-circle" }) {
+  return `
+    <a class="quick-action-card d-block" href="#${href}">
+      <div class="d-flex align-items-start justify-content-between gap-3">
+        <div>
+          <h3>${escapeHtml(title)}</h3>
+          <p class="mb-0">${escapeHtml(description)}</p>
+        </div>
+        <i class="bi ${escapeHtml(icon)} fs-4 text-soft"></i>
+      </div>
+    </a>
+  `;
+}
+
+export function renderKeyValueList(items) {
+  return `
+    <ul class="key-value-list">
+      ${items.map((item) => `
+        <li>
+          <span class="text-soft">${escapeHtml(item.label)}</span>
+          <strong class="text-end">${escapeHtml(item.value ?? "-")}</strong>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+export function renderChartBars(items) {
+  if (!items.length) {
+    return renderEmptyState({
+      title: "No chart data",
+      description: "Adjust the filters to load more report data."
+    });
+  }
+
+  const max = Math.max(...items.map((item) => item.value), 1);
+
+  return `
+    <div class="chart-stack">
+      ${items.map((item) => `
+        <div class="chart-bar">
+          <strong>${escapeHtml(item.label)}</strong>
+          <div class="chart-track">
+            <div class="chart-fill" style="width: ${(item.value / max) * 100}%"></div>
+          </div>
+          <span class="text-soft fw-semibold">${escapeHtml(formatNumber(item.value))}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+export function renderAppointmentRow(appointment) {
+  return `
+    <tr>
+      <td><strong>${escapeHtml(appointment.patient_name)}</strong></td>
+      <td>${escapeHtml(appointment.doctor_name)}</td>
+      <td>${escapeHtml(formatDate(appointment.appointment_date))}</td>
+      <td>${escapeHtml(formatTime(appointment.appointment_time))}</td>
+      <td>${renderStatusPill(appointment.status)}</td>
+      <td class="text-end">${appointment.actions ?? ""}</td>
+    </tr>
+  `;
+}
+
+export function renderTimelineItem({ title, subtitle, meta, body }) {
+  return `
+    <li class="timeline-item">
+      <span class="timeline-marker" aria-hidden="true"></span>
+      <div class="timeline-content">
+        <div class="d-flex justify-content-between gap-3 flex-wrap">
+          <div>
+            <strong>${escapeHtml(title)}</strong>
+            <div class="text-soft">${escapeHtml(subtitle)}</div>
+          </div>
+          <span class="text-soft fw-semibold">${escapeHtml(meta)}</span>
+        </div>
+        ${body ? `<p class="mb-0 mt-2">${escapeHtml(body)}</p>` : ""}
+      </div>
+    </li>
+  `;
+}
+
+export function renderModal({ id, title, body, footer }) {
+  return `
+    <div class="modal fade" id="${escapeHtml(id)}" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5">${escapeHtml(title)}</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">${body}</div>
+          <div class="modal-footer">${footer}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+export function renderRecentPatientTimeline(patient) {
+  return renderTimelineItem({
+    title: patient.full_name,
+    subtitle: `${patient.gender} - ${patient.age} years`,
+    meta: formatDate(patient.created_at),
+    body: `${patient.phone} - ${patient.address}`
+  });
+}
+
+export function renderRecentAppointmentTimeline(appointment) {
+  return renderTimelineItem({
+    title: `${appointment.patient_name} with ${appointment.doctor_name}`,
+    subtitle: formatDateTime(appointment.appointment_date, appointment.appointment_time),
+    meta: appointment.status,
+    body: appointment.status === "Pending" ? "Awaiting consultation." : "Updated in the appointment workflow."
+  });
+}
