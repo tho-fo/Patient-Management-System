@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Patient Management System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../../assets/styles/app.css">
+    <link rel="stylesheet" href="../../assets/styles/dashboard.css">
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="appSidebar"></aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+        <!-- Header -->
+        <header class="app-header" id="appHeader"></header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+            <!-- Loading Spinner -->
+            <div id="loadingContainer" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 text-muted">Loading dashboard...</p>
+            </div>
+
+            <!-- Dashboard Content (Loaded after sidebar/header) -->
+            <div id="dashboardContent" class="d-none">
+                <!-- Quick Stats Section -->
+                <section class="dashboard-section">
+                    <h2 class="section-title">Quick Overview</h2>
+                    <div class="row g-4">
+                        <!-- Total Patients Card -->
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-blue">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label">Total Patients</p>
+                                    <h3 class="stat-value" id="totalPatients">-</h3>
+                                    <small class="stat-meta" id="patientsMeta"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Doctors Card -->
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-green">
+                                    <i class="bi bi-person-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label">Total Doctors</p>
+                                    <h3 class="stat-value" id="totalDoctors">-</h3>
+                                    <small class="stat-meta" id="doctorsMeta"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Appointments Card -->
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-purple">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label">Total Appointments</p>
+                                    <h3 class="stat-value" id="totalAppointments">-</h3>
+                                    <small class="stat-meta" id="appointmentsMeta"></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Today's Appointments Card -->
+                        <div class="col-12 col-md-6 col-lg-3">
+                            <div class="stat-card">
+                                <div class="stat-icon bg-orange">
+                                    <i class="bi bi-calendar-today"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <p class="stat-label">Today's Appointments</p>
+                                    <h3 class="stat-value" id="todayAppointments">-</h3>
+                                    <small class="stat-meta" id="todayMeta"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Main Dashboard Sections -->
+                <div class="row g-4" id="mainDashboard">
+                    <!-- Today's Appointments -->
+                    <div class="col-12 col-lg-8">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="card-title">Today's Appointments</h5>
+                                <a href="../appointments/pages/appointments-list.html" class="view-all-link">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <div id="appointmentsList" class="appointments-list">
+                                    <p class="text-muted text-center py-4">Loading appointments...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="col-12 col-lg-4">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h5 class="card-title">Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <a href="../patients/pages/add-patient.html" class="action-btn">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span>Add Patient</span>
+                                    </a>
+                                    <a href="../appointments/pages/book-appointment.html" class="action-btn">
+                                        <i class="bi bi-calendar-plus"></i>
+                                        <span>Schedule Appointment</span>
+                                    </a>
+                                    <a href="../patients/pages/patients-list.html" class="action-btn">
+                                        <i class="bi bi-list-ul"></i>
+                                        <span>View Patients</span>
+                                    </a>
+                                    <a href="../medical_records/pages/medical-records-list.html" class="action-btn">
+                                        <i class="bi bi-file-medical"></i>
+                                        <span>Medical Records</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User Info Widget -->
+                        <div class="dashboard-card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title">Your Profile</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="profile-widget">
+                                    <img src="https://ui-avatars.com/api/?name=User&size=64&background=667eea&color=fff" 
+                                         alt="User Avatar" class="profile-avatar">
+                                    <div class="profile-details">
+                                        <p class="profile-name" id="profileName">User Name</p>
+                                        <small class="profile-role" id="profileRole">Role</small>
+                                        <small class="profile-email" id="profileEmail">email@example.com</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Patients Section -->
+                <section class="dashboard-section mt-4">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h5 class="card-title">Recently Added Patients</h5>
+                            <a href="../patients/pages/patients-list.html" class="view-all-link">View All</a>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentPatientsList" class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                            <th>Gender</th>
+                                            <th>Contact</th>
+                                            <th>Added Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="patientsTableBody">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">Loading...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core Configuration -->
+    <script src="../../config/api.config.js"></script>
+    <script src="../../core/constants/app.constants.js"></script>
+    <script src="../../core/theme/theme.config.js"></script>
+    <script src="../../core/errors/error-handler.js"></script>
+
+    <!-- Services -->
+    <script src="../../services/api.service.js"></script>
+    <script src="../../utils/helpers.js"></script>
+    <script src="../../utils/component-loader.js"></script>
+    <script src="../auth/services/auth.service.js"></script>
+    <script src="../dashboard/services/dashboard.service.js"></script>
+
+    <!-- Auth Guard -->
+    <script src="../../routes/auth-guard.js"></script>
+
+    <!-- Dashboard Script -->
+    <script src="../../features/dashboard/pages/dashboard.js"></script>
+</body>
+
+</html>

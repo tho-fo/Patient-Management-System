@@ -1,13 +1,14 @@
 /**
- * Patient Management System - Login Form JavaScript
- * Handles form validation and API communication
+ * Login Page Script
+ * Handles login form logic and authentication
  */
 
-// Global Configuration
-const API_BASE_URL = 'http://localhost:8000/api'; // Adjust based on your backend URL
-const AUTH_ENDPOINT = '/auth/login';
+document.addEventListener('DOMContentLoaded', function() {
+    initializeLoginForm();
+    loadSavedEmail();
+});
 
-// DOM Elements
+// Form Elements
 const loginForm = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -20,16 +21,10 @@ const successAlert = document.getElementById('successAlert');
 const loadingSpinner = document.getElementById('loadingSpinner');
 const forgotPasswordLink = document.querySelector('.forgot-password-link');
 
-// Initialize on DOM Load
-document.addEventListener('DOMContentLoaded', function () {
-    initializeForm();
-    loadSavedEmail();
-});
-
 /**
- * Initialize form event listeners
+ * Initialize login form event listeners
  */
-function initializeForm() {
+function initializeLoginForm() {
     // Form submission
     loginForm.addEventListener('submit', handleLogin);
 
@@ -41,11 +36,18 @@ function initializeForm() {
     passwordInput.addEventListener('blur', validatePassword);
 
     // Clear errors on input
-    emailInput.addEventListener('input', () => clearError('email'));
-    passwordInput.addEventListener('input', () => clearError('password'));
+    emailInput.addEventListener('input', () => clearInputError('email'));
+    passwordInput.addEventListener('input', () => clearInputError('password'));
 
-    // Forgot password (placeholder)
+    // Forgot password link
     forgotPasswordLink.addEventListener('click', handleForgotPassword);
+
+    // Enter key to submit
+    passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loginForm.dispatchEvent(new Event('submit'));
+        }
+    });
 }
 
 /**
@@ -59,111 +61,69 @@ async function handleLogin(event) {
         return;
     }
 
-    // Get form values
     const email = emailInput.value.trim();
     const password = passwordInput.value;
     const rememberMe = rememberMeCheckbox.checked;
 
     // Show loading state
     showLoading(true);
-    hideAlert();
+    hideAlerts();
 
     try {
-        // Send login request to backend
-        const response = await fetch(`${API_BASE_URL}${AUTH_ENDPOINT}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
+        // Call auth service
+        const result = await authService.login(email, password);
 
-        const data = await response.json();
+        if (result.success) {
+            // Save email if remember me is checked
+            if (rememberMe) {
+                localStorage.setItem('savedEmail', email);
+            } else {
+                localStorage.removeItem('savedEmail');
+            }
 
-        if (response.ok && data.success) {
-            // Login successful
-            handleLoginSuccess(data, rememberMe, email);
+            // Show success message
+            showSuccess('Login successful! Redirecting...');
+
+            // Redirect to dashboard after a short delay
+            setTimeout(() => {
+                redirectToDashboard(result.user);
+            }, 1500);
         } else {
-            // Login failed
-            const errorMsg = data.message || 'Invalid email or password. Please try again.';
-            showError(errorMsg);
+            showError(result.message || 'Login failed. Please check your credentials.');
             showLoading(false);
         }
     } catch (error) {
-        // Network or parsing error
-        console.error('Login error:', error);
-        
-        // Check if backend is running
-        if (error instanceof TypeError && error.message.includes('fetch')) {
-            showError('Unable to connect to the server. Please ensure the backend is running.');
-        } else {
-            showError('An error occurred during login. Please try again.');
-        }
-        
+        showError('An error occurred during login. Please try again.');
         showLoading(false);
+        console.error('Login error:', error);
     }
 }
 
 /**
- * Handle successful login
+ * Redirect to appropriate dashboard based on user role
  */
-function handleLoginSuccess(data, rememberMe, email) {
-    showLoading(false);
-    
-    // Show success message
-    showSuccess('Login successful! Redirecting...');
-    
-    // Save credentials if "Remember me" is checked
-    if (rememberMe) {
-        localStorage.setItem('savedEmail', email);
-    } else {
-        localStorage.removeItem('savedEmail');
-    }
-
-    // Store authentication token
-    if (data.token) {
-        localStorage.setItem('authToken', data.token);
-    }
-
-    // Store user information
-    if (data.user) {
-        localStorage.setItem('user', JSON.stringify(data.user));
-    }
-
-    // Redirect to dashboard after a short delay
-    setTimeout(() => {
-        // Adjust the redirect URL based on user role
-        const redirectUrl = determineRedirectUrl(data.user);
-        window.location.href = redirectUrl;
-    }, 1500);
-}
-
-/**
- * Determine redirect URL based on user role
- */
-function determineRedirectUrl(user) {
+function redirectToDashboard(user) {
     const baseUrl = window.location.origin;
-    
+    let dashboardUrl = `${baseUrl}/dashboard.html`;
+
     if (user && user.role) {
         switch (user.role.toLowerCase()) {
             case 'admin':
-                return `${baseUrl}/frontend/admin-dashboard.html`;
+                dashboardUrl = `${baseUrl}/dashboard.html?role=admin`;
+                break;
             case 'doctor':
-                return `${baseUrl}/frontend/doctor-dashboard.html`;
+                dashboardUrl = `${baseUrl}/dashboard.html?role=doctor`;
+                break;
             case 'receptionist':
-                return `${baseUrl}/frontend/receptionist-dashboard.html`;
+                dashboardUrl = `${baseUrl}/dashboard.html?role=receptionist`;
+                break;
             case 'patient':
-                return `${baseUrl}/frontend/patient-dashboard.html`;
-            default:
-                return `${baseUrl}/frontend/dashboard.html`;
+                dashboardUrl = `${baseUrl}/dashboard.html?role=patient`;
+                break;
         }
     }
-    
-    return `${baseUrl}/frontend/dashboard.html`;
+
+    window.location.href = dashboardUrl;
 }
 
 /**
@@ -189,11 +149,13 @@ function validateEmail() {
         return false;
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$|^[a-zA-Z0-9_]{3,}$/;
-    if (!emailRegex.test(email)) {
+    // Email or username validation (email format or 3+ characters for username)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const usernameValid = email.length >= 3;
+
+    if (!emailRegex.test(email) && !usernameValid) {
         emailInput.classList.add('is-invalid');
-        emailError.textContent = 'Please enter a valid email or username.';
+        emailError.textContent = 'Please enter a valid email or username (3+ characters).';
         return false;
     }
 
@@ -217,7 +179,7 @@ function validatePassword() {
 
     if (password.length < 6) {
         passwordInput.classList.add('is-invalid');
-        passwordError.textContent = 'Password must be at least 6 characters long.';
+        passwordError.textContent = 'Password must be at least 6 characters.';
         return false;
     }
 
@@ -231,7 +193,7 @@ function validatePassword() {
  */
 function togglePasswordVisibility() {
     const icon = togglePasswordBtn.querySelector('i');
-    
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         icon.classList.remove('bi-eye');
@@ -246,9 +208,9 @@ function togglePasswordVisibility() {
 }
 
 /**
- * Clear validation errors
+ * Clear input error styles
  */
-function clearError(fieldName) {
+function clearInputError(fieldName) {
     if (fieldName === 'email') {
         emailInput.classList.remove('is-invalid', 'is-valid');
     } else if (fieldName === 'password') {
@@ -269,21 +231,21 @@ function showError(message) {
  * Show success alert
  */
 function showSuccess(message) {
-    successAlert.querySelector('#successMessage').textContent = message;
+    document.getElementById('successMessage').textContent = message;
     successAlert.classList.remove('d-none');
     successAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 /**
- * Hide alerts
+ * Hide all alerts
  */
-function hideAlert() {
+function hideAlerts() {
     errorAlert.classList.add('d-none');
     successAlert.classList.add('d-none');
 }
 
 /**
- * Show/hide loading spinner
+ * Show/hide loading state
  */
 function showLoading(isLoading) {
     if (isLoading) {
@@ -315,45 +277,50 @@ function loadSavedEmail() {
  */
 function handleForgotPassword(event) {
     event.preventDefault();
-    
-    // Placeholder implementation
-    // In a real system, this would redirect to a password reset page
-    // or show a modal for password recovery
-    
+
     const email = emailInput.value.trim();
-    
-    if (email) {
-        alert(`Password reset link will be sent to: ${email}\n\nNote: This is a placeholder. Implement the actual password reset flow in your backend.`);
-    } else {
-        alert('Please enter your email address first.');
-        emailInput.focus();
+
+    if (!email) {
+        showError('Please enter your email address to reset your password.');
+        return;
+    }
+
+    // In a real system, this would redirect to a password reset page
+    // or show a modal to send reset link
+    showError('Password reset feature coming soon. Please contact administrator for assistance.');
+
+    // Could redirect to reset password page:
+    // window.location.href = '/password-reset.html?email=' + encodeURIComponent(email);
+}
+
+/**
+ * Logout function (for use throughout the app)
+ */
+async function logout() {
+    try {
+        await authService.logout();
+        window.location.href = '/web_app/src/features/auth/pages/login.html';
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Still clear data and redirect
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userData');
+        window.location.href = '/web_app/src/features/auth/pages/login.html';
     }
 }
 
 /**
- * Optional: Check if user is already logged in on page load
+ * Check if user is already logged in
  */
 function checkExistingSession() {
-    const authToken = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
-    
-    if (authToken && user) {
-        // User might already be logged in
-        // Could redirect to dashboard or just proceed
-        console.log('Existing session detected');
+    if (authService.isAuthenticated()) {
+        // Redirect to dashboard
+        redirectToDashboard(authService.getCurrentUser());
     }
 }
 
-/**
- * Logout function (for use in other pages after login)
- */
-function logout() {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    localStorage.removeItem('savedEmail'); // Optional
-    window.location.href = window.location.origin + '/frontend/login.html';
-}
+// Check for existing session on page load
+checkExistingSession();
 
-// Export functions for use in other files if needed
+// Export functions globally
 window.logout = logout;
-window.isUserLoggedIn = () => !!localStorage.getItem('authToken');

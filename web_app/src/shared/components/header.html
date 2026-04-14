@@ -1,0 +1,578 @@
+<!-- Header/Navbar Component -->
+<header class="app-header" id="appHeader">
+    <div class="header-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="header-menu-toggle d-lg-none" id="headerMenuToggle" type="button">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Header Title/Breadcrumb -->
+        <div class="header-content">
+            <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            <nav aria-label="breadcrumb" class="d-none d-md-block">
+                <ol class="breadcrumb" id="breadcrumb">
+                    <li class="breadcrumb-item"><a href="dashboard.html">Home</a></li>
+                    <li class="breadcrumb-item active" id="currentPage">Dashboard</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Header Right Section -->
+        <div class="header-actions">
+            <!-- Search Bar (Optional) -->
+            <div class="search-container d-none d-md-flex">
+                <div class="input-group search-input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input 
+                        type="search" 
+                        class="form-control" 
+                        placeholder="Search..." 
+                        id="headerSearch"
+                        aria-label="Search"
+                    >
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="notification-container">
+                <button class="header-icon-btn notification-btn" id="notificationBtn" type="button">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">3</span>
+                </button>
+                
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="dropdown-header">
+                        <h6>Notifications</h6>
+                        <button class="notification-clear-btn" type="button">
+                            <small>Clear All</small>
+                        </button>
+                    </div>
+                    <div class="notification-list">
+                        <div class="notification-item unread">
+                            <div class="notification-content">
+                                <p class="notification-title">New appointment scheduled</p>
+                                <small class="notification-time">2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <div class="notification-content">
+                                <p class="notification-title">Patient data updated</p>
+                                <small class="notification-time">4 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <div class="notification-content">
+                                <p class="notification-title">System backup completed</p>
+                                <small class="notification-time">1 day ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown-footer">
+                        <a href="#" class="view-all-link">View All Notifications</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Profile Dropdown -->
+            <div class="profile-container">
+                <button class="profile-btn" id="profileBtn" type="button">
+                    <img 
+                        src="https://ui-avatars.com/api/?name=User&background=667eea&color=fff" 
+                        alt="User Avatar" 
+                        class="profile-avatar"
+                    >
+                    <span class="profile-name d-none d-md-inline" id="userName">User</span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+
+                <!-- Profile Dropdown Menu -->
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-header">
+                        <img 
+                            src="https://ui-avatars.com/api/?name=User&size=64&background=667eea&color=fff" 
+                            alt="User Avatar" 
+                            class="dropdown-avatar"
+                        >
+                        <div class="profile-info">
+                            <p class="profile-username" id="dropdownUserName">User Name</p>
+                            <small class="profile-role" id="dropdownUserRole">Role</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <a href="profile.html" class="dropdown-item">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+                    <a href="settings.html" class="dropdown-item">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                    <a href="help.html" class="dropdown-item">
+                        <i class="bi bi-question-circle"></i> Help
+                    </a>
+                    <hr>
+                    <button class="dropdown-item logout-item" id="headerLogoutBtn" type="button">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+    :root {
+        --header-height: 60px;
+        --primary-color: #667eea;
+        --text-dark: #2d3748;
+        --text-light: #718096;
+        --border-color: #e2e8f0;
+        --bg-light: #f7fafc;
+        --transition: all 300ms ease-in-out;
+    }
+
+    .app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height);
+        background: white;
+        border-bottom: 1px solid var(--border-color);
+        z-index: 100;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        padding: 0 20px;
+    }
+
+    .header-container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        max-width: 100%;
+    }
+
+    /* Header Menu Toggle (Mobile) */
+    .header-menu-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--text-dark);
+        padding: 0;
+        display: none;
+    }
+
+    @media (max-width: 991px) {
+        .header-menu-toggle {
+            display: block;
+        }
+    }
+
+    /* Header Content */
+    .header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        margin: 0;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+
+    .breadcrumb-item {
+        display: inline;
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .breadcrumb-item a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--text-light);
+    }
+
+    /* Header Actions */
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    /* Search Container */
+    .search-container {
+        width: 250px;
+    }
+
+    .search-input-group {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .search-input-group .input-group-text {
+        background: var(--bg-light);
+        border: none;
+        color: var(--text-light);
+    }
+
+    .search-input-group .form-control {
+        border: none;
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .search-input-group .form-control:focus {
+        box-shadow: none;
+        background: white;
+    }
+
+    /* Header Icon Button */
+    .header-icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: var(--text-dark);
+        padding: 0;
+        position: relative;
+        transition: var(--transition);
+    }
+
+    .header-icon-btn:hover {
+        color: var(--primary-color);
+    }
+
+    /* Notification Container */
+    .notification-container {
+        position: relative;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #f56565;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Dropdown Menus */
+    .notification-dropdown,
+    .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        min-width: 320px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px);
+        transition: var(--transition);
+        z-index: 200;
+    }
+
+    .notification-dropdown.show,
+    .profile-dropdown.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .dropdown-header {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dropdown-header h6 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .notification-clear-btn {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 12px;
+        padding: 0;
+    }
+
+    /* Notifications */
+    .notification-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .notification-item:hover {
+        background: var(--bg-light);
+    }
+
+    .notification-item.unread {
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .notification-content {
+        margin: 0;
+    }
+
+    .notification-title {
+        margin: 0 0 4px 0;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-dark);
+    }
+
+    .notification-time {
+        color: var(--text-light);
+        font-size: 12px;
+    }
+
+    .dropdown-footer {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border-color);
+        text-align: center;
+    }
+
+    .view-all-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Profile Container */
+    .profile-container {
+        position: relative;
+    }
+
+    .profile-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-dark);
+        padding: 0;
+        font-size: 14px;
+        transition: var(--transition);
+    }
+
+    .profile-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .profile-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .dropdown-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        flex: 1;
+    }
+
+    .profile-username {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .profile-role {
+        color: var(--text-light);
+        font-size: 12px;
+    }
+
+    /* Profile Dropdown */
+    .profile-dropdown .dropdown-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        color: var(--text-dark);
+        text-decoration: none;
+        border: none;
+        background: none;
+        width: 100%;
+        font-size: 14px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .dropdown-item:hover {
+        background: var(--bg-light);
+        color: var(--primary-color);
+    }
+
+    .dropdown-item i {
+        width: 16px;
+        text-align: center;
+    }
+
+    .logout-item {
+        color: #c53030;
+    }
+
+    .logout-item:hover {
+        background: #fed7d7;
+        color: #c53030;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .app-header {
+            padding: 0 12px;
+        }
+
+        .page-title {
+            font-size: 16px;
+        }
+
+        .search-container {
+            width: auto;
+            display: none !important;
+        }
+
+        .profile-name {
+            display: none !important;
+        }
+    }
+</style>
+
+<script>
+    // Dropdown Toggle Scripts
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const headerMenuToggle = document.getElementById('headerMenuToggle');
+
+        // Notification Toggle
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                notificationDropdown.classList.toggle('show');
+                if (profileDropdown) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Profile Toggle
+        if (profileBtn) {
+            profileBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('show');
+                if (notificationDropdown) {
+                    notificationDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Close dropdowns on outside click
+        document.addEventListener('click', function() {
+            if (notificationDropdown) {
+                notificationDropdown.classList.remove('show');
+            }
+            if (profileDropdown) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+
+        // Menu Toggle for Mobile
+        if (headerMenuToggle) {
+            headerMenuToggle.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebarOverlay');
+                if (sidebar) {
+                    sidebar.classList.toggle('show');
+                    if (overlay) {
+                        overlay.classList.toggle('show');
+                    }
+                }
+            });
+        }
+
+        // Logout
+        const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+        if (headerLogoutBtn) {
+            headerLogoutBtn.addEventListener('click', function() {
+                if (typeof logout === 'function') {
+                    logout();
+                }
+            });
+        }
+
+        // Close overlay when clicked
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('show');
+                this.classList.remove('show');
+            });
+        }
+    });
+</script>
