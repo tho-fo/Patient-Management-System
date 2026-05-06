@@ -12,6 +12,47 @@ export function validateLogin(payload) {
   return errors;
 }
 
+function requireFields(payload, fields) {
+  return fields.reduce((errors, field) => {
+    if (!payload[field]?.trim()) {
+      errors[field] = "This field is required.";
+    }
+
+    return errors;
+  }, {});
+}
+
+export function validateRegistrationStep(payload, requiredFields = []) {
+  const errors = requireFields(payload, requiredFields);
+
+  if (requiredFields.includes("email") && payload.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+    errors.email = "Enter a valid email address.";
+  }
+
+  if (requiredFields.includes("password") && payload.password?.trim() && payload.password.length < 6) {
+    errors.password = "Password must be at least 6 characters.";
+  }
+
+  if (
+    requiredFields.includes("years_of_experience") &&
+    payload.years_of_experience?.trim() &&
+    Number(payload.years_of_experience) < 0
+  ) {
+    errors.years_of_experience = "Years of experience cannot be negative.";
+  }
+
+  if (
+    requiredFields.includes("confirm_password") &&
+    payload.password?.trim() &&
+    payload.confirm_password?.trim() &&
+    payload.password !== payload.confirm_password
+  ) {
+    errors.confirm_password = "Passwords do not match.";
+  }
+
+  return errors;
+}
+
 export function validatePatient(payload) {
   const errors = {};
 

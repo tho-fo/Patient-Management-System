@@ -2,6 +2,8 @@ import { roles } from "./roles.js";
 
 export const routePaths = {
   login: "/login",
+  registerPatient: "/register/patient",
+  registerDoctor: "/register/doctor",
   dashboard: "/dashboard",
   patients: "/patients",
   addPatient: "/patients/new",

@@ -188,6 +188,91 @@ textarea {
   margin-top: 0.85rem;
 }
 
+.auth-register-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.auth-card-wide {
+  min-width: 0;
+}
+
+.registration-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.registration-progress li {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--pms-border);
+  border-radius: 16px;
+  color: var(--pms-muted);
+  background: rgba(13, 107, 116, 0.04);
+}
+
+.registration-progress span {
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 800;
+  color: var(--pms-primary);
+  background: var(--pms-primary-soft);
+}
+
+.registration-progress strong {
+  overflow: hidden;
+  font-size: 0.88rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registration-progress li.active,
+.registration-progress li.completed {
+  color: var(--pms-secondary);
+  border-color: rgba(13, 107, 116, 0.28);
+  background: rgba(13, 107, 116, 0.09);
+}
+
+.registration-progress li.completed span {
+  color: #ffffff;
+  background: var(--pms-success);
+}
+
+.registration-step {
+  display: none;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--pms-border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.registration-step.active {
+  display: block;
+}
+
+.registration-review {
+  border: 1px solid var(--pms-border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.registration-review-list {
+  padding: 0.35rem 1rem;
+}
+
 .demo-credentials {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);

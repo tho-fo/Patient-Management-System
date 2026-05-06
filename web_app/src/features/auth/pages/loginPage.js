@@ -62,6 +62,14 @@ export const loginPage = {
               <button class="btn btn-primary btn-lg w-100" type="submit" id="loginSubmit">
                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
               </button>
+              <div class="auth-register-actions mt-4">
+                <a class="btn btn-outline-primary w-100" href="#${routePaths.registerPatient}">
+                  <i class="bi bi-person-plus me-2"></i>Register as Patient
+                </a>
+                <a class="btn btn-outline-secondary w-100" href="#${routePaths.registerDoctor}">
+                  <i class="bi bi-person-badge me-2"></i>Register as Doctor
+                </a>
+              </div>
             </form>
           </section>
         </section>
