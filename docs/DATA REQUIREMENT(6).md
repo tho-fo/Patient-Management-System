@@ -4,7 +4,7 @@
 
 ---
 
-#  **1\. Introduction**
+# **1. Introduction**
 
 Data requirements describe the type of data that the system will collect, store, process, and manage. In the Patient Management System, data plays a critical role in ensuring that patient information, appointments, and medical records are properly handled.
 
@@ -12,59 +12,58 @@ This section defines the structure, type, relationships, and constraints of data
 
 ---
 
-# **2\. Types of Data in the System**
+# **2. Types of Data in the System**
 
 The system will handle several categories of data, including:
 
-* Patient data  
-* Doctor data  
-* Administrative data  
-* Appointment data  
+* Admin data
+* Doctor data
+* Receptionist data
+* Patient data
+* Appointment data
 * Medical records
 
-Each category of data is stored in a structured format within a relational database.
+Each category of data is stored in a structured format within **Cloud Firestore** collections and documents.
 
 ---
 
-#  **3\. Data Entities and Their Attributes**
+# **3. Data Entities and Their Attributes**
 
 Entities represent real-world objects in the system. Each entity contains attributes (fields) that describe it.
 
 ---
 
-## **3.1 Patient Entity**
+## **3.1 Admin Entity**
 
-This entity stores all information related to patients.
+This entity stores administrator profile information.
 
 ### **Attributes:**
 
-* patient\_id (Primary Key)  
-* name  
-* age  
-* gender  
-* phone  
-* email  
-* address  
-* password
+* admin_id (Document ID)
+* auth_uid
+* full_name
+* email
+* created_at
 
 ### **Description:**
 
-The Patient entity is central to the system as it holds personal and medical-related information for each patient.
+Admin profiles are linked to Firebase Authentication accounts through `auth_uid` and are used to manage system-level operations.
 
 ---
 
-##  **3.2 Doctor Entity**
+## **3.2 Doctor Entity**
 
 Stores details of doctors in the hospital.
 
 ### **Attributes:**
 
-* doctor\_id (Primary Key)  
-* name  
-* specialization  
-* phone  
-* email  
-* password
+* doctor_id (Document ID)
+* auth_uid
+* full_name
+* specialization
+* phone
+* email
+* created_at
 
 ### **Description:**
 
@@ -72,34 +71,18 @@ Doctors are responsible for diagnosis and treatment. Their information is linked
 
 ---
 
-## **3.3 Admin Entity**
-
-Stores system administrator details.
-
-### **Attributes:**
-
-* admin\_id (Primary Key)  
-* name  
-* email  
-* password
-
-### **Description:**
-
-Admin controls system operations and manages users.
-
----
-
-##  **3.4 Receptionist Entity**
+## **3.3 Receptionist Entity**
 
 Stores details of reception staff.
 
 ### **Attributes:**
 
-* receptionist\_id (Primary Key)  
-* name  
-* phone  
-* email  
-* password
+* receptionist_id (Document ID)
+* auth_uid
+* full_name
+* phone
+* email
+* created_at
 
 ### **Description:**
 
@@ -107,18 +90,41 @@ Receptionists handle patient registration and appointment scheduling.
 
 ---
 
-##  **3.5 Appointment Entity**
+## **3.4 Patient Entity**
+
+This entity stores all information related to patients.
+
+### **Attributes:**
+
+* patient_id (Document ID)
+* auth_uid (optional for patient self-service accounts)
+* full_name
+* age
+* gender
+* phone
+* email
+* address
+* created_at
+
+### **Description:**
+
+The Patient entity is central to the system as it holds personal and medical-related information for each patient.
+
+---
+
+## **3.5 Appointment Entity**
 
 Stores appointment details.
 
 ### **Attributes:**
 
-* appointment\_id (Primary Key)  
-* patient\_id (Foreign Key)  
-* doctor\_id (Foreign Key)  
-* appointment\_date  
-* appointment\_time  
+* appointment_id (Document ID)
+* patient_id (Reference ID)
+* doctor_id (Reference ID)
+* appointment_date
+* appointment_time
 * status
+* created_at
 
 ### **Description:**
 
@@ -126,18 +132,18 @@ This entity links patients and doctors and tracks scheduled visits.
 
 ---
 
-##  **3.6 Medical Records Entity**
+## **3.6 Medical Records Entity**
 
 Stores patient medical history.
 
 ### **Attributes:**
 
-* record\_id (Primary Key)  
-* patient\_id (Foreign Key)  
-* doctor\_id (Foreign Key)  
-* diagnosis  
-* treatment  
-* date
+* record_id (Document ID)
+* patient_id (Reference ID)
+* doctor_id (Reference ID)
+* diagnosis
+* treatment
+* record_date
 
 ### **Description:**
 
@@ -145,101 +151,104 @@ This entity keeps track of patient diagnosis and treatment over time.
 
 ---
 
-# **4\. Data Relationships**
+# **4. Data Relationships**
 
 Relationships define how entities are connected.
 
 ### **Key Relationships:**
 
-* One Patient → Many Appointments (**1:M**)  
-* One Doctor → Many Appointments (**1:M**)  
-* One Patient → Many Medical Records (**1:M**)  
-* One Doctor → Many Medical Records (**1:M**)
+* One Patient -> Many Appointments (**1:M**)
+* One Doctor -> Many Appointments (**1:M**)
+* One Patient -> Many Medical Records (**1:M**)
+* One Doctor -> Many Medical Records (**1:M**)
 
 ### **Explanation:**
 
-* A patient can have multiple appointments  
-* A doctor can treat multiple patients  
+* A patient can have multiple appointments
+* A doctor can treat multiple patients
 * Each medical record belongs to one patient and one doctor
+* Relationships are maintained using document IDs and validated by application logic and security rules
 
 ---
 
-# **🟦 5\. Data Dictionary (IMPORTANT FOR UNIVERSITY)**
+# **5. Data Dictionary**
 
 A data dictionary provides detailed information about each data field.
 
 ---
 
-## **Example: Patient Table**
+## **Example: Patient Collection**
 
 | Field | Type | Description |
 | ----- | ----- | ----- |
-| patient\_id | INT | Unique identifier |
-| name | VARCHAR | Patient name |
-| age | INT | Patient age |
-| gender | VARCHAR | Male/Female |
-| phone | VARCHAR | Contact number |
-| email | VARCHAR | Email address |
-| password | VARCHAR | Login password |
+| patient_id | String | Unique document identifier |
+| auth_uid | String | Firebase Authentication UID |
+| full_name | String | Patient name |
+| age | Number | Patient age |
+| gender | String | Male/Female/Other |
+| phone | String | Contact number |
+| email | String | Email address |
+| address | String | Residential address |
 
 ---
 
-## **Example: Appointment Table**
+## **Example: Appointment Collection**
 
 | Field | Type | Description |
 | ----- | ----- | ----- |
-| appointment\_id | INT | Unique ID |
-| patient\_id | INT | Links to patient |
-| doctor\_id | INT | Links to doctor |
-| appointment\_date | DATE | Date of visit |
-| appointment\_time | TIME | Time of visit |
-| status | VARCHAR | Pending/Completed |
+| appointment_id | String | Unique document ID |
+| patient_id | String | Links to patient |
+| doctor_id | String | Links to doctor |
+| appointment_date | String | Date of visit |
+| appointment_time | String | Time of visit |
+| status | String | Pending/Completed/Cancelled |
 
 ---
 
-# **6\. Data Integrity Constraints**
+# **6. Data Integrity Constraints**
 
 To ensure data accuracy and consistency:
 
-* **Primary Key (PK):** Uniquely identifies records  
-* **Foreign Key (FK):** Links tables  
-* **NOT NULL:** Prevents empty fields  
-* **UNIQUE:** Avoids duplicate entries
+* **Document ID:** Uniquely identifies records
+* **Reference IDs:** Link related documents
+* **Required fields:** Prevent incomplete records
+* **Controlled values:** Avoid invalid status or gender values
+* **Authentication link:** `auth_uid` must match the correct Firebase account where applicable
 
 ---
 
-#  **7\. Data Storage and Management**
+# **7. Data Storage and Management**
 
-* Data will be stored in a **MySQL relational database**  
-* Data will be organized into tables  
-* Relationships will be maintained using foreign keys  
-* Regular backups will be implemented
+* Data will be stored in **Cloud Firestore**
+* Data will be organized into collections and documents
+* Relationships will be maintained using document IDs, validation logic, and security rules
+* Regular backup/export procedures should be implemented
 
 ---
 
-# **8\. Data Security Requirements**
+# **8. Data Security Requirements**
 
 To protect sensitive information:
 
-* User authentication (login system)  
-* Password encryption  
-* Role-based access control  
+* Firebase Authentication for login control
+* Role-based access control
+* Firestore security rules
 * Restricted access to medical records
 
 ---
 
-# **9\. Data Flow Overview**
+# **9. Data Flow Overview**
 
 The system will process data as follows:
 
-1. Patient registers → data stored  
-2. Appointment created → linked to doctor  
-3. Doctor updates medical record  
-4. Admin monitors system data
+1. A user account is authenticated through Firebase Authentication
+2. A related profile document is stored in Firestore
+3. An appointment is created and linked to patient and doctor documents
+4. A doctor updates a medical record
+5. Admin monitors system data and reports
 
 ---
 
-# **10\. Conclusion**
+# **10. Conclusion**
 
-The data requirements define the structure and organization of information within the Patient Management System. Proper data management ensures accuracy, security, and efficiency in hospital operations.
-
+The data requirements define the structure and organization of information within the Patient Management System. Proper data management ensures accuracy, security, and efficiency in hospital operations while using Firebase Authentication and Cloud Firestore as the core platform.

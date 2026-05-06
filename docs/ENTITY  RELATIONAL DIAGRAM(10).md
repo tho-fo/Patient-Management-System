@@ -1,10 +1,10 @@
 # **ENTITY RELATIONSHIP DIAGRAM (ERD)**
 
-## **Patient Management System – Hospital Management & Patient Care Platform**
+## **Patient Management System - Hospital Management & Patient Care Platform**
 
 ---
 
-# **1\. INTRODUCTION**
+# **1. INTRODUCTION**
 
 ## **1.1 Purpose**
 
@@ -14,59 +14,59 @@ This document defines the Entity Relationship Diagram for the Patient Management
 
 The ERD covers the core system and extended modules required for:
 
-* user management (Admin, Doctor, Receptionist)  
-* patient registration and management  
-* appointment scheduling  
-* medical record tracking  
+* user management through Firebase Authentication
+* patient registration and management
+* appointment scheduling
+* medical record tracking
 * system reporting and operations
+
+This ERD represents the logical data model that will be stored in **Cloud Firestore** and linked to **Firebase Authentication** accounts.
 
 ---
 
-# **2\. CORE ENTITIES**
+# **2. CORE ENTITIES**
 
 The main entities in the system are:
 
-* User  
-* Patient  
-* Doctor  
-* Receptionist  
-* Appointment  
+* AuthAccount
+* Admin
+* Doctor
+* Receptionist
+* Patient
+* Appointment
 * MedicalRecord
 
 ---
 
-# **3\. ENTITY DEFINITIONS**
+# **3. ENTITY DEFINITIONS**
 
 ---
 
-## **3.1 User**
+## **3.1 AuthAccount**
 
-Represents all system users (Admin, Doctor, Receptionist).
+Represents the authenticated account managed by Firebase Authentication.
 
 **Key Attributes:**
 
-* id  
-* name  
-* email  
-* password  
-* role  
-* created\_at
+* uid
+* email
+* provider
+* role
+* created_at
 
 ---
 
-## **3.2 Patient**
+## **3.2 Admin**
 
-Represents a registered patient in the hospital system.
+Represents a system administrator profile stored in Firestore.
 
 **Key Attributes:**
 
-* id  
-* name  
-* age  
-* gender  
-* phone  
-* address  
-* created\_at
+* admin_id
+* auth_uid
+* full_name
+* email
+* created_at
 
 ---
 
@@ -76,9 +76,10 @@ Represents a doctor in the hospital.
 
 **Key Attributes:**
 
-* id  
-* user\_id  
-* specialization  
+* doctor_id
+* auth_uid
+* full_name
+* specialization
 * phone
 
 ---
@@ -89,192 +90,242 @@ Represents front desk staff responsible for patient registration and appointment
 
 **Key Attributes:**
 
-* id  
-* user\_id  
+* receptionist_id
+* auth_uid
+* full_name
 * phone
 
 ---
 
-## **3.5 Appointment**
+## **3.5 Patient**
+
+Represents a registered patient in the hospital system.
+
+**Key Attributes:**
+
+* patient_id
+* auth_uid
+* full_name
+* age
+* gender
+* phone
+* address
+* created_at
+
+---
+
+## **3.6 Appointment**
 
 Represents a scheduled meeting between a patient and a doctor.
 
 **Key Attributes:**
 
-* id  
-* patient\_id  
-* doctor\_id  
-* appointment\_date  
-* status  
-* created\_at
+* appointment_id
+* patient_id
+* doctor_id
+* appointment_date
+* appointment_time
+* status
+* created_at
 
 ---
 
-## **3.6 MedicalRecord**
+## **3.7 MedicalRecord**
 
 Represents the diagnosis and treatment information of a patient.
 
 **Key Attributes:**
 
-* id  
-* patient\_id  
-* doctor\_id  
-* diagnosis  
-* treatment  
-* record\_date
+* record_id
+* patient_id
+* doctor_id
+* diagnosis
+* treatment
+* record_date
 
 ---
 
-# **4\. RELATIONSHIPS**
+# **4. RELATIONSHIPS**
 
 ---
 
-## **4.1 User → Doctor**
+## **4.1 AuthAccount -> Admin**
 
-One user can be one doctor profile  
- Each doctor is linked to one user
+One authenticated account can map to one admin profile.
 
-**Relationship:** User 1 : 1 Doctor
-
----
-
-## **4.2 User → Receptionist**
-
-One user can be one receptionist profile  
- Each receptionist is linked to one user
-
-**Relationship:** User 1 : 1 Receptionist
+**Relationship:** AuthAccount 1 : 0..1 Admin
 
 ---
 
-## **4.3 Patient → Appointment**
+## **4.2 AuthAccount -> Doctor**
 
-One patient can have many appointments  
- Each appointment belongs to one patient
+One authenticated account can map to one doctor profile.
+
+**Relationship:** AuthAccount 1 : 0..1 Doctor
+
+---
+
+## **4.3 AuthAccount -> Receptionist**
+
+One authenticated account can map to one receptionist profile.
+
+**Relationship:** AuthAccount 1 : 0..1 Receptionist
+
+---
+
+## **4.4 AuthAccount -> Patient**
+
+One authenticated account can optionally map to one patient profile.
+
+**Relationship:** AuthAccount 1 : 0..1 Patient
+
+---
+
+## **4.5 Patient -> Appointment**
+
+One patient can have many appointments.
+Each appointment belongs to one patient.
 
 **Relationship:** Patient 1 : M Appointment
 
 ---
 
-## **4.4 Doctor → Appointment**
+## **4.6 Doctor -> Appointment**
 
-One doctor can have many appointments  
- Each appointment belongs to one doctor
+One doctor can have many appointments.
+Each appointment belongs to one doctor.
 
 **Relationship:** Doctor 1 : M Appointment
 
 ---
 
-## **4.5 Patient → MedicalRecord**
+## **4.7 Patient -> MedicalRecord**
 
-One patient can have many medical records  
- Each record belongs to one patient
+One patient can have many medical records.
+Each record belongs to one patient.
 
 **Relationship:** Patient 1 : M MedicalRecord
 
 ---
 
-## **4.6 Doctor → MedicalRecord**
+## **4.8 Doctor -> MedicalRecord**
 
-One doctor can create many medical records  
- Each record is created by one doctor
+One doctor can create many medical records.
+Each record is created by one doctor.
 
 **Relationship:** Doctor 1 : M MedicalRecord
 
 ---
 
-# **5\. TEXTUAL ER DIAGRAM**
+# **5. TEXTUAL ER DIAGRAM**
 
-User  
- ├── 1 : 1 Doctor  
- ├── 1 : 1 Receptionist
+AuthAccount
+-> 0..1 Admin
+-> 0..1 Doctor
+-> 0..1 Receptionist
+-> 0..1 Patient
 
-Patient  
- ├──\< Appointment  
- └──\< MedicalRecord
+Patient
+-> Appointment
+-> MedicalRecord
 
-Doctor  
- ├──\< Appointment  
- └──\< MedicalRecord
+Doctor
+-> Appointment
+-> MedicalRecord
 
-Appointment  
- (links Patient and Doctor)
+Appointment
+(links Patient and Doctor)
 
-MedicalRecord  
- (links Patient and Doctor)
+MedicalRecord
+(links Patient and Doctor)
 
 ---
 
-# **6\. MERMAID ER DIAGRAM (TEXT REPRESENTATION)**
+# **6. MERMAID ER DIAGRAM (TEXT REPRESENTATION)**
 
+```mermaid
 erDiagram
 
-   USERS ||--|| DOCTORS : has  
-   USERS ||--|| RECEPTIONISTS : has
+   AUTH_ACCOUNTS ||--o| ADMINS : maps_to
+   AUTH_ACCOUNTS ||--o| DOCTORS : maps_to
+   AUTH_ACCOUNTS ||--o| RECEPTIONISTS : maps_to
+   AUTH_ACCOUNTS ||--o| PATIENTS : maps_to
 
-   PATIENTS ||--o{ APPOINTMENTS : books  
+   PATIENTS ||--o{ APPOINTMENTS : books
    DOCTORS ||--o{ APPOINTMENTS : attends
 
-   PATIENTS ||--o{ MEDICAL\_RECORDS : has  
-   DOCTORS ||--o{ MEDICAL\_RECORDS : writes
+   PATIENTS ||--o{ MEDICAL_RECORDS : has
+   DOCTORS ||--o{ MEDICAL_RECORDS : writes
 
-   USERS {  
-       int id PK  
-       string name  
-       string email  
-       string password  
-       string role  
-       timestamp created\_at  
+   AUTH_ACCOUNTS {
+       string uid PK
+       string email
+       string provider
+       string role
+       timestamp created_at
    }
 
-   DOCTORS {  
-       int id PK  
-       int user\_id FK  
-       string specialization  
-       string phone  
+   ADMINS {
+       string admin_id PK
+       string auth_uid FK
+       string full_name
+       string email
+       timestamp created_at
    }
 
-   RECEPTIONISTS {  
-       int id PK  
-       int user\_id FK  
-       string phone  
+   DOCTORS {
+       string doctor_id PK
+       string auth_uid FK
+       string full_name
+       string specialization
+       string phone
    }
 
-   PATIENTS {  
-       int id PK  
-       string name  
-       int age  
-       string gender  
-       string phone  
-       string address  
-       timestamp created\_at  
+   RECEPTIONISTS {
+       string receptionist_id PK
+       string auth_uid FK
+       string full_name
+       string phone
    }
 
-   APPOINTMENTS {  
-       int id PK  
-       int patient\_id FK  
-       int doctor\_id FK  
-       datetime appointment\_date  
-       string status  
-       timestamp created\_at  
+   PATIENTS {
+       string patient_id PK
+       string auth_uid FK
+       string full_name
+       number age
+       string gender
+       string phone
+       string address
+       timestamp created_at
    }
 
-   MEDICAL\_RECORDS {  
-       int id PK  
-       int patient\_id FK  
-       int doctor\_id FK  
-       text diagnosis  
-       text treatment  
-       date record\_date  
-   }  
+   APPOINTMENTS {
+       string appointment_id PK
+       string patient_id FK
+       string doctor_id FK
+       string appointment_date
+       string appointment_time
+       string status
+       timestamp created_at
+   }
+
+   MEDICAL_RECORDS {
+       string record_id PK
+       string patient_id FK
+       string doctor_id FK
+       string diagnosis
+       string treatment
+       timestamp record_date
+   }
+```
+
 ---
 
-# **7\. DESIGN NOTES**
+# **7. DESIGN NOTES**
 
-* **Patient is a central entity** for hospital operations  
-* **Appointment connects Patient and Doctor**  
-* **MedicalRecord stores clinical data** and links both Patient and Doctor  
-* **User entity controls authentication and roles**  
-* Doctor and Receptionist are separated for role-based control  
-* The system is designed for scalability (billing, lab modules can be added later) 
-
+* **Patient is a central entity** for hospital operations
+* **Appointment connects Patient and Doctor**
+* **MedicalRecord stores clinical data** and links both Patient and Doctor
+* **AuthAccount controls authentication and user identity**
+* Credentials are managed by Firebase Authentication, while profiles are stored in Firestore
+* The system is designed for scalability so future modules like billing and laboratory can be added later

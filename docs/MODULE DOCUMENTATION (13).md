@@ -4,20 +4,20 @@
 
 ---
 
-# **1\. Introduction**
+# **1. Introduction**
 
 This document defines the functional modules of the Patient Management System.
 
 Each module represents a distinct part of the system responsible for a specific domain of hospital operations. These modules exist across:
 
-* Web/Desktop Application  
-* Backend API  
-* (Future) Mobile App  
+* Web/Desktop Application
+* Firebase service layer
+* (Future) Mobile App
 * (Optional) Integration Layer (SMS, Lab, Billing systems)
 
 ---
 
-# **2\. Module Design Principles**
+# **2. Module Design Principles**
 
 ## **2.1 Feature Isolation**
 
@@ -31,8 +31,9 @@ Every module has a clearly defined purpose.
 
 Modules communicate through:
 
-* services  
-* APIs  
+* services
+* Firebase SDK calls
+* Cloud Functions
 * events (future)
 
 ## **2.4 High Cohesion**
@@ -41,25 +42,25 @@ Everything inside a module should be closely related.
 
 ---
 
-# **3\. Module Overview**
+# **3. Module Overview**
 
 The system is composed of the following core modules:
 
-* Authentication Module  
-* User/Staff Management Module  
-* Patient Management Module  
-* Appointment Module  
-* Medical Records Module  
-* Dashboard & Reporting Module  
-* Billing Module (Future)  
-* Laboratory Integration Module (Future)  
-* Notification Module (Future)  
-* Settings Module  
+* Authentication Module
+* User/Staff Management Module
+* Patient Management Module
+* Appointment Module
+* Medical Records Module
+* Dashboard & Reporting Module
+* Billing Module (Future)
+* Laboratory Integration Module (Future)
+* Notification Module (Future)
+* Settings Module
 * Audit & Logging Module
 
 ---
 
-# **4\. Module Details**
+# **4. Module Details**
 
 ---
 
@@ -67,36 +68,37 @@ The system is composed of the following core modules:
 
 ### **Purpose**
 
-Handles user authentication, access control, and session management.
+Handles Firebase Authentication, access control, and session management.
 
 ### **Core Responsibilities**
 
-* User login/logout  
-* Role-based access control (Admin, Doctor, Receptionist)  
-* Password hashing and verification  
-* Session/token management  
+* User login/logout
+* Role-based access control (Admin, Doctor, Receptionist, Patient)
+* Authentication state tracking
+* Token/session management
 * Account security
 
 ### **Key Components**
 
-* Auth Controller  
-* Auth Service  
-* Token Manager  
-* Middleware (Access control)
+* Firebase Auth Service
+* Auth Guard
+* Role Resolver
+* Session Store
 
 ### **Inputs**
 
-* Username / Email  
+* Email
 * Password
 
 ### **Outputs**
 
-* Access token  
+* Authenticated user session
+* Access token / ID token
 * Authentication status
 
 ### **Dependencies**
 
-* User/Staff Module  
+* User/Staff Module
 * Security utilities
 
 ---
@@ -109,16 +111,16 @@ Manages hospital staff accounts and roles.
 
 ### **Core Responsibilities**
 
-* Create/update/delete staff accounts  
-* Assign roles (Doctor, Admin, Receptionist)  
-* Manage permissions  
-* Store staff details
+* Create/update/deactivate staff accounts
+* Assign roles (Doctor, Admin, Receptionist)
+* Manage permissions
+* Store staff profile details in Firestore
 
 ### **Key Components**
 
-* User Controller  
-* User Service  
-* User Repository
+* User Service
+* Staff Repository
+* Role Manager
 
 ### **Inputs**
 
@@ -126,7 +128,7 @@ Manages hospital staff accounts and roles.
 
 ### **Outputs**
 
-* Staff list  
+* Staff list
 * Staff profiles
 
 ### **Dependencies**
@@ -143,17 +145,17 @@ Handles all patient-related data and registration.
 
 ### **Core Responsibilities**
 
-* Register new patients  
-* Update patient information  
-* Delete/archive patient records  
-* Search patients  
+* Register new patients
+* Update patient information
+* Archive patient records when required
+* Search patients
 * Store patient demographics
 
 ### **Key Components**
 
-* Patient Controller  
-* Patient Service  
+* Patient Service
 * Patient Repository
+* Validation Utilities
 
 ### **Inputs**
 
@@ -161,7 +163,7 @@ Handles all patient-related data and registration.
 
 ### **Outputs**
 
-* Patient records  
+* Patient records
 * Patient list
 
 ### **Dependencies**
@@ -178,16 +180,16 @@ Manages scheduling between patients and doctors.
 
 ### **Core Responsibilities**
 
-* Book appointments  
-* Update/reschedule appointments  
-* Cancel appointments  
-* Assign doctor to patient  
+* Book appointments
+* Update/reschedule appointments
+* Cancel appointments
+* Assign doctor to patient
 * Track appointment status
 
 ### **Key Components**
 
-* Appointment Controller  
-* Appointment Service  
+* Appointment Service
+* Scheduling Validator
 * Appointment Repository
 
 ### **Inputs**
@@ -196,12 +198,12 @@ Manages scheduling between patients and doctors.
 
 ### **Outputs**
 
-* Appointment schedules  
+* Appointment schedules
 * Appointment status
 
 ### **Dependencies**
 
-* Patient Module  
+* Patient Module
 * User/Staff Module
 
 ---
@@ -214,32 +216,33 @@ Stores and manages patient medical history and treatment records.
 
 ### **Core Responsibilities**
 
-* Record diagnoses  
-* Store prescriptions  
-* Track treatments  
+* Record diagnoses
+* Store prescriptions
+* Track treatments
 * Maintain patient history
+* Restrict record access to authorized roles
 
 ### **Key Components**
 
-* Medical Record Controller  
-* Medical Record Service  
+* Medical Record Service
 * Medical Record Repository
+* Access Policy Service
 
 ### **Inputs**
 
-* Diagnosis data  
-* Treatment details  
+* Diagnosis data
+* Treatment details
 * Prescription information
 
 ### **Outputs**
 
-* Patient medical history  
+* Patient medical history
 * Clinical records
 
 ### **Dependencies**
 
-* Patient Module  
-* Appointment Module  
+* Patient Module
+* Appointment Module
 * Doctor (User/Staff Module)
 
 ---
@@ -252,32 +255,33 @@ Provides system overview and hospital analytics.
 
 ### **Core Responsibilities**
 
-* Display total patients  
-* Show appointments statistics  
-* Generate reports  
+* Display total patients
+* Show appointment statistics
+* Generate reports
 * Visual summaries (charts)
 
 ### **Key Components**
 
-* Dashboard Service  
+* Dashboard Service
 * Report Generator
+* Metrics Aggregator
 
 ### **Inputs**
 
-* Patients data  
-* Appointments data  
+* Patient data
+* Appointment data
 * Medical records
 
 ### **Outputs**
 
-* Reports  
-* Charts  
+* Reports
+* Charts
 * System summaries
 
 ### **Dependencies**
 
-* Patient Module  
-* Appointment Module  
+* Patient Module
+* Appointment Module
 * Medical Records Module
 
 ---
@@ -290,14 +294,14 @@ Handles financial operations related to patient care.
 
 ### **Core Responsibilities**
 
-* Generate bills  
-* Track payments  
-* Manage invoices  
+* Generate bills
+* Track payments
+* Manage invoices
 * Payment history
 
 ### **Dependencies**
 
-* Patient Module  
+* Patient Module
 * Medical Records Module
 
 ---
@@ -310,13 +314,13 @@ Manages lab test requests and results.
 
 ### **Core Responsibilities**
 
-* Request lab tests  
-* Receive lab results  
+* Request lab tests
+* Receive lab results
 * Attach results to patient records
 
 ### **Dependencies**
 
-* Medical Records Module  
+* Medical Records Module
 * Patient Module
 
 ---
@@ -329,13 +333,13 @@ Handles system alerts and reminders.
 
 ### **Core Responsibilities**
 
-* Appointment reminders  
-* System alerts  
+* Appointment reminders
+* System alerts
 * SMS/email notifications
 
 ### **Dependencies**
 
-* Appointment Module  
+* Appointment Module
 * User Module
 
 ---
@@ -348,8 +352,8 @@ Manages system configuration and preferences.
 
 ### **Core Responsibilities**
 
-* System settings  
-* User preferences  
+* System settings
+* User preferences
 * Role configurations
 
 ### **Dependencies**
@@ -366,15 +370,16 @@ Tracks system activity for security and debugging.
 
 ### **Core Responsibilities**
 
-* Log user actions  
-* Track system changes  
-* Record errors  
+* Log user actions
+* Track system changes
+* Record errors
 * Monitor system usage
 
 ### **Key Components**
 
-* Audit Logger  
+* Audit Logger
 * Log Storage Service
+* Cloud Function Log Handler
 
 ### **Dependencies**
 
@@ -382,46 +387,46 @@ Tracks system activity for security and debugging.
 
 ---
 
-# **5\. Module Interaction Overview**
+# **5. Module Interaction Overview**
 
 ---
 
 ## **Typical Flow (Patient Registration)**
 
-Patient → Patient Module  
- Data validated  
- Stored in database  
- Audit log recorded
+Receptionist / Patient -> Authentication Module (if account creation is required)
+Patient Module validates data
+Patient profile is stored in Cloud Firestore
+Audit log is recorded
 
 ---
 
 ## **Appointment Flow**
 
-Receptionist → Appointment Module  
- Doctor assigned  
- Appointment scheduled  
- Dashboard updated
+Receptionist / Patient -> Appointment Module
+Doctor availability is checked
+Appointment is saved in Cloud Firestore
+Dashboard metrics are updated
 
 ---
 
 ## **Medical Record Flow**
 
-Doctor → Medical Records Module  
- Diagnosis entered  
- Record stored  
- Patient history updated
+Doctor -> Medical Records Module
+Diagnosis and treatment are validated
+Record is stored in Cloud Firestore
+Patient history is updated
 
 ---
 
 ## **Reporting Flow**
 
-Admin → Dashboard Module  
- Data aggregated  
- Reports generated
+Admin -> Dashboard Module
+Data is aggregated from Firestore and backend services
+Reports are generated
 
 ---
 
-# **6\. Dependency Summary**
+# **6. Dependency Summary**
 
 | Module | Depends On |
 | ----- | ----- |
@@ -438,32 +443,32 @@ Admin → Dashboard Module
 
 ---
 
-# **7\. Scalability Considerations**
+# **7. Scalability Considerations**
 
 This modular design allows:
 
-* Adding billing system easily  
-* Integrating laboratory systems  
-* Supporting mobile application later  
-* Adding AI diagnosis assistance  
+* Adding billing system easily
+* Integrating laboratory systems
+* Supporting mobile application later
+* Adding AI diagnosis assistance
 * Expanding reporting features
+* Extending backend workflows with Cloud Functions
 
 ---
 
-# **8\. Conclusion**
+# **8. Conclusion**
 
 The module structure defines how the system is logically separated and how each part interacts.
 
 If implemented correctly:
 
-* features remain isolated  
-* bugs are easier to track  
-* scaling becomes manageable  
-* new features don’t break existing ones
+* features remain isolated
+* bugs are easier to track
+* scaling becomes manageable
+* new features do not break existing ones
 
 If ignored:
 
-* modules become tightly coupled  
-* system becomes difficult to maintain  
+* modules become tightly coupled
+* system becomes difficult to maintain
 * debugging becomes complex
-

@@ -1,240 +1,234 @@
-#  **SYSTEM ARCHITECTURE**
+# **SYSTEM ARCHITECTURE**
 
 ## **Patient Management System**
 
 ---
 
-##  **1\. Introduction to System Architecture**
+## **1. Introduction to System Architecture**
 
 System architecture defines **how different parts of the system interact** to deliver functionality.
 
-For your Patient Management System, we use a **3-tier architecture**, which separates the system into independent layers:
+For the Patient Management System, we use a **Firebase-based 3-tier architecture**, which separates the system into independent layers:
 
-* Presentation Layer (User Interface)  
-* Application Layer (Business Logic)  
-* Data Layer (Database)
+* Presentation Layer (User Interface)
+* Application/Service Layer (Firebase services and backend logic)
+* Data Layer (Cloud Firestore)
 
- This separation is very important because it:
+This separation is very important because it:
 
-* Improves **security**  
-* Makes the system **easy to maintain**  
+* Improves **security**
+* Makes the system **easy to maintain**
 * Allows **future upgrades**
 
 ---
 
-##  **2\. Overall Architectural Structure**
+## **2. Overall Architectural Structure**
 
-Users (Admin / Doctor / Receptionist / Patient)  
-               ↓  
-Presentation Layer (Frontend UI)  
-               ↓  
-Application Layer (Backend Logic)  
-               ↓  
-Data Layer (Database \- MySQL)  
----
-
-##  **3\. Detailed Explanation of Each Layer**
+Users (Admin / Doctor / Receptionist / Patient)
+-> Presentation Layer (Frontend UI)
+-> Application Layer (Firebase Authentication + Cloud Functions)
+-> Data Layer (Cloud Firestore)
 
 ---
 
-###  **3.1 Presentation Layer (Frontend)**
+## **3. Detailed Explanation of Each Layer**
+
+---
+
+### **3.1 Presentation Layer (Frontend)**
 
 This is the **top layer** where users interact with the system.
 
 #### **Components:**
 
-* Login page  
-* Registration forms  
-* Dashboard  
-* Patient forms  
+* Login page
+* Registration forms
+* Dashboard
+* Patient forms
 * Appointment forms
 
 #### **Technologies Used:**
 
-* HTML → structure of pages  
-* CSS → styling  
-* Bootstrap → responsive design  
-* JavaScript → interactivity
+* HTML -> structure of pages
+* CSS -> styling
+* Bootstrap -> responsive design
+* JavaScript -> interactivity
 
-####  **Functions:**
+#### **Functions:**
 
-* Collect user input (e.g., patient details)  
-* Display information (e.g., medical records)  
-* Send requests to backend
+* Collect user input (for example, patient details)
+* Display information (for example, medical records)
+* Send requests to Firebase services
 
 #### **Example:**
 
 When a receptionist enters a new patient:
 
-* The form collects data  
-* Sends it to backend for processing
+* The form collects data
+* The application validates the data
+* The data is sent to Firestore or Cloud Functions for processing
 
 ---
 
-###  **3.2 Application Layer (Backend)**
+### **3.2 Application / Service Layer**
 
-This is the **core (brain)** of the system.
+This is the **core service layer** of the system.
 
-####  **Components:**
+#### **Components:**
 
-* Authentication system  
-* Business logic  
-* Validation system  
-* API or server scripts
+* Firebase Authentication
+* Business logic services
+* Validation rules
+* Firebase Cloud Functions
+* Firestore security rules
 
 #### **Technologies:**
 
-* PHP (common for your level)  
-   *(or Node.js if advanced)*
+* Firebase Authentication
+* Firebase Cloud Functions
+* Firebase SDK
 
-####  **Functions:**
+#### **Functions:**
 
-* Processes requests from frontend  
-* Validates input data  
-* Applies rules (e.g., no duplicate patient ID)  
-* Communicates with database
+* Authenticates users
+* Processes requests from frontend
+* Validates input data
+* Applies business rules (for example, no duplicate patient ID)
+* Controls secure access to Firestore data
 
-####  **Example:**
+#### **Example:**
 
-When user logs in:
+When a user logs in:
 
-1. Backend receives username/password  
-2. Checks database  
-3. Returns success or error
+1. Firebase Authentication receives the login request
+2. The user is verified
+3. The application loads the user's role and permissions
+4. The user is granted access to the correct dashboard
 
 ---
 
-###  **3.3 Data Layer (Database)**
+### **3.3 Data Layer (Database)**
 
 This is where **all system data is stored permanently**.
 
 #### **Database Used:**
 
-* MySQL
+* Cloud Firestore
 
-####  **Tables:**
+#### **Main Collections:**
 
-* patients  
-* doctors  
-* admin  
-* receptionist  
-* appointments  
-* medical\_records
+* admins
+* doctors
+* receptionists
+* patients
+* appointments
+* medical_records
 
-####  **Functions:**
+#### **Functions:**
 
-* Store data  
-* Retrieve data  
-* Maintain relationships using:  
-  * Primary Keys (PK)  
-  * Foreign Keys (FK)
+* Store data
+* Retrieve data
+* Maintain document relationships using document IDs and references
 
-####  **Example:**
+#### **Example:**
 
-* A patient record is saved  
-* Doctor retrieves it during consultation
+* A patient record is saved in the `patients` collection
+* A doctor retrieves it during consultation
 
 ---
 
-##  **4\. Interaction Between Layers**
-
-Let’s break it down clearly:
+## **4. Interaction Between Layers**
 
 ### **Example: Booking Appointment**
 
-1. User enters data (Frontend)  
-2. Data sent to backend  
-3. Backend validates input  
-4. Backend stores in database  
-5. Database confirms storage  
-6. Backend sends success message  
+1. User enters data (Frontend)
+2. Data is sent to the service layer
+3. Input is validated
+4. Appointment is stored in Cloud Firestore
+5. Firestore confirms the write
+6. The application returns success
 7. Frontend displays confirmation
 
 ---
 
-##  **5\. User Roles in Architecture**
+## **5. User Roles in Architecture**
 
----
+### **Doctor**
 
-###  **Doctor**
-
-* Access patient records  
-* Update diagnosis  
+* Access patient records
+* Update diagnosis
 * Prescribe treatment
 
----
+### **Admin**
 
-###  **Admin**
-
-* Manage system users  
-* Generate reports  
+* Manage system users
+* Generate reports
 * Control system access
 
----
+### **Receptionist**
 
-###  **Receptionist**
-
-* Register patients  
+* Register patients
 * Schedule appointments
 
----
+### **Patient**
 
-###  **Patient**
-
-* View records  
+* View records
 * Book appointments
 
 ---
 
-##  **6\. Deployment Architecture (Real Environment)**
+## **6. Deployment Architecture (Real Environment)**
 
 This shows how the system runs physically:
 
-Client (Browser)  
-   ↓  
-Web Server (Apache / XAMPP)  
-   ↓  
-Application (PHP Scripts)  
-   ↓  
-Database Server (MySQL)  
+Client (Browser)
+-> Web Application
+-> Firebase Authentication / Cloud Functions / Cloud Firestore
+
+Optional deployment support:
+
+* Firebase Hosting for frontend deployment
+* Firebase Emulator Suite for local testing
+
 ---
 
-##  **7\. Security in Architecture**
+## **7. Security in Architecture**
 
 Security is very important in hospital systems.
 
-####  **Measures:**
+#### **Measures:**
 
-* Login authentication  
-* Password encryption  
-* Role-based access control  
-* Database protection
-
----
-
-##  **8\. Advantages of This Architecture**
-
-* ✔ Separation of concerns  
-* ✔ Easy debugging  
-* ✔ Scalable system  
-* ✔ Secure data handling  
-* ✔ Reusable components
+* Firebase Authentication for login control
+* Role-based access control
+* Firestore security rules
+* Protected handling of patient records
+* Audit logging through backend services
 
 ---
 
-##  **9\. Limitations**
+## **8. Advantages of This Architecture**
 
-* Requires server setup  
-* Needs technical knowledge  
-* Internet required (if web-based)
+* Separation of concerns
+* Reduced server maintenance
+* Easy scaling with managed cloud services
+* Secure data handling
+* Faster implementation for authentication and backend workflows
 
 ---
 
-##  **10\. Conclusion**
+## **9. Limitations**
 
-The 3-tier architecture provides a **strong foundation** for the Patient Management System. It ensures:
+* Requires internet connectivity
+* Depends on Firebase service availability
+* Requires careful security-rule configuration
 
-* Efficient communication between components  
-* Secure handling of patient data  
+---
+
+## **10. Conclusion**
+
+The Firebase-based 3-tier architecture provides a strong foundation for the Patient Management System. It ensures:
+
+* Efficient communication between components
+* Secure handling of patient data
 * Flexibility for future expansion
-
+* Simpler backend management through managed cloud services

@@ -1,7 +1,7 @@
-**PROJECTS PROPOSAL**
+**PROJECT PROPOSAL**
 
-Project Title  
-**Design and Implementation of a Patient Management System .**
+Project Title
+**Design and Implementation of a Patient Management System**
 
 **Introduction**
 
@@ -9,18 +9,18 @@ Healthcare institutions still rely heavily on manual systems or poorly integrate
 
 This project focuses on developing a simple, efficient, and user-friendly Patient Management System that can be used in small to medium healthcare facilities.
 
-## **1\.  Problem Statement**
+## **1. Problem Statement**
 
 Many healthcare centers face challenges such as:
 
-* Loss or misplacement of patient records  
-* Time-consuming manual data entry and retrieval  
-* Poor patient tracking and history management  
+* Loss or misplacement of patient records
+* Time-consuming manual data entry and retrieval
+* Poor patient tracking and history management
 * Lack of centralized and secure data storage
 
-From  the above challenges in the medical institution, it can result in delayed of treatment , medical errors, and also poor service delivery .
+These challenges can lead to delays in treatment, medical errors, and poor service delivery.
 
-## **2\.  OBJECTIVE**
+## **2. Objective**
 
 ## **Main Objective:**
 
@@ -28,46 +28,45 @@ To design and implement a Patient Management System that improves the efficiency
 
 ### **Specific Objectives:**
 
-* To create a system for storing and managing patient information  
-* To enable easy retrieval and updating of patient records  
-* To reduce paperwork and manual record keeping  
-* To improve accuracy and security of patient data  
-* To provide a user-friendly interface for hospital staff 
+* To create a system for storing and managing patient information
+* To enable easy retrieval and updating of patient records
+* To reduce paperwork and manual record keeping
+* To improve accuracy and security of patient data
+* To provide a user-friendly interface for hospital staff
 
-  ## **3\.  SCOPES**
+## **3. Scope**
 
 The system will:
 
-* Register and manage patient records  
-* Store medical history  
-* Allow updating and deletion of records  
-* Include a **billing module** for managing payments and invoices  
-* Include a **laboratory module** for recording test results  
+* Register and manage patient records
+* Store medical history
+* Allow updating and deletion of records
+* Include a **billing module** for managing payments and invoices
+* Include a **laboratory module** for recording test results
 * Support centralized data access for hospital staff
 
-  ## **4\. SIGNIFICANT  OF THE STUDY**
+## **4. Significance of the Study**
 
 This project will:
 
-* Help healthcare providers manage patient data efficiently  
-* Reduce errors associated with manual record keeping  
-* Improve patient care through quick access to records  
+* Help healthcare providers manage patient data efficiently
+* Reduce errors associated with manual record keeping
+* Improve patient care through quick access to records
 * Serve as a learning tool for implementing real-world systems
 
-
-  ## **5\. METHODOLOGY**
+## **5. Methodology**
 
 The project will follow these steps:
 
-1. Requirement gathering and analysis  
-2. System design (UI, database, architecture)  
-3. Implementation using programming tools  
-4. Testing and debugging  
+1. Requirement gathering and analysis
+2. System design (UI, Firestore data model, architecture)
+3. Implementation using programming tools
+4. Testing and debugging
 5. Deployment and documentation
 
 **Tools/Technologies:**
 
-* Frontend: HTML, CSS, Bootstrap  
-* Backend: (PHP / Node.js — you will choose)  
-* Database: MySQL
-
+* Frontend: HTML, CSS, Bootstrap, JavaScript
+* Authentication: Firebase Authentication
+* Backend: Firebase Cloud Functions / Firebase services
+* Database: Cloud Firestore

@@ -30,7 +30,7 @@ export const loginPage = {
               <h2 class="h5 mb-3">Demo credentials</h2>
               <div class="small text-white-50 d-grid gap-2">
                 <div><strong>Admin:</strong> admin@hospital.local / admin123</div>
-                <div><strong>Doctor:</strong> miriam.kato@hospital.local / doctor123</div>
+                <div><strong>Doctor:</strong> theodore.kato@hospital.local / doctor123</div>
                 <div><strong>Receptionist:</strong> grace.njeri@hospital.local / desk123</div>
                 <div><strong>Patient:</strong> alice.mumo@patients.local / patient123</div>
               </div>

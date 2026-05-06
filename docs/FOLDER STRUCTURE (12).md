@@ -4,128 +4,229 @@
 
 ---
 
-# **1\. Document Overview**
+# **1. Document Overview**
 
-This document defines the folder structure for the Patient Management System across all platforms:
+This document defines the recommended folder structure for the Patient Management System when using Firebase for authentication, backend services, and database management.
 
-* Web/Desktop Application  
-* Backend API  
-* Shared resources
+The structure is intended to support:
 
-The goal is to ensure:
-
-* clean separation of concerns  
-* scalability as system modules grow (billing, lab integration, etc.)  
-* consistency across development  
-* maintainability for long-term hospital use
+* the web application
+* Firebase configuration and rules
+* optional Cloud Functions
+* long-term maintainability
 
 ---
 
-# **2\. Architecture Approach**
+# **2. Architecture Approach**
 
-We are using a **feature-first \+ layered hybrid structure**.
+We are using a **feature-first + service-layer hybrid structure**.
 
 ## **Why this approach?**
 
 Because:
 
-* Pure layered → becomes difficult to manage as system grows  
-* Pure feature-based → leads to duplication  
-* Hybrid → balances modularity and reuse
+* Pure layered structure becomes difficult to manage as the system grows
+* Pure feature-based structure can lead to duplication
+* A hybrid structure balances modularity and reuse
 
 ## **Structure Philosophy**
 
 Each feature contains:
 
-* UI (pages/forms)  
-* logic (controllers/services)  
-* models (database representation)
+* UI (pages/forms/components)
+* logic (services and validators)
+* models (data representation)
 
-Global/shared code remains centralized.
+Firebase-specific integration code remains centralized.
 
 ---
 
-# **3\. Root Project Structure**
+# **3. Root Project Structure**
 
-patient-management-system/  
-│  
-├── web\_app/  
-├── backend/  
-├── docs/  
-├── shared/  
-├── scripts/  
-├── .env  
-├── README.md  
+```text
+patient-management-system/
+|
+|-- docs/
+|-- web_app/
+|-- firebase.json              (planned when Firebase is configured)
+|-- .firebaserc                (planned environment aliases)
+|-- firestore.rules            (planned Firestore access rules)
+|-- firestore.indexes.json     (planned Firestore indexes)
+`-- functions/                 (optional Cloud Functions backend)
+```
+
+### **Notes**
+
+* `docs/` stores all analysis, planning, and architecture documents
+* `web_app/` stores the frontend application
+* Root Firebase files are added once the Firebase project is initialized
+* `functions/` is optional and is used when backend logic is implemented with Cloud Functions
+
 ---
 
-# **4\. Web/Desktop Application (Frontend)**
+# **4. Web Application Structure**
 
-(Using HTML, Bootstrap, JavaScript or React)
+```text
+web_app/
+|
+|-- assets/
+|   |-- icons/
+|   |-- images/
+|   `-- styles/
+|-- public/
+|-- src/
+|   |-- config/
+|   |-- core/
+|   |-- features/
+|   |-- routes/
+|   |-- services/
+|   |-- shared/
+|   |-- utils/
+|   `-- main.js
+`-- index.html
+```
 
-web\_app/  
-│  
-├── public/  
-├── src/  
-│   ├── core/  
-│   ├── features/  
-│   ├── shared/  
-│   ├── services/  
-│   ├── routes/  
-│   ├── utils/  
-│   ├── config/  
-│   └── main.js  
-│  
-├── assets/  
-│   ├── images/  
-│   ├── icons/  
-│   └── styles/  
-│  
-├── package.json  
-└── index.html  
 ---
 
-## **4.1 src/core/**
+## **4.1 src/config/**
 
-Global application logic.
+Stores project configuration files.
 
-core/  
-├── constants/  
-├── theme/  
-├── errors/  
-├── api/  
-└── base/
+Recommended contents:
+
+* `appConfig.js`
+* `firebaseConfig.js`
+* environment-specific settings
+
+---
+
+## **4.2 src/core/**
+
+Stores global application logic.
+
+```text
+core/
+|-- api/
+|-- base/
+|-- constants/
+|-- errors/
+`-- theme/
+```
 
 Contains:
 
-* system constants  
-* UI themes  
-* API configuration  
-* base classes
+* system constants
+* UI themes
+* shared abstractions for API/data access
+* base classes and reusable utilities
 
 ---
 
-## **4.2 src/features/**
+## **4.3 src/services/**
 
-Main system modules (VERY IMPORTANT)
+Stores reusable service integrations and data access helpers.
 
-features/  
-├── auth/  
-├── dashboard/  
-├── patients/  
-├── appointments/  
-├── medical\_records/  
-├── users/  
-├── reports/  
-├── billing/        (future)  
-├── laboratory/     (future)  
+Recommended Firebase-oriented structure:
+
+```text
+services/
+|-- auth/
+|-- firestore/
+|-- functions/
+`-- firebase/
+```
+
+Contains:
+
+* Firebase Authentication wrappers
+* Firestore queries and document helpers
+* Cloud Function callers
+* shared Firebase initialization logic
+
 ---
 
-### **Example: patients feature**
+## **4.4 src/features/**
 
-patients/  
-├── pages/  
-├── components/  
-├── services/  
-├── models/  
-├── controllers/  
-└── patient\_routes.js  
+Stores the main application modules.
+
+```text
+features/
+|-- auth/
+|-- dashboard/
+|-- patients/
+|-- appointments/
+|-- medical_records/
+|-- users/
+|-- reports/
+`-- settings/
+```
+
+Each feature should own its UI, validation, and feature-specific services.
+
+---
+
+## **4.5 Example: patients feature**
+
+```text
+patients/
+|-- pages/
+|-- components/
+|-- services/
+|-- models/
+`-- patient_routes.js
+```
+
+Suggested responsibilities:
+
+* `pages/` -> route-level screens
+* `components/` -> reusable patient UI pieces
+* `services/` -> patient-specific Firestore actions
+* `models/` -> patient data shapes and mapping helpers
+
+---
+
+## **4.6 src/shared/**
+
+Stores code shared across features.
+
+```text
+shared/
+|-- components/
+|-- layouts/
+`-- state/
+```
+
+Use this area for:
+
+* common UI components
+* shared page layouts
+* global state and session helpers
+
+---
+
+## **4.7 src/routes/** and **src/utils/**
+
+* `routes/` stores routing definitions and guards
+* `utils/` stores formatters, validators, and small reusable helpers
+
+---
+
+# **5. Firebase-Specific Files**
+
+When Firebase is fully configured, the project may include:
+
+* `firebase.json` -> deployment configuration
+* `.firebaserc` -> Firebase project aliases
+* `firestore.rules` -> access control rules
+* `firestore.indexes.json` -> Firestore index definitions
+* `functions/` -> Cloud Functions source code
+
+---
+
+# **6. Design Notes**
+
+* Authentication should be handled through Firebase Authentication
+* Backend workflows should be handled through Cloud Functions when server-side logic is required
+* Persistent application data should be stored in Cloud Firestore
+* Security rules should be versioned alongside the project
+* Firebase integration code should stay centralized to avoid duplication

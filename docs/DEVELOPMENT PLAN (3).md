@@ -1,4 +1,4 @@
-#  **DEVELOPMENT PLANNING**
+# **DEVELOPMENT PLANNING**
 
 ## **PATIENT MANAGEMENT SYSTEM**
 
@@ -16,37 +16,37 @@ For the proposed Patient Management System, the development plan ensures that al
 
 The development of this system will adopt the **Waterfall Model**, which is a linear and sequential approach to software development.
 
-##  **Justification for Using Waterfall Model**
+## **Justification for Using Waterfall Model**
 
 The Waterfall model is selected for the following reasons:
 
-* It is simple and easy to understand, especially for academic projects  
-* Each phase is clearly defined and completed before moving to the next  
-* It allows proper documentation at every stage  
+* It is simple and easy to understand, especially for academic projects
+* Each phase is clearly defined and completed before moving to the next
+* It allows proper documentation at every stage
 * It is suitable where system requirements are well understood
 
 The model ensures a systematic flow of activities, reducing confusion and improving project management.
 
 ---
 
-# **3 Phases of Development** 
+# **3 Phases of Development**
 
 ---
 
- **Requirement Analysis Phase**
+## **Requirement Analysis Phase**
 
 This is the first and most important phase of the project. It involves gathering and analyzing all the requirements needed to develop the system.
 
 ### **Activities Involved:**
 
-* Identifying system stakeholders:  
-  * Admin  
-  * Doctor  
-  * Receptionist  
-  * Patient  
-* Studying the current manual system used in hospitals  
-* Identifying problems in the existing system  
-* Defining system requirements (functional and non-functional)  
+* Identifying system stakeholders:
+  * Admin
+  * Doctor
+  * Receptionist
+  * Patient
+* Studying the current manual system used in hospitals
+* Identifying problems in the existing system
+* Defining system requirements (functional and non-functional)
 * Documenting all requirements clearly
 
 ### **Deliverable:**
@@ -59,30 +59,30 @@ This phase ensures that the system to be developed meets user needs and reduces 
 
 ---
 
-##  **System Design Phase**
+## **System Design Phase**
 
 In this phase, the overall structure and design of the system are created based on the requirements gathered.
 
 ### **Activities Involved:**
 
-* Designing UML diagrams:  
-  * Use Case Diagram (shows system users and interactions)  
-  * Class Diagram (shows system structure)  
-  * Sequence Diagram (shows process flow)  
-* Designing the Entity Relationship (ER) Diagram  
-* Creating the database schema  
-* Designing system architecture  
-* Designing user interfaces (UI) for:  
-  * Admin  
-  * Doctor  
-  * Receptionist  
+* Designing UML diagrams:
+  * Use Case Diagram (shows system users and interactions)
+  * Class Diagram (shows system structure)
+  * Sequence Diagram (shows process flow)
+* Designing the ER/data model
+* Creating the Firestore collection schema
+* Designing Firebase-based system architecture
+* Designing user interfaces (UI) for:
+  * Admin
+  * Doctor
+  * Receptionist
   * Patient
 
 ### **Deliverables:**
 
-* UML diagrams  
-* ER diagram  
-* Database design  
+* UML diagrams
+* ER/data model
+* Firestore schema design
 * Interface mockups
 
 ### **Importance:**
@@ -91,41 +91,42 @@ This phase acts as a blueprint for system development and helps developers under
 
 ---
 
-##  **Implementation Phase**
+## **Implementation Phase**
 
 This is the phase where the actual system is developed through coding.
 
 ### **Technologies Used:**
 
-* Frontend: HTML, CSS, Bootstrap  
-* Backend: PHP or JavaScript  
-* Database: MySQL
+* Frontend: HTML, CSS, Bootstrap, JavaScript
+* Authentication: Firebase Authentication
+* Backend: Firebase Cloud Functions / Firebase service layer
+* Database: Cloud Firestore
 
 ### **Modules Developed:**
 
-####  **Patient Module**
+#### **Patient Module**
 
-* Account registration and login  
-* Booking appointments  
-* Viewing medical records  
+* Account registration and login
+* Booking appointments
+* Viewing medical records
 * Viewing appointment history
 
 #### **Doctor Module**
 
-* Viewing patient details  
-* Updating diagnosis  
+* Viewing patient details
+* Updating diagnosis
 * Prescribing treatments
 
 #### **Receptionist Module**
 
-* Registering new patients  
-* Scheduling appointments  
+* Registering new patients
+* Scheduling appointments
 * Managing patient records
 
 #### **Admin Module**
 
-* Managing all users  
-* Monitoring system activities  
+* Managing all users
+* Monitoring system activities
 * Generating reports
 
 ### **Deliverable:**
@@ -138,21 +139,22 @@ This phase transforms system design into a working application.
 
 ---
 
-##  **Testing Phase**
+## **Testing Phase**
 
 The testing phase ensures that the system operates correctly and meets user requirements.
 
 ### **Types of Testing:**
 
-* **Unit Testing:** Testing individual modules separately  
-* **Integration Testing:** Testing how modules work together  
+* **Unit Testing:** Testing individual modules separately
+* **Integration Testing:** Testing how modules work together
 * **System Testing:** Testing the entire system as a whole
 
 ### **Activities:**
 
-* Identifying system errors (bugs)  
-* Fixing errors  
-* Validating system performance
+* Identifying system errors (bugs)
+* Fixing errors
+* Validating Firebase Authentication flows
+* Validating Firestore reads/writes and security rules
 
 ### **Deliverable:**
 
@@ -170,9 +172,10 @@ This is the final phase where the system is made available for real use.
 
 ### **Activities:**
 
-* Installing the system on computers or server  
-* Setting up the database  
-* Configuring system settings  
+* Configuring the Firebase project
+* Setting up Firebase Authentication providers and roles
+* Creating Firestore collections, indexes, and security rules
+* Deploying frontend and backend configuration
 * Training users (hospital staff)
 
 ### **Deliverable:**
@@ -185,16 +188,16 @@ Ensures the system is ready for real-world usage.
 
 ---
 
-#  **Development Schedule (Project Timeline)**
+# **Development Schedule (Project Timeline)**
 
 The project will be completed within a structured time frame as shown below:
 
 | Phase | Duration |
 | ----- | ----- |
-| Requirement Analysis | 1–2 weeks |
+| Requirement Analysis | 1-2 weeks |
 | System Design | 2 weeks |
-| Implementation | 3–5 weeks |
-| Testing | 1–2 weeks |
+| Implementation | 3-5 weeks |
+| Testing | 1-2 weeks |
 | Deployment | 1 week |
 
 ### **Total Estimated Duration:**
@@ -203,19 +206,19 @@ The project will be completed within a structured time frame as shown below:
 
 ---
 
-#  **3.5 Tools and Resources**
+# **3.5 Tools and Resources**
 
 ### **Hardware Requirements:**
 
-* Computer system  
+* Computer system
 * Internet connection
 
 ### **Software Requirements:**
 
-* Code editor (e.g., VS Code)  
-* Web browser (Chrome)  
-* Database system (MySQL)  
-* Server environment (XAMPP/WAMP)
+* Code editor (for example, VS Code)
+* Web browser (Chrome or Edge)
+* Firebase project and Firebase Console access
+* Firebase CLI / Emulator Suite for testing and deployment
 
 ---
 
@@ -225,16 +228,17 @@ Every project may face certain risks. Identifying and managing these risks is im
 
 ### **Possible Risks:**
 
-* Delay in project completion  
-* Technical difficulties during development  
-* Data loss  
+* Delay in project completion
+* Technical difficulties during development
+* Data loss or incorrect cloud configuration
 * Resistance from users
 
 ### **Mitigation Strategies:**
 
-* Proper time management  
-* Regular system backup  
-* Testing at each stage  
+* Proper time management
+* Regular Firestore backup/export planning
+* Testing at each stage
+* Reviewing Firebase security rules before deployment
 * Providing user training
 
 ---
@@ -243,5 +247,4 @@ Every project may face certain risks. Identifying and managing these risks is im
 
 The development planning of the Patient Management System provides a structured approach to building the system. By following the Waterfall model and clearly defined phases, the project ensures systematic development, efficient resource utilization, and timely completion.
 
-This plan will guide the successful implementation of a reliable and efficient system that improves hospital operations and enhances patient care.
-
+This plan will guide the successful implementation of a reliable and efficient system that improves hospital operations and enhances patient care using Firebase for authentication, backend services, and database management.

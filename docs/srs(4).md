@@ -4,11 +4,11 @@
 
 ---
 
-#  **1\. INTRODUCTION**
+# **1. INTRODUCTION**
 
 ## **1.1 Purpose of the System**
 
-The purpose of this document is to provide a detailed description of the requirements for the Patient Management System. It serves as a guide for developers, stakeholders, and users to understand the system’s functionality and constraints.
+The purpose of this document is to provide a detailed description of the requirements for the Patient Management System. It serves as a guide for developers, stakeholders, and users to understand the system's functionality and constraints.
 
 The system is designed to automate hospital operations such as patient registration, appointment scheduling, and medical record management.
 
@@ -20,22 +20,23 @@ The Patient Management System is a web-based application that enables hospitals 
 
 The system will allow:
 
-* Admin to manage system operations  
-* Doctors to manage patient medical records  
-* Receptionists to register patients and schedule appointments  
+* Admin to manage system operations
+* Doctors to manage patient medical records
+* Receptionists to register patients and schedule appointments
 * Patients to access their information and book appointments
 
 ---
 
 ## **1.3 Definitions, Acronyms, and Abbreviations**
 
-| Term |          Meaning |
+| Term | Meaning |
 | ----- | ----- |
-| PMS |       Patient Management System |
+| PMS | Patient Management System |
 | SRS | Software Requirement Specification |
 | Admin | System administrator |
 | UI | User Interface |
 | DBMS | Database Management System |
+| UID | Unique user identifier from Firebase Authentication |
 
 ---
 
@@ -45,11 +46,11 @@ This document provides a detailed description of system requirements including f
 
 ---
 
-# **2\. OVERALL DESCRIPTION**
+# **2. OVERALL DESCRIPTION**
 
 ## **2.1 System Perspective**
 
-The Patient Management System is a standalone web-based system that interacts with a database to store and retrieve patient information.
+The Patient Management System is a web-based system that uses Firebase services to authenticate users, process backend operations, and store or retrieve patient information.
 
 It replaces the manual system of record keeping with a digital solution.
 
@@ -59,11 +60,11 @@ It replaces the manual system of record keeping with a digital solution.
 
 The system consists of four main users:
 
- **Admin**
+### **Admin**
 
 * Manages the entire system
 
-###  **Doctor**
+### **Doctor**
 
 * Handles patient diagnosis and treatment
 
@@ -71,7 +72,7 @@ The system consists of four main users:
 
 * Registers patients and schedules appointments
 
-### **Patient** 
+### **Patient**
 
 * Books appointments and views records
 
@@ -81,33 +82,35 @@ The system consists of four main users:
 
 The system will operate on:
 
-* Web browsers (Chrome, Edge)  
-* Operating systems (Windows, Linux)  
-* Server environment (XAMPP/WAMP)
+* Web browsers (Chrome, Edge)
+* Operating systems (Windows, Linux)
+* Internet-connected client devices
+* Firebase project environment
 
 ---
 
 ## **2.4 Design and Implementation Constraints**
 
-* Requires internet or local server  
-* Must ensure data security  
+* Requires internet connectivity
+* Depends on Firebase project configuration and availability
+* Must ensure data security through Firebase Authentication and Firestore rules
 * Limited to hospital environment
 
 ---
 
 ## **2.5 Assumptions and Dependencies**
 
-* Users have basic computer knowledge  
-* System will be used in a healthcare facility  
-* Database server is available
+* Users have basic computer knowledge
+* System will be used in a healthcare facility
+* Firebase Authentication, Cloud Functions, and Cloud Firestore are available
 
 ---
 
-#  **3\. SYSTEM FEATURES (FUNCTIONAL REQUIREMENTS)**
+# **3. SYSTEM FEATURES (FUNCTIONAL REQUIREMENTS)**
 
 ---
 
-##  **3.1 Admin Module**
+## **3.1 Admin Module**
 
 ### **Description:**
 
@@ -115,9 +118,9 @@ The admin controls and manages the entire system.
 
 ### **Functions:**
 
-* Login/logout  
-* Add, edit, delete users (Doctor, Receptionist, Patient)  
-* View system reports  
+* Login/logout
+* Add, edit, delete users (Doctor, Receptionist, Patient)
+* View system reports
 * Monitor system activities
 
 ---
@@ -130,15 +133,15 @@ The doctor manages patient medical information.
 
 ### **Functions:**
 
-* Login/logout  
-* View patient details  
-* Add diagnosis  
-* Prescribe treatment  
+* Login/logout
+* View patient details
+* Add diagnosis
+* Prescribe treatment
 * View appointment schedule
 
 ---
 
-##  **3.3 Receptionist Module**
+## **3.3 Receptionist Module**
 
 ### **Description:**
 
@@ -146,14 +149,14 @@ The receptionist handles patient registration and appointments.
 
 ### **Functions:**
 
-* Login/logout  
-* Register new patients  
-* Schedule appointments  
+* Login/logout
+* Register new patients
+* Schedule appointments
 * Update patient details
 
 ---
 
-##  **3.4 Patient Module (IMPORTANT)**
+## **3.4 Patient Module**
 
 ### **Description:**
 
@@ -161,58 +164,59 @@ The patient interacts with the system to access healthcare services.
 
 ### **Functions:**
 
-* Register account  
-* Login/logout  
-* View profile  
-* Book appointment  
-* View appointment history  
+* Register account
+* Login/logout
+* View profile
+* Book appointment
+* View appointment history
 * View medical records
 
 ---
 
-# **4\. NON-FUNCTIONAL REQUIREMENTS**
+# **4. NON-FUNCTIONAL REQUIREMENTS**
 
 ---
 
 ## **4.1 Performance Requirements**
 
-* The system should respond quickly to user actions  
+* The system should respond quickly to user actions
 * Should handle multiple users simultaneously
 
 ---
 
 ## **4.2 Security Requirements**
 
-* User authentication (login system)  
-* Password protection  
-* Role-based access control  
+* User authentication using Firebase Authentication
+* Password protection handled by Firebase Authentication
+* Role-based access control
+* Firestore security rules for restricted data access
 * Data confidentiality
 
 ---
 
 ## **4.3 Usability Requirements**
 
-* User-friendly interface  
-* Easy navigation  
+* User-friendly interface
+* Easy navigation
 * Minimal training required
 
 ---
 
 ## **4.4 Reliability Requirements**
 
-* System should be available at all times  
-* Backup system should be implemented
+* System should be available whenever hospital staff need it
+* Backup/export strategy should be implemented for cloud data
 
 ---
 
 ## **4.5 Maintainability**
 
-* Easy to update and modify  
+* Easy to update and modify
 * Well-structured code
 
 ---
 
-# **5\. SYSTEM MODELS**
+# **5. SYSTEM MODELS**
 
 ## **5.1 Use Case Diagram**
 
@@ -220,9 +224,9 @@ The patient interacts with the system to access healthcare services.
 
 ---
 
-## **5.2 ER Diagram**
+## **5.2 ER / Data Model Diagram**
 
-(Insert ER Diagram here)
+(Insert ER or Firestore data model diagram here)
 
 ---
 
@@ -232,26 +236,26 @@ The patient interacts with the system to access healthcare services.
 
 ---
 
-#  **6\. DATABASE REQUIREMENTS**
+# **6. DATABASE REQUIREMENTS**
 
-The system will use a relational database with the following tables:
+The system will use **Cloud Firestore** with the following main collections:
 
-* Admin  
-* Doctors  
-* Receptionists  
-* Patients  
-* Appointments  
-* Medical Records
+* admins
+* doctors
+* receptionists
+* patients
+* appointments
+* medical_records
 
-Each table will be connected using primary keys (PK) and foreign keys (FK).
+Authentication credentials will be managed by **Firebase Authentication**, while profile documents will reference the authenticated user through `auth_uid`.
 
 ---
 
-#  **7\. EXTERNAL INTERFACE REQUIREMENTS**
+# **7. EXTERNAL INTERFACE REQUIREMENTS**
 
 ## **7.1 User Interface**
 
-* Web-based interface  
+* Web-based interface
 * Dashboard for each user
 
 ## **7.2 Hardware Interface**
@@ -260,26 +264,29 @@ Each table will be connected using primary keys (PK) and foreign keys (FK).
 
 ## **7.3 Software Interface**
 
-* Web browser  
-* Database server
+* Web browser
+* Firebase Authentication
+* Cloud Firestore
+* Firebase Cloud Functions
 
 ---
 
-#  **8\. ASSUMPTIONS AND LIMITATIONS**
+# **8. ASSUMPTIONS AND LIMITATIONS**
 
 ### **Assumptions:**
 
-* Users are trained  
+* Users are trained
 * System is used in a hospital
+* Firebase services are properly configured
 
 ### **Limitations:**
 
-* Requires electricity  
+* Requires electricity
+* Requires internet access
 * Limited to defined modules
 
 ---
 
-#  **9\. CONCLUSION**
+# **9. CONCLUSION**
 
 The SRS document provides a complete description of the Patient Management System requirements. It serves as a foundation for system design and implementation, ensuring that the final product meets user needs and operates efficiently.
-
