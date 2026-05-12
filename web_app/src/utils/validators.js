@@ -56,24 +56,32 @@ export function validateRegistrationStep(payload, requiredFields = []) {
 export function validatePatient(payload) {
   const errors = {};
 
-  if (!payload.full_name?.trim()) {
-    errors.full_name = "Patient name is required.";
+  if (!payload.firstName?.trim()) {
+    errors.firstName = "First name is required.";
   }
 
-  if (!payload.age || Number(payload.age) <= 0) {
-    errors.age = "Age must be a positive number.";
+  if (!payload.lastName?.trim()) {
+    errors.lastName = "Last name is required.";
   }
 
   if (!payload.gender) {
     errors.gender = "Select a gender.";
   }
 
+  if (!payload.dateOfBirth) {
+    errors.dateOfBirth = "Date of birth is required.";
+  }
+
+  if (payload.age && Number(payload.age) < 0) {
+    errors.age = "Age cannot be negative.";
+  }
+
   if (!payload.phone?.trim()) {
     errors.phone = "Phone number is required.";
   }
 
-  if (!payload.address?.trim()) {
-    errors.address = "Address is required.";
+  if (payload.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+    errors.email = "Enter a valid email address.";
   }
 
   return errors;

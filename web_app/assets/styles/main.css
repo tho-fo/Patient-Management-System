@@ -578,6 +578,28 @@ textarea {
   background: rgba(13, 107, 116, 0.03);
 }
 
+.patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 220px;
+}
+
+.patient-avatar-sm {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: linear-gradient(145deg, var(--pms-primary), var(--pms-secondary));
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.22);
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -643,6 +665,54 @@ textarea {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.45fr);
+  gap: 1rem;
+}
+
+.profile-stack {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.profile-identity-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.4rem;
+  border: 1px solid var(--pms-border);
+  border-radius: var(--pms-radius-md);
+  background: var(--pms-surface);
+  box-shadow: var(--pms-shadow);
+  backdrop-filter: blur(10px);
+}
+
+.profile-avatar {
+  width: 6rem;
+  height: 6rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(145deg, var(--pms-primary), var(--pms-secondary));
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.22);
+}
+
+.profile-name {
+  overflow-wrap: anywhere;
+}
+
+.profile-action-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
 .key-value-list li {
   display: flex;
   align-items: start;
@@ -702,6 +772,13 @@ textarea {
   color: var(--pms-muted);
 }
 
+.form-section-title {
+  margin-bottom: 0.9rem;
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--pms-secondary);
+}
+
 .loading-shell {
   padding: 4rem 1rem;
   display: flex;
@@ -714,7 +791,8 @@ textarea {
   }
 
   .detail-grid,
-  .profile-grid {
+  .profile-grid,
+  .profile-layout {
     grid-template-columns: 1fr;
   }
 }
@@ -794,5 +872,10 @@ textarea {
 
   .chart-bar {
     grid-template-columns: 1fr;
+  }
+
+  .profile-identity-card {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

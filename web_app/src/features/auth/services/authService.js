@@ -97,9 +97,11 @@ async function registerWithProfile(payload, role) {
     if (role === roles.PATIENT) {
       await setDoc(doc(db, "patients", uid), {
         patient_id: uid,
+        uid,
         auth_uid: uid,
         full_name: fullName,
         age: calculateAge(payload.date_of_birth),
+        date_of_birth: payload.date_of_birth,
         gender: payload.gender,
         phone: payload.phone,
         email: payload.email,
@@ -111,9 +113,12 @@ async function registerWithProfile(payload, role) {
     if (role === roles.DOCTOR) {
       await setDoc(doc(db, "doctors", uid), {
         doctor_id: uid,
+        uid,
         auth_uid: uid,
         full_name: fullName,
         specialization: payload.specialization,
+        license_number: payload.license_number,
+        years_of_experience: Number(payload.years_of_experience),
         phone: payload.phone,
         email: payload.email,
         created_at: serverTimestamp()

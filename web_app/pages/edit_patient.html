@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Patient | Patient Management System</title>
+</head>
+<body>
+  <script>
+    const id = new URLSearchParams(window.location.search).get("id") || "";
+    const route = id ? `#/patients/${encodeURIComponent(id)}/edit` : "#/patients";
+    window.location.replace(`../index.html${route}`);
+  </script>
+  <a href="../index.html#/patients">Open patients</a>
+</body>
+</html>

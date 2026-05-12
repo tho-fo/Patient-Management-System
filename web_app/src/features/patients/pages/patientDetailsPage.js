@@ -4,37 +4,26 @@ import { patientService } from "../services/patientService.js";
 import {
   renderDataTable,
   renderKeyValueList,
+  renderModal,
   renderPageHero,
   renderRecentAppointmentTimeline,
   renderSectionCard,
   renderTimeline
 } from "../../../shared/components/ui.js";
-import { formatDate } from "../../../utils/formatters.js";
-import { qs, formToObject, clearFormErrors, applyFormErrors, renderInlineAlert, setBusyState } from "../../../utils/dom.js";
-import { validatePatient } from "../../../utils/validators.js";
+import { escapeHtml, formatDate, getInitials } from "../../../utils/formatters.js";
+import { qs, renderInlineAlert, setBusyState } from "../../../utils/dom.js";
 import { store } from "../../../shared/state/store.js";
 
 function canManagePatients(role) {
-  return role === roles.ADMIN || role === roles.RECEPTIONIST;
-}
-
-function buildAppointmentRows(appointments) {
-  return appointments.slice(0, 5).map((appointment) => `
-    <tr>
-      <td>${appointment.doctor_name}</td>
-      <td>${formatDate(appointment.appointment_date)}</td>
-      <td>${appointment.appointment_time}</td>
-      <td>${appointment.status}</td>
-    </tr>
-  `);
+  return role === roles.ADMIN || role === roles.DOCTOR || role === roles.RECEPTIONIST;
 }
 
 function buildMedicalRecordRows(records) {
   return records.slice(0, 5).map((record) => `
     <tr>
-      <td>${record.doctor_name}</td>
-      <td>${record.diagnosis}</td>
-      <td>${record.treatment}</td>
+      <td>${escapeHtml(record.doctor_name ?? record.doctor_id ?? "-")}</td>
+      <td>${escapeHtml(record.diagnosis ?? "-")}</td>
+      <td>${escapeHtml(record.treatment ?? "-")}</td>
       <td>${formatDate(record.record_date)}</td>
     </tr>
   `);
@@ -42,7 +31,7 @@ function buildMedicalRecordRows(records) {
 
 export const patientDetailsPage = {
   title: "Patient Details",
-  subtitle: "Patient demographics, related appointments, and medical history.",
+  subtitle: "Patient demographics, contact details, and medical information.",
   allowedRoles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST],
 
   async render(context) {
@@ -51,29 +40,63 @@ export const patientDetailsPage = {
 
     return {
       title: patient.full_name,
-      subtitle: "Patient details, history preview, and record maintenance.",
+      subtitle: "Patient profile and record overview.",
+      patient,
       content: `
         ${renderPageHero({
           eyebrow: "Patient Profile",
           title: patient.full_name,
-          subtitle: "Review demographics, recent appointments, and medical history from a single record view.",
+          subtitle: "Review personal, contact, medical, appointment, and record information.",
           actions: `
-            <a class="btn btn-primary" href="#${routePaths.bookAppointment}"><i class="bi bi-calendar-plus me-2"></i>Book appointment</a>
-            <a class="btn btn-outline-secondary" href="#${routePaths.medicalHistory}">View history</a>
+            <a class="btn btn-outline-secondary" href="#${routePaths.patients}">Back</a>
+            ${editable ? `<a class="btn btn-primary" href="#/patients/${patient.patient_id}/edit"><i class="bi bi-pencil me-2"></i>Edit</a>` : ""}
           `
         })}
 
-        <div class="detail-grid">
-          <div class="d-grid gap-3">
+        <div id="patientDetailAlert" class="mb-3"></div>
+        <div class="profile-layout">
+          <div class="profile-stack">
+            <section class="profile-identity-card">
+              <span class="profile-avatar">${escapeHtml(getInitials(patient.full_name))}</span>
+              <div class="profile-name">
+                <h2 class="h4 fw-bold mb-1">${escapeHtml(patient.full_name)}</h2>
+                <p class="text-soft mb-2">Patient #${escapeHtml(patient.patient_id)}</p>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="status-pill pending">${escapeHtml(patient.gender)}</span>
+                  <span class="status-pill completed">${escapeHtml(patient.bloodGroup || "Blood N/A")}</span>
+                  <span class="status-pill cancelled">${escapeHtml(patient.age)} years</span>
+                </div>
+              </div>
+            </section>
+
+            <div class="profile-grid">
+              ${renderSectionCard({
+                title: "Personal information",
+                content: renderKeyValueList([
+                  { label: "First name", value: patient.firstName },
+                  { label: "Last name", value: patient.lastName },
+                  { label: "Gender", value: patient.gender },
+                  { label: "Date of birth", value: formatDate(patient.dateOfBirth) },
+                  { label: "Age", value: `${patient.age} years` }
+                ])
+              })}
+
+              ${renderSectionCard({
+                title: "Contact information",
+                content: renderKeyValueList([
+                  { label: "Phone", value: patient.phone },
+                  { label: "Email", value: patient.email || "-" },
+                  { label: "Address", value: patient.address || "-" },
+                  { label: "Emergency contact", value: patient.emergencyContact || "-" }
+                ])
+              })}
+            </div>
+
             ${renderSectionCard({
-              title: "Patient summary",
-              subtitle: "Core demographic fields from the patient schema.",
+              title: "Medical information",
               content: renderKeyValueList([
-                { label: "Patient ID", value: `#${patient.patient_id}` },
-                { label: "Age", value: `${patient.age} years` },
-                { label: "Gender", value: patient.gender },
-                { label: "Phone", value: patient.phone },
-                { label: "Address", value: patient.address },
+                { label: "Blood group", value: patient.bloodGroup || "-" },
+                { label: "Medical condition", value: patient.medicalCondition || "-" },
                 { label: "Registered", value: formatDate(patient.created_at) }
               ])
             })}
@@ -85,7 +108,7 @@ export const patientDetailsPage = {
                 ? renderTimeline(patient.appointments.slice(0, 5), renderRecentAppointmentTimeline)
                 : renderDataTable({
                     headers: ["Doctor", "Date", "Time", "Status"],
-                    rows: buildAppointmentRows(patient.appointments),
+                    rows: [],
                     emptyMessage: "No appointments have been scheduled for this patient yet."
                   })
             })}
@@ -102,112 +125,62 @@ export const patientDetailsPage = {
           </div>
 
           ${renderSectionCard({
-            title: editable ? "Edit patient" : "Patient details",
-            subtitle: editable
-              ? "Reception and admin users can update the stored patient details."
-              : "Doctors can view patient details but cannot edit registration data.",
+            title: "Actions",
+            subtitle: "Use patient context for the next hospital workflow step.",
             content: `
-              <div id="patientDetailAlert" class="mb-3"></div>
-              <form id="patientDetailForm" novalidate>
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="detail_full_name">Full name</label>
-                    <input class="form-control" id="detail_full_name" name="full_name" type="text" value="${patient.full_name}" ${editable ? "" : "disabled"}>
-                    <div class="invalid-feedback" data-error-for="full_name"></div>
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label fw-semibold" for="detail_age">Age</label>
-                    <input class="form-control" id="detail_age" name="age" type="number" min="0" value="${patient.age}" ${editable ? "" : "disabled"}>
-                    <div class="invalid-feedback" data-error-for="age"></div>
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label fw-semibold" for="detail_gender">Gender</label>
-                    <select class="form-select" id="detail_gender" name="gender" ${editable ? "" : "disabled"}>
-                      <option value="Male" ${patient.gender === "Male" ? "selected" : ""}>Male</option>
-                      <option value="Female" ${patient.gender === "Female" ? "selected" : ""}>Female</option>
-                      <option value="Other" ${patient.gender === "Other" ? "selected" : ""}>Other</option>
-                    </select>
-                    <div class="invalid-feedback" data-error-for="gender"></div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="detail_phone">Phone</label>
-                    <input class="form-control" id="detail_phone" name="phone" type="tel" value="${patient.phone}" ${editable ? "" : "disabled"}>
-                    <div class="invalid-feedback" data-error-for="phone"></div>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label fw-semibold" for="detail_address">Address</label>
-                    <textarea class="form-control" id="detail_address" name="address" rows="4" ${editable ? "" : "disabled"}>${patient.address}</textarea>
-                    <div class="invalid-feedback" data-error-for="address"></div>
-                  </div>
-                </div>
-                ${editable ? `
-                  <div class="d-flex gap-2 mt-4">
-                    <button class="btn btn-primary" id="patientUpdateButton" type="submit"><i class="bi bi-save me-2"></i>Save changes</button>
-                    <button class="btn btn-outline-danger" id="patientDeleteButton" type="button">Delete patient</button>
-                  </div>
-                ` : ""}
-              </form>
+              <div class="profile-action-stack">
+                <a class="btn btn-primary" href="#${routePaths.bookAppointment}?patient_id=${patient.patient_id}"><i class="bi bi-calendar-plus me-2"></i>Book appointment</a>
+                <a class="btn btn-outline-secondary" href="#${routePaths.medicalHistory}?patient_id=${patient.patient_id}">View history</a>
+                ${editable ? `<button class="btn btn-outline-danger" id="patientDeleteButton" type="button"><i class="bi bi-trash me-2"></i>Delete patient</button>` : ""}
+              </div>
             `
           })}
         </div>
+
+        ${renderModal({
+          id: "deletePatientModal",
+          title: "Delete patient",
+          body: `<p class="mb-0">Are you sure you want to delete this patient?</p><p class="text-soft mb-0 mt-2">${escapeHtml(patient.full_name)}</p>`,
+          footer: `
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDeletePatient">Delete patient</button>
+          `
+        })}
       `
     };
   },
 
-  mount(root, context) {
+  mount(root, context, page) {
     if (!canManagePatients(context.currentUser.role)) {
       return;
     }
 
-    const form = qs("#patientDetailForm", root);
-    const submitButton = qs("#patientUpdateButton", root);
     const deleteButton = qs("#patientDeleteButton", root);
+    const confirmDeleteButton = qs("#confirmDeletePatient", root);
     const alertContainer = qs("#patientDetailAlert", root);
-    const patientId = context.params.id;
+    const deleteModalElement = qs("#deletePatientModal", root);
+    const deleteModal = window.bootstrap ? new window.bootstrap.Modal(deleteModalElement) : null;
 
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      clearFormErrors(form);
-      renderInlineAlert(alertContainer, "");
-
-      const payload = formToObject(form);
-      const errors = validatePatient(payload);
-      if (Object.keys(errors).length > 0) {
-        applyFormErrors(form, errors);
-        return;
-      }
-
-      setBusyState(submitButton, true);
-
-      try {
-        const patient = await patientService.update(patientId, payload);
-        store.setFlash({
-          type: "success",
-          message: `${patient.full_name} was updated successfully.`
-        });
-        context.navigate(`/patients/${patientId}`);
-      } catch (error) {
-        renderInlineAlert(alertContainer, error.message);
-      } finally {
-        setBusyState(submitButton, false);
-      }
+    deleteButton?.addEventListener("click", () => {
+      deleteModal?.show();
     });
 
-    deleteButton.addEventListener("click", async () => {
-      const confirmed = window.confirm("Delete this patient record?");
-      if (!confirmed) {
-        return;
-      }
+    confirmDeleteButton?.addEventListener("click", async () => {
+      setBusyState(confirmDeleteButton, true);
+      renderInlineAlert(alertContainer, "");
 
       try {
-        await patientService.remove(patientId);
+        await patientService.remove(page.patient.patient_id);
         store.setFlash({
           type: "success",
           message: "Patient record deleted successfully."
         });
+        deleteModal?.hide();
         context.navigate(routePaths.patients);
       } catch (error) {
         renderInlineAlert(alertContainer, error.message);
+      } finally {
+        setBusyState(confirmDeleteButton, false);
       }
     });
   }
