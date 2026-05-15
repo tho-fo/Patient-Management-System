@@ -39,15 +39,15 @@ This entity stores administrator profile information.
 
 ### **Attributes:**
 
-* admin_id (Document ID)
-* auth_uid
-* full_name
+* adminId (Document ID)
+* authUid
+* fullName
 * email
-* created_at
+* createdAt
 
 ### **Description:**
 
-Admin profiles are linked to Firebase Authentication accounts through `auth_uid` and are used to manage system-level operations.
+Admin profiles are linked to Firebase Authentication accounts through `authUid` and are used to manage system-level operations.
 
 ---
 
@@ -57,13 +57,13 @@ Stores details of doctors in the hospital.
 
 ### **Attributes:**
 
-* doctor_id (Document ID)
-* auth_uid
-* full_name
+* doctorId (Document ID)
+* authUid
+* fullName
 * specialization
 * phone
 * email
-* created_at
+* createdAt
 
 ### **Description:**
 
@@ -77,12 +77,12 @@ Stores details of reception staff.
 
 ### **Attributes:**
 
-* receptionist_id (Document ID)
-* auth_uid
-* full_name
+* receptionistId (Document ID)
+* authUid
+* fullName
 * phone
 * email
-* created_at
+* createdAt
 
 ### **Description:**
 
@@ -96,15 +96,15 @@ This entity stores all information related to patients.
 
 ### **Attributes:**
 
-* patient_id (Document ID)
-* auth_uid (optional for patient self-service accounts)
-* full_name
+* patientId (Document ID)
+* authUid (optional for patient self-service accounts)
+* fullName
 * age
 * gender
 * phone
 * email
 * address
-* created_at
+* createdAt
 
 ### **Description:**
 
@@ -118,13 +118,13 @@ Stores appointment details.
 
 ### **Attributes:**
 
-* appointment_id (Document ID)
-* patient_id (Reference ID)
-* doctor_id (Reference ID)
-* appointment_date
-* appointment_time
+* appointmentId (Document ID)
+* patientId (Reference ID)
+* doctorId (Reference ID)
+* appointmentDate
+* appointmentTime
 * status
-* created_at
+* createdAt
 
 ### **Description:**
 
@@ -138,12 +138,12 @@ Stores patient medical history.
 
 ### **Attributes:**
 
-* record_id (Document ID)
-* patient_id (Reference ID)
-* doctor_id (Reference ID)
+* recordId (Document ID)
+* patientId (Reference ID)
+* doctorId (Reference ID)
 * diagnosis
 * treatment
-* record_date
+* recordDate
 
 ### **Description:**
 
@@ -181,9 +181,9 @@ A data dictionary provides detailed information about each data field.
 
 | Field | Type | Description |
 | ----- | ----- | ----- |
-| patient_id | String | Unique document identifier |
-| auth_uid | String | Firebase Authentication UID |
-| full_name | String | Patient name |
+| patientId | String | Unique document identifier |
+| authUid | String | Firebase Authentication UID |
+| fullName | String | Patient name |
 | age | Number | Patient age |
 | gender | String | Male/Female/Other |
 | phone | String | Contact number |
@@ -196,11 +196,11 @@ A data dictionary provides detailed information about each data field.
 
 | Field | Type | Description |
 | ----- | ----- | ----- |
-| appointment_id | String | Unique document ID |
-| patient_id | String | Links to patient |
-| doctor_id | String | Links to doctor |
-| appointment_date | String | Date of visit |
-| appointment_time | String | Time of visit |
+| appointmentId | String | Unique document ID |
+| patientId | String | Links to patient |
+| doctorId | String | Links to doctor |
+| appointmentDate | String | Date of visit |
+| appointmentTime | String | Time of visit |
 | status | String | Pending/Completed/Cancelled |
 
 ---
@@ -213,7 +213,7 @@ To ensure data accuracy and consistency:
 * **Reference IDs:** Link related documents
 * **Required fields:** Prevent incomplete records
 * **Controlled values:** Avoid invalid status or gender values
-* **Authentication link:** `auth_uid` must match the correct Firebase account where applicable
+* **Authentication link:** `authUid` must match the correct Firebase account where applicable
 
 ---
 

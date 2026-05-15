@@ -56,7 +56,7 @@ The core database contains:
 * receptionists
 * patients
 * appointments
-* medical_records
+* medicalRecords
 
 ---
 
@@ -71,17 +71,17 @@ Stores system administrators who manage the system.
 
 **Fields**
 
-* admin_id - String, Document ID
-* auth_uid - String, Not Null
-* full_name - String, Not Null
+* adminId - String, Document ID
+* authUid - String, Not Null
+* fullName - String, Not Null
 * email - String, Not Null
-* created_at - Timestamp
+* createdAt - Timestamp
 
 **Constraints**
 
-* `auth_uid` must map to a valid Firebase Authentication user
+* `authUid` must map to a valid Firebase Authentication user
 * `email` should match the authenticated user's email
-* `full_name` must not be empty
+* `fullName` must not be empty
 
 ---
 
@@ -92,19 +92,19 @@ Stores all doctors in the hospital.
 
 **Fields**
 
-* doctor_id - String, Document ID
-* auth_uid - String, Not Null
-* full_name - String, Not Null
+* doctorId - String, Document ID
+* authUid - String, Not Null
+* fullName - String, Not Null
 * specialization - String
 * phone - String
 * email - String
-* created_at - Timestamp
+* createdAt - Timestamp
 
 **Constraints**
 
-* `doctor_id` must be unique
-* `auth_uid` must map to a valid Firebase Authentication user
-* `full_name` must not be empty
+* `doctorId` must be unique
+* `authUid` must map to a valid Firebase Authentication user
+* `fullName` must not be empty
 
 ---
 
@@ -115,17 +115,17 @@ Stores staff responsible for patient registration and appointment scheduling.
 
 **Fields**
 
-* receptionist_id - String, Document ID
-* auth_uid - String, Not Null
-* full_name - String, Not Null
+* receptionistId - String, Document ID
+* authUid - String, Not Null
+* fullName - String, Not Null
 * phone - String
 * email - String
-* created_at - Timestamp
+* createdAt - Timestamp
 
 **Constraints**
 
-* `auth_uid` must map to a valid Firebase Authentication user
-* `full_name` must not be empty
+* `authUid` must map to a valid Firebase Authentication user
+* `fullName` must not be empty
 
 ---
 
@@ -136,22 +136,22 @@ Stores all registered patient information.
 
 **Fields**
 
-* patient_id - String, Document ID
-* auth_uid - String, Optional
-* full_name - String, Not Null
+* patientId - String, Document ID
+* authUid - String, Optional
+* fullName - String, Not Null
 * age - Number
 * gender - String
 * phone - String
 * email - String
 * address - String
-* created_at - Timestamp
+* createdAt - Timestamp
 
 **Constraints**
 
-* `patient_id` must be unique
-* `full_name` must not be empty
+* `patientId` must be unique
+* `fullName` must not be empty
 * `age` must be a positive number
-* `auth_uid` is optional but must be valid when present
+* `authUid` is optional but must be valid when present
 
 ---
 
@@ -162,18 +162,18 @@ Stores all appointment scheduling records between patients and doctors.
 
 **Fields**
 
-* appointment_id - String, Document ID
-* patient_id - String, Reference ID
-* doctor_id - String, Reference ID
-* appointment_date - String, Not Null
-* appointment_time - String, Not Null
+* appointmentId - String, Document ID
+* patientId - String, Reference ID
+* doctorId - String, Reference ID
+* appointmentDate - String, Not Null
+* appointmentTime - String, Not Null
 * status - String, Default `Pending`
-* created_at - Timestamp
+* createdAt - Timestamp
 
 **Constraints**
 
-* `patient_id` must reference an existing patient document
-* `doctor_id` must reference an existing doctor document
+* `patientId` must reference an existing patient document
+* `doctorId` must reference an existing doctor document
 * `status` values can be: Pending, Completed, Cancelled
 
 **Notes**
@@ -183,24 +183,24 @@ Stores all appointment scheduling records between patients and doctors.
 
 ---
 
-### **4.6 medical_records**
+### **4.6 medicalRecords**
 
 **Purpose**
 Stores diagnosis and treatment details for patients.
 
 **Fields**
 
-* record_id - String, Document ID
-* patient_id - String, Reference ID
-* doctor_id - String, Reference ID
+* recordId - String, Document ID
+* patientId - String, Reference ID
+* doctorId - String, Reference ID
 * diagnosis - String
 * treatment - String
-* record_date - Timestamp
+* recordDate - Timestamp
 
 **Constraints**
 
-* `patient_id` must reference an existing patient document
-* `doctor_id` must reference an existing doctor document
+* `patientId` must reference an existing patient document
+* `doctorId` must reference an existing doctor document
 
 **Notes**
 
@@ -215,15 +215,15 @@ Stores diagnosis and treatment details for patients.
 
 * One patient -> many appointments
 * One doctor -> many appointments
-* One patient -> many medical_records
-* One doctor -> many medical_records
+* One patient -> many medicalRecords
+* One doctor -> many medicalRecords
 
 ---
 
 ### **5.2 Relationship Explanation**
 
 * `appointments` connects patients and doctors
-* `medical_records` links diagnosis to both patient and doctor
+* `medicalRecords` links diagnosis to both patient and doctor
 * Firestore relationships are maintained through reference IDs and validated by the application and backend logic
 
 ---
@@ -232,11 +232,11 @@ Stores diagnosis and treatment details for patients.
 
 patients
 -> appointments
--> medical_records
+-> medicalRecords
 
 doctors
 -> appointments
--> medical_records
+-> medicalRecords
 
 admins
 -> manages system
@@ -271,7 +271,7 @@ Allowed values:
 ### **8.1 admins / doctors / receptionists**
 
 * email must be valid
-* auth_uid must be valid
+* authUid must be valid
 * name must not be empty
 
 ---
@@ -292,7 +292,7 @@ Allowed values:
 
 ---
 
-### **8.4 medical_records**
+### **8.4 medicalRecords**
 
 * diagnosis should not be empty
 * patient must exist
@@ -306,24 +306,24 @@ To improve performance:
 
 ### **patients**
 
-* index on `full_name`
-* index on `auth_uid` when patient self-service is enabled
+* index on `fullName`
+* index on `authUid` when patient self-service is enabled
 
 ### **doctors**
 
-* index on `auth_uid`
+* index on `authUid`
 * index on `specialization`
 
 ### **appointments**
 
-* composite index on `doctor_id + appointment_date`
-* composite index on `patient_id + appointment_date`
+* composite index on `doctorId + appointmentDate`
+* composite index on `patientId + appointmentDate`
 * index on `status`
 
-### **medical_records**
+### **medicalRecords**
 
-* composite index on `patient_id + record_date`
-* composite index on `doctor_id + record_date`
+* composite index on `patientId + recordDate`
+* composite index on `doctorId + recordDate`
 
 ---
 
@@ -354,35 +354,35 @@ This schema can be expanded to include:
 ## **12. FIRESTORE-LIKE REFERENCE STRUCTURE**
 
 ```text
-patients/{patient_id}
-  full_name: string
+patients/{patientId}
+  fullName: string
   age: number
   gender: string
   phone: string
   address: string
-  created_at: timestamp
+  createdAt: timestamp
 
-doctors/{doctor_id}
-  auth_uid: string
-  full_name: string
+doctors/{doctorId}
+  authUid: string
+  fullName: string
   specialization: string
   phone: string
   email: string
 
-appointments/{appointment_id}
-  patient_id: string
-  doctor_id: string
-  appointment_date: string
-  appointment_time: string
+appointments/{appointmentId}
+  patientId: string
+  doctorId: string
+  appointmentDate: string
+  appointmentTime: string
   status: string
-  created_at: timestamp
+  createdAt: timestamp
 
-medical_records/{record_id}
-  patient_id: string
-  doctor_id: string
+medicalRecords/{recordId}
+  patientId: string
+  doctorId: string
   diagnosis: string
   treatment: string
-  record_date: timestamp
+  recordDate: timestamp
 ```
 
 ---
