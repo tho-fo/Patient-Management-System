@@ -9,11 +9,11 @@ import { validateMedicalRecord } from "../../../utils/validators.js";
 import { store } from "../../../shared/state/store.js";
 
 function buildPatientOptions(patients) {
-  return patients.map((patient) => `<option value="${patient.patient_id}">${patient.full_name} - #${patient.patient_id}</option>`).join("");
+  return patients.map((patient) => `<option value="${patient.patientId}">${patient.fullName} - #${patient.patientId}</option>`).join("");
 }
 
 function buildDoctorOptions(doctors) {
-  return doctors.map((doctor) => `<option value="${doctor.staff_key}">${doctor.full_name} - ${doctor.specialization}</option>`).join("");
+  return doctors.map((doctor) => `<option value="${doctor.staffKey}">${doctor.fullName} - ${doctor.specialization}</option>`).join("");
 }
 
 export const recordEntryPage = {
@@ -49,20 +49,20 @@ export const recordEntryPage = {
               <form id="recordForm" novalidate>
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="record_patient_id">Patient</label>
-                    <select class="form-select" id="record_patient_id" name="patient_id">
+                    <label class="form-label fw-semibold" for="record_patientId">Patient</label>
+                    <select class="form-select" id="record_patientId" name="patientId">
                       <option value="">Select patient</option>
                       ${buildPatientOptions(patients)}
                     </select>
-                    <div class="invalid-feedback" data-error-for="patient_id"></div>
+                    <div class="invalid-feedback" data-error-for="patientId"></div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="record_doctor_id">Doctor</label>
-                    <select class="form-select" id="record_doctor_id" name="doctor_id" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
+                    <label class="form-label fw-semibold" for="record_doctorId">Doctor</label>
+                    <select class="form-select" id="record_doctorId" name="doctorId" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
                       <option value="">Select doctor</option>
                       ${buildDoctorOptions(doctors)}
                     </select>
-                    <div class="invalid-feedback" data-error-for="doctor_id"></div>
+                    <div class="invalid-feedback" data-error-for="doctorId"></div>
                   </div>
                   <div class="col-12">
                     <label class="form-label fw-semibold" for="diagnosis">Diagnosis</label>
@@ -75,7 +75,7 @@ export const recordEntryPage = {
                     <div class="invalid-feedback" data-error-for="treatment"></div>
                   </div>
                 </div>
-                ${currentDoctorValue ? `<input type="hidden" name="doctor_id" value="${currentDoctorValue}">` : ""}
+                ${currentDoctorValue ? `<input type="hidden" name="doctorId" value="${currentDoctorValue}">` : ""}
                 <div class="d-flex gap-2 mt-4">
                   <button class="btn btn-primary" id="recordSubmit" type="submit"><i class="bi bi-save me-2"></i>Save record</button>
                   <a class="btn btn-outline-secondary" href="#${routePaths.medicalHistory}">Cancel</a>
@@ -102,7 +102,7 @@ export const recordEntryPage = {
     const form = qs("#recordForm", root);
     const submitButton = qs("#recordSubmit", root);
     const alertContainer = qs("#recordFormAlert", root);
-    const patientSelect = qs("#record_patient_id", root);
+    const patientSelect = qs("#record_patientId", root);
     const historyPreview = qs("#historyPreview", root);
 
     const refreshHistory = async () => {
@@ -116,16 +116,16 @@ export const recordEntryPage = {
         return;
       }
 
-      const records = await medicalRecordService.list({ patient_id: patientId });
+      const records = await medicalRecordService.list({ patientId: patientId });
       historyPreview.innerHTML = renderDataTable({
         headers: ["Patient", "Doctor", "Diagnosis", "Treatment", "Date", "Actions"],
         rows: records.slice(0, 5).map((record) => `
           <tr>
-            <td>${record.patient_name}</td>
-            <td>${record.doctor_name}</td>
+            <td>${record.patientName}</td>
+            <td>${record.doctorName}</td>
             <td>${record.diagnosis}</td>
             <td>${record.treatment}</td>
-            <td>${new Date(record.record_date).toLocaleDateString()}</td>
+            <td>${new Date(record.recordDate).toLocaleDateString()}</td>
             <td class="text-end">Existing</td>
           </tr>
         `),
@@ -141,8 +141,8 @@ export const recordEntryPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(form);
-      if (payload.doctor_id) {
-        payload.doctor_id = payload.doctor_id.split("-")[1];
+      if (payload.doctorId) {
+        payload.doctorId = payload.doctorId.split("-")[1];
       }
       const errors = validateMedicalRecord(payload);
 

@@ -36,9 +36,9 @@ export function renderSidebar({ user, pathname }) {
 
       <div class="sidebar-user">
         <div class="d-flex align-items-center gap-3 mb-3">
-          <div class="brand-mark">${escapeHtml(getInitials(user.full_name))}</div>
+          <div class="brand-mark">${escapeHtml(getInitials(user.fullName))}</div>
           <div>
-            <strong class="d-block">${escapeHtml(user.full_name)}</strong>
+            <strong class="d-block">${escapeHtml(user.fullName)}</strong>
             <span class="sidebar-meta">${escapeHtml(user.email)}</span>
           </div>
         </div>

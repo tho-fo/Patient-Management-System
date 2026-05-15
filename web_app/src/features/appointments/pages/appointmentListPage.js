@@ -13,11 +13,11 @@ function canManageAppointments(role) {
 
 function getScopedFilters(role, currentUser) {
   if (role === roles.PATIENT) {
-    return { patient_id: currentUser.id };
+    return { patientId: currentUser.id };
   }
 
   if (role === roles.DOCTOR) {
-    return { doctor_id: currentUser.id };
+    return { doctorId: currentUser.id };
   }
 
   return {};
@@ -28,7 +28,7 @@ function buildAppointmentRows(appointments, role) {
     renderAppointmentRow({
       ...appointment,
       actions: canManageAppointments(role)
-        ? `<button class="btn btn-sm btn-outline-primary" data-edit-appointment="${appointment.appointment_id}" type="button">Update</button>`
+        ? `<button class="btn btn-sm btn-outline-primary" data-edit-appointment="${appointment.appointmentId}" type="button">Update</button>`
         : ""
     })
   );
@@ -72,14 +72,14 @@ export const appointmentListPage = {
             <form id="appointmentFilterForm" class="filter-bar mb-4">
               <div class="row g-3 align-items-end">
                 <div class="col-lg-4">
-                  <label class="form-label fw-semibold" for="appointment_date">Date</label>
-                  <input class="form-control" id="appointment_date" name="appointment_date" type="date">
+                  <label class="form-label fw-semibold" for="appointmentDate">Date</label>
+                  <input class="form-control" id="appointmentDate" name="appointmentDate" type="date">
                 </div>
                 <div class="col-lg-4">
-                  <label class="form-label fw-semibold" for="doctor_id">Doctor</label>
-                  <select class="form-select" id="doctor_id" name="doctor_id" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
+                  <label class="form-label fw-semibold" for="doctorId">Doctor</label>
+                  <select class="form-select" id="doctorId" name="doctorId" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
                     <option value="">All doctors</option>
-                    ${buildOptions(doctors, "staff_key", (doctor) => `${doctor.full_name} - ${doctor.specialization}`)}
+                    ${buildOptions(doctors, "staffKey", (doctor) => `${doctor.fullName} - ${doctor.specialization}`)}
                   </select>
                   <div class="form-note">Doctor filters follow the staff module roles.</div>
                 </div>
@@ -114,33 +114,33 @@ export const appointmentListPage = {
           body: `
             <div id="appointmentModalAlert" class="mb-3"></div>
             <form id="appointmentUpdateForm" novalidate>
-              <input type="hidden" name="appointment_id" id="modal_appointment_id">
+              <input type="hidden" name="appointmentId" id="modal_appointmentId">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="modal_patient_id">Patient</label>
-                  <select class="form-select" id="modal_patient_id" name="patient_id">
+                  <label class="form-label fw-semibold" for="modal_patientId">Patient</label>
+                  <select class="form-select" id="modal_patientId" name="patientId">
                     <option value="">Select patient</option>
-                    ${buildOptions(patients, "patient_id", (patient) => `${patient.full_name} - #${patient.patient_id}`)}
+                    ${buildOptions(patients, "patientId", (patient) => `${patient.fullName} - #${patient.patientId}`)}
                   </select>
-                  <div class="invalid-feedback" data-error-for="patient_id"></div>
+                  <div class="invalid-feedback" data-error-for="patientId"></div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="modal_doctor_id">Doctor</label>
-                  <select class="form-select" id="modal_doctor_id" name="doctor_id">
+                  <label class="form-label fw-semibold" for="modal_doctorId">Doctor</label>
+                  <select class="form-select" id="modal_doctorId" name="doctorId">
                     <option value="">Select doctor</option>
-                    ${buildOptions(doctors, "staff_key", (doctor) => `${doctor.full_name} - ${doctor.specialization}`)}
+                    ${buildOptions(doctors, "staffKey", (doctor) => `${doctor.fullName} - ${doctor.specialization}`)}
                   </select>
-                  <div class="invalid-feedback" data-error-for="doctor_id"></div>
+                  <div class="invalid-feedback" data-error-for="doctorId"></div>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label fw-semibold" for="modal_appointment_date">Date</label>
-                  <input class="form-control" id="modal_appointment_date" name="appointment_date" type="date">
-                  <div class="invalid-feedback" data-error-for="appointment_date"></div>
+                  <label class="form-label fw-semibold" for="modal_appointmentDate">Date</label>
+                  <input class="form-control" id="modal_appointmentDate" name="appointmentDate" type="date">
+                  <div class="invalid-feedback" data-error-for="appointmentDate"></div>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label fw-semibold" for="modal_appointment_time">Time</label>
-                  <input class="form-control" id="modal_appointment_time" name="appointment_time" type="time">
-                  <div class="invalid-feedback" data-error-for="appointment_time"></div>
+                  <label class="form-label fw-semibold" for="modal_appointmentTime">Time</label>
+                  <input class="form-control" id="modal_appointmentTime" name="appointmentTime" type="time">
+                  <div class="invalid-feedback" data-error-for="appointmentTime"></div>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label fw-semibold" for="modal_status">Status</label>
@@ -171,8 +171,8 @@ export const appointmentListPage = {
     const loadTable = async (extraFilters = {}) => {
       const filters = { ...scopedFilters, ...extraFilters };
 
-      if (filters.doctor_id && String(filters.doctor_id).startsWith("doctor-")) {
-        filters.doctor_id = filters.doctor_id.split("-")[1];
+      if (filters.doctorId && String(filters.doctorId).startsWith("doctor-")) {
+        filters.doctorId = filters.doctorId.split("-")[1];
       }
 
       const appointments = await appointmentService.list(filters);
@@ -206,18 +206,18 @@ export const appointmentListPage = {
 
     const openModal = async (appointmentId) => {
       const appointments = await loadTable(formToObject(form));
-      const appointment = appointments.find((item) => Number(item.appointment_id) === Number(appointmentId));
+      const appointment = appointments.find((item) => Number(item.appointmentId) === Number(appointmentId));
       if (!appointment) {
         return;
       }
 
       modalForm.reset();
       renderInlineAlert(alertContainer, "");
-      qs("#modal_appointment_id", modalForm).value = appointment.appointment_id;
-      qs("#modal_patient_id", modalForm).value = appointment.patient_id;
-      qs("#modal_doctor_id", modalForm).value = `doctor-${appointment.doctor_id}`;
-      qs("#modal_appointment_date", modalForm).value = appointment.appointment_date;
-      qs("#modal_appointment_time", modalForm).value = appointment.appointment_time;
+      qs("#modal_appointmentId", modalForm).value = appointment.appointmentId;
+      qs("#modal_patientId", modalForm).value = appointment.patientId;
+      qs("#modal_doctorId", modalForm).value = `doctor-${appointment.doctorId}`;
+      qs("#modal_appointmentDate", modalForm).value = appointment.appointmentDate;
+      qs("#modal_appointmentTime", modalForm).value = appointment.appointmentTime;
       qs("#modal_status", modalForm).value = appointment.status;
       modalInstance.show();
     };
@@ -237,7 +237,7 @@ export const appointmentListPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(modalForm);
-      payload.doctor_id = payload.doctor_id.split("-")[1];
+      payload.doctorId = payload.doctorId.split("-")[1];
       const errors = validateAppointment(payload);
 
       if (Object.keys(errors).length > 0) {
@@ -248,7 +248,7 @@ export const appointmentListPage = {
       setBusyState(submitButton, true);
 
       try {
-        await appointmentService.update(payload.appointment_id, payload);
+        await appointmentService.update(payload.appointmentId, payload);
         modalInstance.hide();
         await loadTable(formToObject(form));
       } catch (error) {

@@ -70,10 +70,10 @@ function renderReportBlocks(data) {
           headers: ["Patient", "Doctor", "Date", "Time", "Status", "Actions"],
           rows: data.latestAppointments.map((appointment) => `
             <tr>
-              <td>${appointment.patient_name}</td>
-              <td>${appointment.doctor_name}</td>
-              <td>${appointment.appointment_date}</td>
-              <td>${appointment.appointment_time}</td>
+              <td>${appointment.patientName}</td>
+              <td>${appointment.doctorName}</td>
+              <td>${appointment.appointmentDate}</td>
+              <td>${appointment.appointmentTime}</td>
               <td>${appointment.status}</td>
               <td class="text-end">Summary</td>
             </tr>

@@ -264,10 +264,10 @@ export const patientRegistrationPage = createRegistrationPage({
       shortTitle: "Basic",
       description: "Capture the patient identity details used during registration.",
       fields: [
-        { name: "first_name", label: "First Name", type: "text", placeholder: "Enter first name", className: "col-md-6", required: true },
-        { name: "last_name", label: "Last Name", type: "text", placeholder: "Enter last name", className: "col-md-6", required: true },
+        { name: "firstName", label: "First Name", type: "text", placeholder: "Enter first name", className: "col-md-6", required: true },
+        { name: "lastName", label: "Last Name", type: "text", placeholder: "Enter last name", className: "col-md-6", required: true },
         { name: "gender", label: "Gender", type: "select", placeholder: "Select gender", options: genderOptions, className: "col-md-6", required: true },
-        { name: "date_of_birth", label: "Date of Birth", type: "date", className: "col-md-6", required: true }
+        { name: "dateOfBirth", label: "Date of Birth", type: "date", className: "col-md-6", required: true }
       ]
     },
     {
@@ -286,7 +286,7 @@ export const patientRegistrationPage = createRegistrationPage({
       description: "Set the password fields for the future authentication connection.",
       fields: [
         { name: "password", label: "Password", type: "password", placeholder: "Enter password", className: "col-md-6", required: true, secret: true },
-        { name: "confirm_password", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
+        { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
       ]
     }
   ]
@@ -311,8 +311,8 @@ export const doctorRegistrationPage = createRegistrationPage({
       shortTitle: "Personal",
       description: "Capture the doctor identity details needed for a staff profile.",
       fields: [
-        { name: "first_name", label: "First Name", type: "text", placeholder: "Enter first name", className: "col-md-6", required: true },
-        { name: "last_name", label: "Last Name", type: "text", placeholder: "Enter last name", className: "col-md-6", required: true },
+        { name: "firstName", label: "First Name", type: "text", placeholder: "Enter first name", className: "col-md-6", required: true },
+        { name: "lastName", label: "Last Name", type: "text", placeholder: "Enter last name", className: "col-md-6", required: true },
         { name: "gender", label: "Gender", type: "select", placeholder: "Select gender", options: genderOptions, required: true }
       ]
     },
@@ -322,8 +322,8 @@ export const doctorRegistrationPage = createRegistrationPage({
       description: "Add professional details before contact and account setup.",
       fields: [
         { name: "specialization", label: "Specialization", type: "select", placeholder: "Select specialization", options: specializationOptions, required: true },
-        { name: "license_number", label: "License Number", type: "text", placeholder: "Enter license number", className: "col-md-6", required: true },
-        { name: "years_of_experience", label: "Years of Experience", type: "number", placeholder: "Enter years", className: "col-md-6", required: true }
+        { name: "licenseNumber", label: "License Number", type: "text", placeholder: "Enter license number", className: "col-md-6", required: true },
+        { name: "yearsOfExperience", label: "Years of Experience", type: "number", placeholder: "Enter years", className: "col-md-6", required: true }
       ]
     },
     {
@@ -341,7 +341,7 @@ export const doctorRegistrationPage = createRegistrationPage({
       description: "Set password fields for the future authentication connection.",
       fields: [
         { name: "password", label: "Password", type: "password", placeholder: "Enter password", className: "col-md-6", required: true, secret: true },
-        { name: "confirm_password", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
+        { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
       ]
     }
   ]

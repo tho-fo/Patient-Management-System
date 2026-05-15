@@ -37,8 +37,8 @@ function renderProfileFields(profile) {
   return `
     <div class="row g-3">
       <div class="col-md-6">
-        <label class="form-label fw-semibold" for="profile_full_name">Full name</label>
-        <input class="form-control" id="profile_full_name" name="full_name" type="text" value="${profile.full_name}">
+        <label class="form-label fw-semibold" for="profile_fullName">Full name</label>
+        <input class="form-control" id="profile_fullName" name="fullName" type="text" value="${profile.fullName}">
       </div>
       <div class="col-md-6">
         <label class="form-label fw-semibold" for="profile_email">Email</label>
@@ -108,19 +108,19 @@ export const settingsPage = {
               <form id="passwordForm" novalidate>
                 <div class="row g-3">
                   <div class="col-12">
-                    <label class="form-label fw-semibold" for="current_password">Current password</label>
-                    <input class="form-control" id="current_password" name="current_password" type="password">
-                    <div class="invalid-feedback" data-error-for="current_password"></div>
+                    <label class="form-label fw-semibold" for="currentPassword">Current password</label>
+                    <input class="form-control" id="currentPassword" name="currentPassword" type="password">
+                    <div class="invalid-feedback" data-error-for="currentPassword"></div>
                   </div>
                   <div class="col-12">
-                    <label class="form-label fw-semibold" for="new_password">New password</label>
-                    <input class="form-control" id="new_password" name="new_password" type="password">
-                    <div class="invalid-feedback" data-error-for="new_password"></div>
+                    <label class="form-label fw-semibold" for="newPassword">New password</label>
+                    <input class="form-control" id="newPassword" name="newPassword" type="password">
+                    <div class="invalid-feedback" data-error-for="newPassword"></div>
                   </div>
                   <div class="col-12">
-                    <label class="form-label fw-semibold" for="confirm_password">Confirm password</label>
-                    <input class="form-control" id="confirm_password" name="confirm_password" type="password">
-                    <div class="invalid-feedback" data-error-for="confirm_password"></div>
+                    <label class="form-label fw-semibold" for="confirmPassword">Confirm password</label>
+                    <input class="form-control" id="confirmPassword" name="confirmPassword" type="password">
+                    <div class="invalid-feedback" data-error-for="confirmPassword"></div>
                   </div>
                 </div>
                 <div class="d-flex gap-2 mt-4">
@@ -142,7 +142,7 @@ export const settingsPage = {
             content: renderKeyValueList([
               { label: "System", value: "Patient Management System" },
               { label: "Current role", value: roleLabels[profile.role] },
-              { label: "Active user", value: profile.full_name }
+              { label: "Active user", value: profile.fullName }
             ])
           })}
         </div>

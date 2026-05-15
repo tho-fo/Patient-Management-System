@@ -13,7 +13,7 @@ import { roles } from "../../../core/constants/roles.js";
 import { auth, db } from "../../../services/firebase_config.js";
 
 function buildFullName(payload) {
-  return `${payload.first_name ?? ""} ${payload.last_name ?? ""}`.trim();
+  return `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim();
 }
 
 function calculateAge(dateOfBirth) {
@@ -51,9 +51,9 @@ function normalizeProfile(documentSnapshot, role) {
   const data = documentSnapshot.data();
 
   return {
-    id: data.patient_id ?? data.doctor_id ?? documentSnapshot.id,
-    auth_uid: data.auth_uid,
-    full_name: data.full_name,
+    id: data.patientId ?? data.doctorId ?? documentSnapshot.id,
+    authUid: data.authUid,
+    fullName: data.fullName,
     email: data.email,
     phone: data.phone ?? "",
     specialization: data.specialization ?? "",
@@ -93,35 +93,36 @@ async function registerWithProfile(payload, role) {
     const userCredential = await createUserWithEmailAndPassword(auth, payload.email, payload.password);
     const uid = userCredential.user.uid;
     const fullName = buildFullName(payload);
+    const dateOfBirth = payload.dateOfBirth;
 
     if (role === roles.PATIENT) {
       await setDoc(doc(db, "patients", uid), {
-        patient_id: uid,
+        patientId: uid,
         uid,
-        auth_uid: uid,
-        full_name: fullName,
-        age: calculateAge(payload.date_of_birth),
-        date_of_birth: payload.date_of_birth,
+        authUid: uid,
+        fullName,
+        age: calculateAge(dateOfBirth),
+        dateOfBirth,
         gender: payload.gender,
         phone: payload.phone,
         email: payload.email,
         address: payload.address,
-        created_at: serverTimestamp()
+        createdAt: serverTimestamp()
       });
     }
 
     if (role === roles.DOCTOR) {
       await setDoc(doc(db, "doctors", uid), {
-        doctor_id: uid,
+        doctorId: uid,
         uid,
-        auth_uid: uid,
-        full_name: fullName,
+        authUid: uid,
+        fullName,
         specialization: payload.specialization,
-        license_number: payload.license_number,
-        years_of_experience: Number(payload.years_of_experience),
+        licenseNumber: payload.licenseNumber,
+        yearsOfExperience: Number(payload.yearsOfExperience),
         phone: payload.phone,
         email: payload.email,
-        created_at: serverTimestamp()
+        createdAt: serverTimestamp()
       });
     }
 

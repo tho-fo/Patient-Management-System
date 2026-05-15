@@ -7,14 +7,14 @@ import { escapeHtml, getInitials } from "../../../utils/formatters.js";
 import { calculateAge, profileService } from "../services/profileService.js";
 
 function patientItems(profile) {
-  const age = profile.date_of_birth ? calculateAge(profile.date_of_birth) : profile.age;
+  const age = profile.dateOfBirth ? calculateAge(profile.dateOfBirth) : profile.age;
 
   return [
-    { label: "Full Name", value: profile.full_name },
+    { label: "Full Name", value: profile.fullName },
     { label: "Email", value: profile.email },
     { label: "Phone", value: profile.phone },
     { label: "Gender", value: profile.gender },
-    { label: "Date of Birth", value: profile.date_of_birth },
+    { label: "Date of Birth", value: profile.dateOfBirth },
     { label: "Age", value: age },
     { label: "Address", value: profile.address }
   ];
@@ -22,19 +22,19 @@ function patientItems(profile) {
 
 function doctorItems(profile) {
   return [
-    { label: "Full Name", value: profile.full_name },
+    { label: "Full Name", value: profile.fullName },
     { label: "Email", value: profile.email },
     { label: "Phone", value: profile.phone },
     { label: "Specialization", value: profile.specialization },
-    { label: "License Number", value: profile.license_number },
-    { label: "Years of Experience", value: profile.years_of_experience }
+    { label: "License Number", value: profile.licenseNumber },
+    { label: "Years of Experience", value: profile.yearsOfExperience }
   ];
 }
 
 function renderAvatar(profile) {
   return `
     <div class="profile-avatar" aria-hidden="true">
-      ${escapeHtml(getInitials(profile.full_name))}
+      ${escapeHtml(getInitials(profile.fullName))}
     </div>
   `;
 }
@@ -45,7 +45,7 @@ function renderPrimaryCard(profile) {
       ${renderAvatar(profile)}
       <div class="min-w-0">
         <span class="role-chip ${escapeHtml(profile.role)} mb-3">${escapeHtml(roleLabels[profile.role] ?? profile.role)}</span>
-        <h2 class="page-title profile-name">${escapeHtml(profile.full_name || "Profile")}</h2>
+        <h2 class="page-title profile-name">${escapeHtml(profile.fullName || "Profile")}</h2>
         <p class="page-subtitle mb-0">${escapeHtml(profile.email || "No email available")}</p>
       </div>
     </section>

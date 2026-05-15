@@ -52,7 +52,7 @@ Represents the authenticated account managed by Firebase Authentication.
 * email
 * provider
 * role
-* created_at
+* createdAt
 
 ---
 
@@ -62,11 +62,11 @@ Represents a system administrator profile stored in Firestore.
 
 **Key Attributes:**
 
-* admin_id
-* auth_uid
-* full_name
+* adminId
+* authUid
+* fullName
 * email
-* created_at
+* createdAt
 
 ---
 
@@ -76,9 +76,9 @@ Represents a doctor in the hospital.
 
 **Key Attributes:**
 
-* doctor_id
-* auth_uid
-* full_name
+* doctorId
+* authUid
+* fullName
 * specialization
 * phone
 
@@ -90,9 +90,9 @@ Represents front desk staff responsible for patient registration and appointment
 
 **Key Attributes:**
 
-* receptionist_id
-* auth_uid
-* full_name
+* receptionistId
+* authUid
+* fullName
 * phone
 
 ---
@@ -103,14 +103,14 @@ Represents a registered patient in the hospital system.
 
 **Key Attributes:**
 
-* patient_id
-* auth_uid
-* full_name
+* patientId
+* authUid
+* fullName
 * age
 * gender
 * phone
 * address
-* created_at
+* createdAt
 
 ---
 
@@ -120,13 +120,13 @@ Represents a scheduled meeting between a patient and a doctor.
 
 **Key Attributes:**
 
-* appointment_id
-* patient_id
-* doctor_id
-* appointment_date
-* appointment_time
+* appointmentId
+* patientId
+* doctorId
+* appointmentDate
+* appointmentTime
 * status
-* created_at
+* createdAt
 
 ---
 
@@ -136,12 +136,12 @@ Represents the diagnosis and treatment information of a patient.
 
 **Key Attributes:**
 
-* record_id
-* patient_id
-* doctor_id
+* recordId
+* patientId
+* doctorId
 * diagnosis
 * treatment
-* record_date
+* recordDate
 
 ---
 
@@ -254,68 +254,68 @@ erDiagram
    PATIENTS ||--o{ APPOINTMENTS : books
    DOCTORS ||--o{ APPOINTMENTS : attends
 
-   PATIENTS ||--o{ MEDICAL_RECORDS : has
-   DOCTORS ||--o{ MEDICAL_RECORDS : writes
+   PATIENTS ||--o{ medicalRecords : has
+   DOCTORS ||--o{ medicalRecords : writes
 
    AUTH_ACCOUNTS {
        string uid PK
        string email
        string provider
        string role
-       timestamp created_at
+       timestamp createdAt
    }
 
    ADMINS {
-       string admin_id PK
-       string auth_uid FK
-       string full_name
+       string adminId PK
+       string authUid FK
+       string fullName
        string email
-       timestamp created_at
+       timestamp createdAt
    }
 
    DOCTORS {
-       string doctor_id PK
-       string auth_uid FK
-       string full_name
+       string doctorId PK
+       string authUid FK
+       string fullName
        string specialization
        string phone
    }
 
    RECEPTIONISTS {
-       string receptionist_id PK
-       string auth_uid FK
-       string full_name
+       string receptionistId PK
+       string authUid FK
+       string fullName
        string phone
    }
 
    PATIENTS {
-       string patient_id PK
-       string auth_uid FK
-       string full_name
+       string patientId PK
+       string authUid FK
+       string fullName
        number age
        string gender
        string phone
        string address
-       timestamp created_at
+       timestamp createdAt
    }
 
    APPOINTMENTS {
-       string appointment_id PK
-       string patient_id FK
-       string doctor_id FK
-       string appointment_date
-       string appointment_time
+       string appointmentId PK
+       string patientId FK
+       string doctorId FK
+       string appointmentDate
+       string appointmentTime
        string status
-       timestamp created_at
+       timestamp createdAt
    }
 
-   MEDICAL_RECORDS {
-       string record_id PK
-       string patient_id FK
-       string doctor_id FK
+   medicalRecords {
+       string recordId PK
+       string patientId FK
+       string doctorId FK
        string diagnosis
        string treatment
-       timestamp record_date
+       timestamp recordDate
    }
 ```
 

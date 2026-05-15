@@ -245,9 +245,9 @@ The system will use **Cloud Firestore** with the following main collections:
 * receptionists
 * patients
 * appointments
-* medical_records
+* medicalRecords
 
-Authentication credentials will be managed by **Firebase Authentication**, while profile documents will reference the authenticated user through `auth_uid`.
+Authentication credentials will be managed by **Firebase Authentication**, while profile documents will reference the authenticated user through `authUid`.
 
 ---
 

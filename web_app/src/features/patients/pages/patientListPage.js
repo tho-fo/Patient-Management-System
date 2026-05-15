@@ -14,10 +14,10 @@ function buildRows(patients, role) {
     <tr>
       <td>
         <div class="patient-cell">
-          <span class="patient-avatar-sm">${escapeHtml(getInitials(patient.full_name))}</span>
+          <span class="patient-avatar-sm">${escapeHtml(getInitials(patient.fullName))}</span>
           <div>
-            <strong>${escapeHtml(patient.full_name)}</strong>
-            <div class="text-soft small">#${escapeHtml(patient.patient_id)}</div>
+            <strong>${escapeHtml(patient.fullName)}</strong>
+            <div class="text-soft small">#${escapeHtml(patient.patientId)}</div>
           </div>
         </div>
       </td>
@@ -25,13 +25,13 @@ function buildRows(patients, role) {
       <td>${escapeHtml(patient.age)}</td>
       <td>${escapeHtml(patient.phone)}</td>
       <td>${escapeHtml(patient.bloodGroup || "-")}</td>
-      <td>${formatDate(patient.created_at)}</td>
+      <td>${formatDate(patient.createdAt)}</td>
       <td class="text-end">
         <div class="btn-group btn-group-sm" role="group" aria-label="Patient actions">
-          <a class="btn btn-outline-primary" href="#/patients/${patient.patient_id}" title="View patient"><i class="bi bi-eye"></i></a>
+          <a class="btn btn-outline-primary" href="#/patients/${patient.patientId}" title="View patient"><i class="bi bi-eye"></i></a>
           ${canManagePatients(role) ? `
-            <a class="btn btn-outline-secondary" href="#/patients/${patient.patient_id}/edit" title="Edit patient"><i class="bi bi-pencil"></i></a>
-            <button class="btn btn-outline-danger" data-delete-patient="${patient.patient_id}" data-patient-name="${escapeHtml(patient.full_name)}" type="button" title="Delete patient"><i class="bi bi-trash"></i></button>
+            <a class="btn btn-outline-secondary" href="#/patients/${patient.patientId}/edit" title="Edit patient"><i class="bi bi-pencil"></i></a>
+            <button class="btn btn-outline-danger" data-delete-patient="${patient.patientId}" data-patient-name="${escapeHtml(patient.fullName)}" type="button" title="Delete patient"><i class="bi bi-trash"></i></button>
           ` : ""}
         </div>
       </td>

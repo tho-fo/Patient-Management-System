@@ -122,7 +122,7 @@ This is where **all system data is stored permanently**.
 * receptionists
 * patients
 * appointments
-* medical_records
+* medicalRecords
 
 #### **Functions:**
 

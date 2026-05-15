@@ -34,20 +34,20 @@ export function validateRegistrationStep(payload, requiredFields = []) {
   }
 
   if (
-    requiredFields.includes("years_of_experience") &&
-    payload.years_of_experience?.trim() &&
-    Number(payload.years_of_experience) < 0
+    (requiredFields.includes("yearsOfExperience") || requiredFields.includes("yearsOfExperience")) &&
+    (payload.yearsOfExperience ?? payload.yearsOfExperience)?.trim() &&
+    Number(payload.yearsOfExperience ?? payload.yearsOfExperience) < 0
   ) {
-    errors.years_of_experience = "Years of experience cannot be negative.";
+    errors.yearsOfExperience = "Years of experience cannot be negative.";
   }
 
   if (
-    requiredFields.includes("confirm_password") &&
+    requiredFields.includes("confirmPassword") &&
     payload.password?.trim() &&
-    payload.confirm_password?.trim() &&
-    payload.password !== payload.confirm_password
+    payload.confirmPassword?.trim() &&
+    payload.password !== payload.confirmPassword
   ) {
-    errors.confirm_password = "Passwords do not match.";
+    errors.confirmPassword = "Passwords do not match.";
   }
 
   return errors;
@@ -90,20 +90,20 @@ export function validatePatient(payload) {
 export function validateAppointment(payload) {
   const errors = {};
 
-  if (!payload.patient_id) {
-    errors.patient_id = "Select a patient.";
+  if (!payload.patientId) {
+    errors.patientId = "Select a patient.";
   }
 
-  if (!payload.doctor_id) {
-    errors.doctor_id = "Select a doctor.";
+  if (!payload.doctorId) {
+    errors.doctorId = "Select a doctor.";
   }
 
-  if (!payload.appointment_date) {
-    errors.appointment_date = "Select an appointment date.";
+  if (!payload.appointmentDate) {
+    errors.appointmentDate = "Select an appointment date.";
   }
 
-  if (!payload.appointment_time) {
-    errors.appointment_time = "Select an appointment time.";
+  if (!payload.appointmentTime) {
+    errors.appointmentTime = "Select an appointment time.";
   }
 
   return errors;
@@ -112,12 +112,12 @@ export function validateAppointment(payload) {
 export function validateMedicalRecord(payload) {
   const errors = {};
 
-  if (!payload.patient_id) {
-    errors.patient_id = "Select a patient.";
+  if (!payload.patientId) {
+    errors.patientId = "Select a patient.";
   }
 
-  if (!payload.doctor_id) {
-    errors.doctor_id = "Select a doctor.";
+  if (!payload.doctorId) {
+    errors.doctorId = "Select a doctor.";
   }
 
   if (!payload.diagnosis?.trim()) {
@@ -134,8 +134,8 @@ export function validateMedicalRecord(payload) {
 export function validateStaff(payload, isEdit = false) {
   const errors = {};
 
-  if (!payload.full_name?.trim()) {
-    errors.full_name = "Staff name is required.";
+  if (!payload.fullName?.trim()) {
+    errors.fullName = "Staff name is required.";
   }
 
   if (!payload.role) {
@@ -164,24 +164,24 @@ export function validateStaff(payload, isEdit = false) {
 export function validatePasswordChange(payload) {
   const errors = {};
 
-  if (!payload.current_password?.trim()) {
-    errors.current_password = "Current password is required.";
+  if (!payload.currentPassword?.trim()) {
+    errors.currentPassword = "Current password is required.";
   }
 
-  if (!payload.new_password?.trim()) {
-    errors.new_password = "New password is required.";
+  if (!payload.newPassword?.trim()) {
+    errors.newPassword = "New password is required.";
   }
 
-  if (!payload.confirm_password?.trim()) {
-    errors.confirm_password = "Confirm the new password.";
+  if (!payload.confirmPassword?.trim()) {
+    errors.confirmPassword = "Confirm the new password.";
   }
 
   if (
-    payload.new_password?.trim() &&
-    payload.confirm_password?.trim() &&
-    payload.new_password !== payload.confirm_password
+    payload.newPassword?.trim() &&
+    payload.confirmPassword?.trim() &&
+    payload.newPassword !== payload.confirmPassword
   ) {
-    errors.confirm_password = "Passwords do not match.";
+    errors.confirmPassword = "Passwords do not match.";
   }
 
   return errors;

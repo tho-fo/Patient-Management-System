@@ -21,10 +21,10 @@ function canManagePatients(role) {
 function buildMedicalRecordRows(records) {
   return records.slice(0, 5).map((record) => `
     <tr>
-      <td>${escapeHtml(record.doctor_name ?? record.doctor_id ?? "-")}</td>
+      <td>${escapeHtml(record.doctorName ?? record.doctorId ?? "-")}</td>
       <td>${escapeHtml(record.diagnosis ?? "-")}</td>
       <td>${escapeHtml(record.treatment ?? "-")}</td>
-      <td>${formatDate(record.record_date)}</td>
+      <td>${formatDate(record.recordDate)}</td>
     </tr>
   `);
 }
@@ -39,17 +39,17 @@ export const patientDetailsPage = {
     const editable = canManagePatients(context.currentUser.role);
 
     return {
-      title: patient.full_name,
+      title: patient.fullName,
       subtitle: "Patient profile and record overview.",
       patient,
       content: `
         ${renderPageHero({
           eyebrow: "Patient Profile",
-          title: patient.full_name,
+          title: patient.fullName,
           subtitle: "Review personal, contact, medical, appointment, and record information.",
           actions: `
             <a class="btn btn-outline-secondary" href="#${routePaths.patients}">Back</a>
-            ${editable ? `<a class="btn btn-primary" href="#/patients/${patient.patient_id}/edit"><i class="bi bi-pencil me-2"></i>Edit</a>` : ""}
+            ${editable ? `<a class="btn btn-primary" href="#/patients/${patient.patientId}/edit"><i class="bi bi-pencil me-2"></i>Edit</a>` : ""}
           `
         })}
 
@@ -57,10 +57,10 @@ export const patientDetailsPage = {
         <div class="profile-layout">
           <div class="profile-stack">
             <section class="profile-identity-card">
-              <span class="profile-avatar">${escapeHtml(getInitials(patient.full_name))}</span>
+              <span class="profile-avatar">${escapeHtml(getInitials(patient.fullName))}</span>
               <div class="profile-name">
-                <h2 class="h4 fw-bold mb-1">${escapeHtml(patient.full_name)}</h2>
-                <p class="text-soft mb-2">Patient #${escapeHtml(patient.patient_id)}</p>
+                <h2 class="h4 fw-bold mb-1">${escapeHtml(patient.fullName)}</h2>
+                <p class="text-soft mb-2">Patient #${escapeHtml(patient.patientId)}</p>
                 <div class="d-flex flex-wrap gap-2">
                   <span class="status-pill pending">${escapeHtml(patient.gender)}</span>
                   <span class="status-pill completed">${escapeHtml(patient.bloodGroup || "Blood N/A")}</span>
@@ -97,7 +97,7 @@ export const patientDetailsPage = {
               content: renderKeyValueList([
                 { label: "Blood group", value: patient.bloodGroup || "-" },
                 { label: "Medical condition", value: patient.medicalCondition || "-" },
-                { label: "Registered", value: formatDate(patient.created_at) }
+                { label: "Registered", value: formatDate(patient.createdAt) }
               ])
             })}
 
@@ -129,8 +129,8 @@ export const patientDetailsPage = {
             subtitle: "Use patient context for the next hospital workflow step.",
             content: `
               <div class="profile-action-stack">
-                <a class="btn btn-primary" href="#${routePaths.bookAppointment}?patient_id=${patient.patient_id}"><i class="bi bi-calendar-plus me-2"></i>Book appointment</a>
-                <a class="btn btn-outline-secondary" href="#${routePaths.medicalHistory}?patient_id=${patient.patient_id}">View history</a>
+                <a class="btn btn-primary" href="#${routePaths.bookAppointment}?patientId=${patient.patientId}"><i class="bi bi-calendar-plus me-2"></i>Book appointment</a>
+                <a class="btn btn-outline-secondary" href="#${routePaths.medicalHistory}?patientId=${patient.patientId}">View history</a>
                 ${editable ? `<button class="btn btn-outline-danger" id="patientDeleteButton" type="button"><i class="bi bi-trash me-2"></i>Delete patient</button>` : ""}
               </div>
             `
@@ -140,7 +140,7 @@ export const patientDetailsPage = {
         ${renderModal({
           id: "deletePatientModal",
           title: "Delete patient",
-          body: `<p class="mb-0">Are you sure you want to delete this patient?</p><p class="text-soft mb-0 mt-2">${escapeHtml(patient.full_name)}</p>`,
+          body: `<p class="mb-0">Are you sure you want to delete this patient?</p><p class="text-soft mb-0 mt-2">${escapeHtml(patient.fullName)}</p>`,
           footer: `
             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-danger" id="confirmDeletePatient">Delete patient</button>
@@ -170,7 +170,7 @@ export const patientDetailsPage = {
       renderInlineAlert(alertContainer, "");
 
       try {
-        await patientService.remove(page.patient.patient_id);
+        await patientService.remove(page.patient.patientId);
         store.setFlash({
           type: "success",
           message: "Patient record deleted successfully."

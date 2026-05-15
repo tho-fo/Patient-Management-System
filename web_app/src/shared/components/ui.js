@@ -164,10 +164,10 @@ export function renderChartBars(items) {
 export function renderAppointmentRow(appointment) {
   return `
     <tr>
-      <td><strong>${escapeHtml(appointment.patient_name)}</strong></td>
-      <td>${escapeHtml(appointment.doctor_name)}</td>
-      <td>${escapeHtml(formatDate(appointment.appointment_date))}</td>
-      <td>${escapeHtml(formatTime(appointment.appointment_time))}</td>
+      <td><strong>${escapeHtml(appointment.patientName)}</strong></td>
+      <td>${escapeHtml(appointment.doctorName)}</td>
+      <td>${escapeHtml(formatDate(appointment.appointmentDate))}</td>
+      <td>${escapeHtml(formatTime(appointment.appointmentTime))}</td>
       <td>${renderStatusPill(appointment.status)}</td>
       <td class="text-end">${appointment.actions ?? ""}</td>
     </tr>
@@ -211,17 +211,17 @@ export function renderModal({ id, title, body, footer }) {
 
 export function renderRecentPatientTimeline(patient) {
   return renderTimelineItem({
-    title: patient.full_name,
+    title: patient.fullName,
     subtitle: `${patient.gender} - ${patient.age} years`,
-    meta: formatDate(patient.created_at),
+    meta: formatDate(patient.createdAt),
     body: `${patient.phone} - ${patient.address}`
   });
 }
 
 export function renderRecentAppointmentTimeline(appointment) {
   return renderTimelineItem({
-    title: `${appointment.patient_name} with ${appointment.doctor_name}`,
-    subtitle: formatDateTime(appointment.appointment_date, appointment.appointment_time),
+    title: `${appointment.patientName} with ${appointment.doctorName}`,
+    subtitle: formatDateTime(appointment.appointmentDate, appointment.appointmentTime),
     meta: appointment.status,
     body: appointment.status === "Pending" ? "Awaiting consultation." : "Updated in the appointment workflow."
   });

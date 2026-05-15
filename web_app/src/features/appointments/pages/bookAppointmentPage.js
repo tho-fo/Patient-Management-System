@@ -9,11 +9,11 @@ import { validateAppointment } from "../../../utils/validators.js";
 import { store } from "../../../shared/state/store.js";
 
 function buildDoctorOptions(doctors) {
-  return doctors.map((doctor) => `<option value="${doctor.staff_key}">${doctor.full_name} - ${doctor.specialization}</option>`).join("");
+  return doctors.map((doctor) => `<option value="${doctor.staffKey}">${doctor.fullName} - ${doctor.specialization}</option>`).join("");
 }
 
 function buildPatientOptions(patients) {
-  return patients.map((patient) => `<option value="${patient.patient_id}">${patient.full_name} - #${patient.patient_id}</option>`).join("");
+  return patients.map((patient) => `<option value="${patient.patientId}">${patient.fullName} - #${patient.patientId}</option>`).join("");
 }
 
 export const bookAppointmentPage = {
@@ -49,33 +49,33 @@ export const bookAppointmentPage = {
               <form id="appointmentForm" novalidate>
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="patient_id">Patient</label>
-                    <select class="form-select" id="patient_id" name="patient_id" ${context.currentUser.role === roles.PATIENT ? "disabled" : ""}>
+                    <label class="form-label fw-semibold" for="patientId">Patient</label>
+                    <select class="form-select" id="patientId" name="patientId" ${context.currentUser.role === roles.PATIENT ? "disabled" : ""}>
                       <option value="">Select patient</option>
                       ${buildPatientOptions(patients)}
                     </select>
-                    <div class="invalid-feedback" data-error-for="patient_id"></div>
+                    <div class="invalid-feedback" data-error-for="patientId"></div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="doctor_id">Doctor</label>
-                    <select class="form-select" id="doctor_id" name="doctor_id">
+                    <label class="form-label fw-semibold" for="doctorId">Doctor</label>
+                    <select class="form-select" id="doctorId" name="doctorId">
                       <option value="">Select doctor</option>
                       ${buildDoctorOptions(doctors)}
                     </select>
-                    <div class="invalid-feedback" data-error-for="doctor_id"></div>
+                    <div class="invalid-feedback" data-error-for="doctorId"></div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="appointment_date">Appointment date</label>
-                    <input class="form-control" id="appointment_date" name="appointment_date" type="date">
-                    <div class="invalid-feedback" data-error-for="appointment_date"></div>
+                    <label class="form-label fw-semibold" for="appointmentDate">Appointment date</label>
+                    <input class="form-control" id="appointmentDate" name="appointmentDate" type="date">
+                    <div class="invalid-feedback" data-error-for="appointmentDate"></div>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" for="appointment_time">Appointment time</label>
-                    <input class="form-control" id="appointment_time" name="appointment_time" type="time">
-                    <div class="invalid-feedback" data-error-for="appointment_time"></div>
+                    <label class="form-label fw-semibold" for="appointmentTime">Appointment time</label>
+                    <input class="form-control" id="appointmentTime" name="appointmentTime" type="time">
+                    <div class="invalid-feedback" data-error-for="appointmentTime"></div>
                   </div>
                 </div>
-                ${scopedPatientId ? `<input type="hidden" name="patient_id" value="${scopedPatientId}">` : ""}
+                ${scopedPatientId ? `<input type="hidden" name="patientId" value="${scopedPatientId}">` : ""}
                 <div class="d-flex gap-2 mt-4">
                   <button class="btn btn-primary" id="appointmentSubmit" type="submit"><i class="bi bi-save me-2"></i>Save appointment</button>
                   <a class="btn btn-outline-secondary" href="#${routePaths.appointments}">Cancel</a>
@@ -116,9 +116,9 @@ export const bookAppointmentPage = {
     const alertContainer = qs("#appointmentFormAlert", root);
     const patientCard = qs("#selectedPatientCard", root);
     const availabilityRegion = qs("#availabilityRegion", root);
-    const patientSelect = qs("#patient_id", root);
-    const doctorSelect = qs("#doctor_id", root);
-    const dateInput = qs("#appointment_date", root);
+    const patientSelect = qs("#patientId", root);
+    const doctorSelect = qs("#doctorId", root);
+    const dateInput = qs("#appointmentDate", root);
 
     const syncPatientCard = async () => {
       const patientId = context.currentUser.role === roles.PATIENT ? context.currentUser.id : patientSelect.value;
@@ -128,7 +128,7 @@ export const bookAppointmentPage = {
 
       const patient = await patientService.getById(patientId);
       patientCard.innerHTML = renderKeyValueList([
-        { label: "Patient", value: patient.full_name },
+        { label: "Patient", value: patient.fullName },
         { label: "Phone", value: patient.phone },
         { label: "Address", value: patient.address }
       ]);
@@ -148,18 +148,18 @@ export const bookAppointmentPage = {
       }
 
       const appointments = await appointmentService.list({
-        doctor_id: doctorId,
-        appointment_date: appointmentDate
+        doctorId: doctorId,
+        appointmentDate: appointmentDate
       });
 
       availabilityRegion.innerHTML = renderDataTable({
         headers: ["Patient", "Doctor", "Date", "Time", "Status", "Actions"],
         rows: appointments.map((appointment) => `
           <tr>
-            <td>${appointment.patient_name}</td>
-            <td>${appointment.doctor_name}</td>
-            <td>${appointment.appointment_date}</td>
-            <td>${appointment.appointment_time}</td>
+            <td>${appointment.patientName}</td>
+            <td>${appointment.doctorName}</td>
+            <td>${appointment.appointmentDate}</td>
+            <td>${appointment.appointmentTime}</td>
             <td>${appointment.status}</td>
             <td class="text-end">Booked</td>
           </tr>
@@ -180,8 +180,8 @@ export const bookAppointmentPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(form);
-      if (payload.doctor_id) {
-        payload.doctor_id = payload.doctor_id.split("-")[1];
+      if (payload.doctorId) {
+        payload.doctorId = payload.doctorId.split("-")[1];
       }
       const errors = validateAppointment(payload);
 

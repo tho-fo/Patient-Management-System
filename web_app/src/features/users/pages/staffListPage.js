@@ -7,13 +7,13 @@ import { qs, formToObject } from "../../../utils/dom.js";
 function buildRows(staff) {
   return staff.map((member) => `
     <tr>
-      <td><strong>${member.full_name}</strong></td>
+      <td><strong>${member.fullName}</strong></td>
       <td class="text-capitalize">${member.role}</td>
       <td>${member.specialization || member.phone || "-"}</td>
       <td>${member.email}</td>
       <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary me-2" href="#/staff/${member.staff_key}/edit">Edit</a>
-        <button class="btn btn-sm btn-outline-danger" type="button" data-delete-staff="${member.staff_key}">Delete</button>
+        <a class="btn btn-sm btn-outline-primary me-2" href="#/staff/${member.staffKey}/edit">Edit</a>
+        <button class="btn btn-sm btn-outline-danger" type="button" data-delete-staff="${member.staffKey}">Delete</button>
       </td>
     </tr>
   `);

@@ -12,23 +12,23 @@ function canEditRecords(role) {
 }
 
 function buildPatientOptions(patients) {
-  return patients.map((patient) => `<option value="${patient.patient_id}">${patient.full_name} - #${patient.patient_id}</option>`).join("");
+  return patients.map((patient) => `<option value="${patient.patientId}">${patient.fullName} - #${patient.patientId}</option>`).join("");
 }
 
 function buildDoctorOptions(doctors) {
-  return doctors.map((doctor) => `<option value="${doctor.staff_key}">${doctor.full_name} - ${doctor.specialization}</option>`).join("");
+  return doctors.map((doctor) => `<option value="${doctor.staffKey}">${doctor.fullName} - ${doctor.specialization}</option>`).join("");
 }
 
 function buildRows(records, role) {
   return records.map((record) => `
     <tr>
-      <td>${record.patient_name}</td>
-      <td>${record.doctor_name}</td>
+      <td>${record.patientName}</td>
+      <td>${record.doctorName}</td>
       <td>${record.diagnosis}</td>
       <td>${record.treatment}</td>
-      <td>${new Date(record.record_date).toLocaleDateString()}</td>
+      <td>${new Date(record.recordDate).toLocaleDateString()}</td>
       <td class="text-end">
-        ${canEditRecords(role) ? `<button class="btn btn-sm btn-outline-primary" type="button" data-edit-record="${record.record_id}">Edit</button>` : ""}
+        ${canEditRecords(role) ? `<button class="btn btn-sm btn-outline-primary" type="button" data-edit-record="${record.recordId}">Edit</button>` : ""}
       </td>
     </tr>
   `);
@@ -43,7 +43,7 @@ export const patientHistoryPage = {
     const [patients, doctors, records] = await Promise.all([
       patientService.list(),
       userService.list({ role: roles.DOCTOR }),
-      medicalRecordService.list(context.currentUser.role === roles.PATIENT ? { patient_id: context.currentUser.id } : {})
+      medicalRecordService.list(context.currentUser.role === roles.PATIENT ? { patientId: context.currentUser.id } : {})
     ]);
 
     return {
@@ -67,8 +67,8 @@ export const patientHistoryPage = {
               <form id="historyFilterForm" class="filter-bar mb-4">
                 <div class="row g-3 align-items-end">
                   <div class="col-lg-8">
-                    <label class="form-label fw-semibold" for="history_patient_id">Patient</label>
-                    <select class="form-select" id="history_patient_id" name="patient_id">
+                    <label class="form-label fw-semibold" for="history_patientId">Patient</label>
+                    <select class="form-select" id="history_patientId" name="patientId">
                       <option value="">All patients</option>
                       ${buildPatientOptions(patients)}
                     </select>
@@ -96,23 +96,23 @@ export const patientHistoryPage = {
           body: `
             <div id="recordModalAlert" class="mb-3"></div>
             <form id="recordEditForm" novalidate>
-              <input type="hidden" name="record_id" id="modal_record_id">
+              <input type="hidden" name="recordId" id="modal_recordId">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="modal_record_patient_id">Patient</label>
-                  <select class="form-select" id="modal_record_patient_id" name="patient_id">
+                  <label class="form-label fw-semibold" for="modal_record_patientId">Patient</label>
+                  <select class="form-select" id="modal_record_patientId" name="patientId">
                     <option value="">Select patient</option>
                     ${buildPatientOptions(patients)}
                   </select>
-                  <div class="invalid-feedback" data-error-for="patient_id"></div>
+                  <div class="invalid-feedback" data-error-for="patientId"></div>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="modal_record_doctor_id">Doctor</label>
-                  <select class="form-select" id="modal_record_doctor_id" name="doctor_id">
+                  <label class="form-label fw-semibold" for="modal_record_doctorId">Doctor</label>
+                  <select class="form-select" id="modal_record_doctorId" name="doctorId">
                     <option value="">Select doctor</option>
                     ${buildDoctorOptions(doctors)}
                   </select>
-                  <div class="invalid-feedback" data-error-for="doctor_id"></div>
+                  <div class="invalid-feedback" data-error-for="doctorId"></div>
                 </div>
                 <div class="col-12">
                   <label class="form-label fw-semibold" for="modal_diagnosis">Diagnosis</label>
@@ -140,7 +140,7 @@ export const patientHistoryPage = {
     const filterForm = qs("#historyFilterForm", root);
     const resetButton = qs("#historyFilterReset", root);
     const tableRegion = qs("#historyTableRegion", root);
-    const scopedFilter = context.currentUser.role === roles.PATIENT ? { patient_id: context.currentUser.id } : {};
+    const scopedFilter = context.currentUser.role === roles.PATIENT ? { patientId: context.currentUser.id } : {};
 
     const loadRecords = async (extra = {}) => {
       const records = await medicalRecordService.list({ ...scopedFilter, ...extra });
@@ -179,16 +179,16 @@ export const patientHistoryPage = {
       }
 
       const records = await loadRecords(filterForm ? formToObject(filterForm) : {});
-      const record = records.find((item) => Number(item.record_id) === Number(button.dataset.editRecord));
+      const record = records.find((item) => Number(item.recordId) === Number(button.dataset.editRecord));
       if (!record) {
         return;
       }
 
       modalForm.reset();
       renderInlineAlert(alertContainer, "");
-      qs("#modal_record_id", modalForm).value = record.record_id;
-      qs("#modal_record_patient_id", modalForm).value = record.patient_id;
-      qs("#modal_record_doctor_id", modalForm).value = `doctor-${record.doctor_id}`;
+      qs("#modal_recordId", modalForm).value = record.recordId;
+      qs("#modal_record_patientId", modalForm).value = record.patientId;
+      qs("#modal_record_doctorId", modalForm).value = `doctor-${record.doctorId}`;
       qs("#modal_diagnosis", modalForm).value = record.diagnosis;
       qs("#modal_treatment", modalForm).value = record.treatment;
       modalInstance.show();
@@ -200,7 +200,7 @@ export const patientHistoryPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(modalForm);
-      payload.doctor_id = payload.doctor_id.split("-")[1];
+      payload.doctorId = payload.doctorId.split("-")[1];
       const errors = validateMedicalRecord(payload);
       if (Object.keys(errors).length > 0) {
         applyFormErrors(modalForm, errors);
@@ -210,7 +210,7 @@ export const patientHistoryPage = {
       setBusyState(updateButton, true);
 
       try {
-        await medicalRecordService.update(payload.record_id, payload);
+        await medicalRecordService.update(payload.recordId, payload);
         modalInstance.hide();
         await loadRecords(filterForm ? formToObject(filterForm) : {});
       } catch (error) {

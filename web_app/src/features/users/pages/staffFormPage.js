@@ -38,9 +38,9 @@ export const staffFormPage = {
             <form id="staffForm" novalidate>
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="full_name">Full name</label>
-                  <input class="form-control" id="full_name" name="full_name" type="text" value="${staff?.full_name ?? ""}">
-                  <div class="invalid-feedback" data-error-for="full_name"></div>
+                  <label class="form-label fw-semibold" for="fullName">Full name</label>
+                  <input class="form-control" id="fullName" name="fullName" type="text" value="${staff?.fullName ?? ""}">
+                  <div class="invalid-feedback" data-error-for="fullName"></div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="role">Role</label>

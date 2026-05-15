@@ -155,7 +155,7 @@ features/
 |-- dashboard/
 |-- patients/
 |-- appointments/
-|-- medical_records/
+|-- medicalRecords/
 |-- users/
 |-- reports/
 `-- settings/

@@ -111,60 +111,60 @@ classDiagram
        +string email
        +string provider
        +string role
-       +datetime created_at
+       +datetime createdAt
    }
 
    class Admin {
-       +string admin_id
-       +string auth_uid
-       +string full_name
+       +string adminId
+       +string authUid
+       +string fullName
        +string email
-       +datetime created_at
+       +datetime createdAt
    }
 
    class Doctor {
-       +string doctor_id
-       +string auth_uid
-       +string full_name
+       +string doctorId
+       +string authUid
+       +string fullName
        +string specialization
        +string phone
    }
 
    class Receptionist {
-       +string receptionist_id
-       +string auth_uid
-       +string full_name
+       +string receptionistId
+       +string authUid
+       +string fullName
        +string phone
    }
 
    class Patient {
-       +string patient_id
-       +string auth_uid
-       +string full_name
+       +string patientId
+       +string authUid
+       +string fullName
        +number age
        +string gender
        +string phone
        +string address
-       +datetime created_at
+       +datetime createdAt
    }
 
    class Appointment {
-       +string appointment_id
-       +string patient_id
-       +string doctor_id
-       +string appointment_date
-       +string appointment_time
+       +string appointmentId
+       +string patientId
+       +string doctorId
+       +string appointmentDate
+       +string appointmentTime
        +string status
-       +datetime created_at
+       +datetime createdAt
    }
 
    class MedicalRecord {
-       +string record_id
-       +string patient_id
-       +string doctor_id
+       +string recordId
+       +string patientId
+       +string doctorId
        +text diagnosis
        +text treatment
-       +datetime record_date
+       +datetime recordDate
    }
 
    AuthAccount "1" --> "0..1" Admin : maps_to
@@ -200,7 +200,7 @@ sequenceDiagram
    Receptionist->>UI: Enter patient details
    Receptionist->>UI: Click Save
    UI->>AUTH: Create patient account (optional)
-   AUTH-->>UI: Return auth_uid
+   AUTH-->>UI: Return authUid
    UI->>FUNC: Validate registration request
    FUNC->>FS: Create patient document
    FS-->>FUNC: Success

@@ -38,7 +38,7 @@ async function findProfile(collectionName, uid) {
     return directSnapshot;
   }
 
-  const authUidQuery = query(collection(db, collectionName), where("auth_uid", "==", uid), limit(1));
+  const authUidQuery = query(collection(db, collectionName), where("authUid", "==", uid), limit(1));
   const authUidSnapshot = await getDocs(authUidQuery);
 
   if (!authUidSnapshot.empty) {
@@ -53,22 +53,23 @@ async function findProfile(collectionName, uid) {
 
 function normalizeProfile(snapshot, role) {
   const data = snapshot.data();
+  const authUid = data.authUid ?? data.uid ?? snapshot.id;
 
   return {
-    id: data.patient_id ?? data.doctor_id ?? snapshot.id,
-    uid: data.uid ?? data.auth_uid ?? snapshot.id,
-    auth_uid: data.auth_uid ?? data.uid ?? snapshot.id,
+    id: data.patientId ?? data.doctorId ?? snapshot.id,
+    uid: data.uid ?? authUid,
+    authUid,
     role,
-    full_name: data.full_name ?? "",
+    fullName: data.fullName ?? "",
     email: data.email ?? "",
     phone: data.phone ?? "",
     gender: data.gender ?? "",
-    date_of_birth: data.date_of_birth ?? data.dob ?? "",
+    dateOfBirth: data.dateOfBirth ?? "",
     age: data.age ?? "",
     address: data.address ?? "",
     specialization: data.specialization ?? "",
-    license_number: data.license_number ?? "",
-    years_of_experience: data.years_of_experience ?? ""
+    licenseNumber: data.licenseNumber ?? "",
+    yearsOfExperience: data.yearsOfExperience ?? ""
   };
 }
 

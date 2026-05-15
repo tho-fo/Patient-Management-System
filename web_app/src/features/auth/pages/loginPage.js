@@ -102,7 +102,7 @@ export const loginPage = {
         store.setSession(session);
         store.setFlash({
           type: "success",
-          message: `Welcome back, ${session.user.full_name}.`
+          message: `Welcome back, ${session.user.fullName}.`
         });
         context.navigate(routePaths.dashboard);
       } catch (error) {

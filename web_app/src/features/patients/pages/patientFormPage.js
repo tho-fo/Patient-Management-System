@@ -112,7 +112,7 @@ function renderPatientForm(patient = null) {
         <button class="btn btn-primary" id="patientSubmit" type="submit">
           <i class="bi bi-save me-2"></i>${patient ? "Save changes" : "Save patient"}
         </button>
-        <a class="btn btn-outline-secondary" href="#${patient ? `/patients/${patient.patient_id}` : routePaths.patients}">Cancel</a>
+        <a class="btn btn-outline-secondary" href="#${patient ? `/patients/${patient.patientId}` : routePaths.patients}">Cancel</a>
       </div>
     </form>
   `;
@@ -149,14 +149,14 @@ function bindPatientForm(root, context, patient = null) {
 
     try {
       const savedPatient = patient
-        ? await patientService.update(patient.patient_id, payload, context.currentUser)
+        ? await patientService.update(patient.patientId, payload, context.currentUser)
         : await patientService.create(payload, context.currentUser);
 
       store.setFlash({
         type: "success",
-        message: `${savedPatient.full_name} was ${patient ? "updated" : "added"} successfully.`
+        message: `${savedPatient.fullName} was ${patient ? "updated" : "added"} successfully.`
       });
-      context.navigate(`/patients/${savedPatient.patient_id}`);
+      context.navigate(`/patients/${savedPatient.patientId}`);
     } catch (error) {
       renderInlineAlert(alertContainer, error.message);
     } finally {
@@ -217,19 +217,19 @@ export const patientEditPage = {
 
     return {
       title: "Edit Patient",
-      subtitle: `Update ${patient.full_name}.`,
+      subtitle: `Update ${patient.fullName}.`,
       patient,
       content: `
         ${renderPageHero({
           eyebrow: "Patient Update",
           title: "Edit patient record",
           subtitle: "Review the existing patient data, make changes, and save updates to Firestore.",
-          actions: `<a class="btn btn-outline-secondary" href="#/patients/${patient.patient_id}">Back to profile</a>`
+          actions: `<a class="btn btn-outline-secondary" href="#/patients/${patient.patientId}">Back to profile</a>`
         })}
 
         ${renderSectionCard({
-          title: patient.full_name,
-          subtitle: `Patient #${patient.patient_id}`,
+          title: patient.fullName,
+          subtitle: `Patient #${patient.patientId}`,
           content: renderPatientForm(patient)
         })}
       `
