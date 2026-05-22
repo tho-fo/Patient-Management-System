@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
   collection,
   doc,
@@ -7,7 +7,7 @@ import {
   limit,
   query,
   where
-} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { roles } from "../../../core/constants/roles.js";
 import { auth, db } from "../../../services/firebase_config.js";
 

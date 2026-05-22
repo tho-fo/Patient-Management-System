@@ -7,8 +7,8 @@ import { patientEditPage, patientFormPage } from "../features/patients/pages/pat
 import { patientDetailsPage } from "../features/patients/pages/patientDetailsPage.js";
 import { appointmentListPage } from "../features/appointments/pages/appointmentListPage.js";
 import { bookAppointmentPage } from "../features/appointments/pages/bookAppointmentPage.js";
-import { recordEntryPage } from "../features/medicalRecords/pages/recordEntryPage.js";
-import { patientHistoryPage } from "../features/medicalRecords/pages/patientHistoryPage.js";
+import { recordEntryPage } from "../features/medical_records/pages/recordEntryPage.js";
+import { patientHistoryPage } from "../features/medical_records/pages/patientHistoryPage.js";
 import { staffListPage } from "../features/users/pages/staffListPage.js";
 import { staffFormPage } from "../features/users/pages/staffFormPage.js";
 import { profilePage } from "../features/profile/pages/profilePage.js";

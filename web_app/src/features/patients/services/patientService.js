@@ -9,7 +9,7 @@ import {
   serverTimestamp,
   updateDoc,
   where
-} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { db } from "../../../services/firebase_config.js";
 
 const patientsCollection = collection(db, "patients");
