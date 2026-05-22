@@ -27,7 +27,7 @@ export const recordEntryPage = {
       userService.list({ role: roles.DOCTOR })
     ]);
 
-    const currentDoctorValue = context.currentUser.role === roles.DOCTOR ? `doctor-${context.currentUser.id}` : "";
+    const currentDoctorValue = context.currentUser.role === roles.DOCTOR ? context.currentUser.id : "";
 
     return {
       title: "Medical Record Entry",
@@ -141,9 +141,6 @@ export const recordEntryPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(form);
-      if (payload.doctorId) {
-        payload.doctorId = payload.doctorId.split("-")[1];
-      }
       const errors = validateMedicalRecord(payload);
 
       if (Object.keys(errors).length > 0) {

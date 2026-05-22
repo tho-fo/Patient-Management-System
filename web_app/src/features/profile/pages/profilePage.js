@@ -31,6 +31,15 @@ function doctorItems(profile) {
   ];
 }
 
+function staffItems(profile) {
+  return [
+    { label: "Full Name", value: profile.fullName },
+    { label: "Email", value: profile.email },
+    { label: "Phone", value: profile.phone || "-" },
+    { label: "Role", value: roleLabels[profile.role] ?? profile.role }
+  ];
+}
+
 function renderAvatar(profile) {
   return `
     <div class="profile-avatar" aria-hidden="true">
@@ -96,11 +105,15 @@ function renderRoleActions(profile) {
 export const profilePage = {
   title: "Profile",
   subtitle: "Role-based account details from Firebase and Firestore.",
-  allowedRoles: [roles.DOCTOR, roles.PATIENT],
+  allowedRoles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT],
 
   async render() {
     const profile = await profileService.getCurrentProfile();
-    const details = profile.role === roles.PATIENT ? patientItems(profile) : doctorItems(profile);
+    const details = profile.role === roles.PATIENT
+      ? patientItems(profile)
+      : profile.role === roles.DOCTOR
+        ? doctorItems(profile)
+        : staffItems(profile);
 
     return {
       title: "Profile",

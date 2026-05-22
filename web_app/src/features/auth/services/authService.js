@@ -1,36 +1,9 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  serverTimestamp,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { appConfig } from "../../../config/appConfig.js";
+import { httpClient } from "../../../core/api/httpClient.js";
 import { roles } from "../../../core/constants/roles.js";
-import { auth, db } from "../../../services/firebase_config.js";
 
 function buildFullName(payload) {
   return `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim();
-}
-
-function calculateAge(dateOfBirth) {
-  if (!dateOfBirth) {
-    return null;
-  }
-
-  const birthDate = new Date(dateOfBirth);
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
-
-  if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-    age -= 1;
-  }
-
-  return age > 0 ? age : null;
 }
 
 function formatAuthError(error) {
@@ -49,19 +22,39 @@ function formatAuthError(error) {
 
 function normalizeProfile(documentSnapshot, role) {
   const data = documentSnapshot.data();
+  const fullName = data.fullName ?? buildFullName(data);
 
   return {
-    id: data.patientId ?? data.doctorId ?? documentSnapshot.id,
-    authUid: data.authUid,
-    fullName: data.fullName,
+    id: data.adminId ?? data.patientId ?? data.doctorId ?? data.receptionistId ?? documentSnapshot.id,
+    authUid: data.authUid ?? documentSnapshot.id,
+    firstName: data.firstName ?? "",
+    lastName: data.lastName ?? "",
+    fullName,
     email: data.email,
     phone: data.phone ?? "",
-    specialization: data.specialization ?? "",
+    specialization: Array.isArray(data.specialization) ? data.specialization.join(", ") : data.specialization ?? "",
     role
   };
 }
 
-async function resolveUserRole(uid) {
+async function loadFirebase() {
+  const [{ auth, db }, authSdk, firestoreSdk] = await Promise.all([
+    import("../../../services/firebase_config.js"),
+    import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js"),
+    import("https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js")
+  ]);
+
+  return { auth, db, ...authSdk, ...firestoreSdk };
+}
+
+async function resolveUserRole(uid, firestore) {
+  const { db, doc, getDoc } = firestore;
+  const adminSnapshot = await getDoc(doc(db, "admins", uid));
+
+  if (adminSnapshot.exists()) {
+    return normalizeProfile(adminSnapshot, roles.ADMIN);
+  }
+
   const patientSnapshot = await getDoc(doc(db, "patients", uid));
 
   if (patientSnapshot.exists()) {
@@ -74,13 +67,19 @@ async function resolveUserRole(uid) {
     return normalizeProfile(doctorSnapshot, roles.DOCTOR);
   }
 
-  throw new Error("No patient or doctor profile was found for this account.");
+  const receptionistSnapshot = await getDoc(doc(db, "receptionists", uid));
+
+  if (receptionistSnapshot.exists()) {
+    return normalizeProfile(receptionistSnapshot, roles.RECEPTIONIST);
+  }
+
+  throw new Error("No role profile was found for this account.");
 }
 
-async function buildSession(userCredential) {
+async function buildSession(userCredential, firestore) {
   const firebaseUser = userCredential.user;
   const token = await firebaseUser.getIdToken();
-  const user = await resolveUserRole(firebaseUser.uid);
+  const user = await resolveUserRole(firebaseUser.uid, firestore);
 
   return {
     token,
@@ -90,23 +89,42 @@ async function buildSession(userCredential) {
 
 async function registerWithProfile(payload, role) {
   try {
+    if (appConfig.useMockApi) {
+      return httpClient.post(`/auth/register-${role}`, payload);
+    }
+
+    const {
+      auth,
+      db,
+      createUserWithEmailAndPassword,
+      doc,
+      getDoc,
+      serverTimestamp,
+      setDoc
+    } = await loadFirebase();
     const userCredential = await createUserWithEmailAndPassword(auth, payload.email, payload.password);
     const uid = userCredential.user.uid;
     const fullName = buildFullName(payload);
-    const dateOfBirth = payload.dateOfBirth;
+    const dob = payload.dateOfBirth ?? payload.dob ?? "";
 
     if (role === roles.PATIENT) {
       await setDoc(doc(db, "patients", uid), {
         patientId: uid,
-        uid,
-        authUid: uid,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
         fullName,
-        age: calculateAge(dateOfBirth),
-        dateOfBirth,
-        gender: payload.gender,
         phone: payload.phone,
         email: payload.email,
         address: payload.address,
+        otherInfo: {
+          bloodType: payload.bloodType ?? "",
+          bloodGroup: payload.bloodGroup ?? "",
+          weight: Number(payload.weight ?? 0),
+          height: Number(payload.height ?? 0),
+          gender: payload.gender,
+          dob
+        },
+        updatedAt: serverTimestamp(),
         createdAt: serverTimestamp()
       });
     }
@@ -114,19 +132,19 @@ async function registerWithProfile(payload, role) {
     if (role === roles.DOCTOR) {
       await setDoc(doc(db, "doctors", uid), {
         doctorId: uid,
-        uid,
-        authUid: uid,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
         fullName,
-        specialization: payload.specialization,
-        licenseNumber: payload.licenseNumber,
-        yearsOfExperience: Number(payload.yearsOfExperience),
+        specialization: [payload.specialization].filter(Boolean),
+        availability: {},
         phone: payload.phone,
         email: payload.email,
+        updatedAt: serverTimestamp(),
         createdAt: serverTimestamp()
       });
     }
 
-    return buildSession(userCredential);
+    return buildSession(userCredential, { db, doc, getDoc });
   } catch (error) {
     throw formatAuthError(error);
   }
@@ -143,14 +161,25 @@ export const authService = {
 
   async login(payload) {
     try {
+      if (appConfig.useMockApi) {
+        return httpClient.post("/auth/login", payload);
+      }
+
+      const firebase = await loadFirebase();
+      const { auth, signInWithEmailAndPassword } = firebase;
       const userCredential = await signInWithEmailAndPassword(auth, payload.email, payload.password);
-      return buildSession(userCredential);
+      return buildSession(userCredential, firebase);
     } catch (error) {
       throw formatAuthError(error);
     }
   },
 
   async logout() {
+    if (appConfig.useMockApi) {
+      return httpClient.post("/auth/logout");
+    }
+
+    const { auth, signOut } = await loadFirebase();
     await signOut(auth);
     return { success: true };
   }

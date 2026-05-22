@@ -4,8 +4,8 @@ export const appConfig = {
   apiBaseUrl: "http://localhost:8000/api",
   useMockApi: true,
   storageKeys: {
-    session: "pms-session-v1",
-    flash: "pms-flash-v1",
-    mockDatabase: "pms-mock-db-v1"
+    session: "pms-session-v2",
+    flash: "pms-flash-v2",
+    mockDatabase: "pms-mock-db-v2"
   }
 };

@@ -104,8 +104,8 @@ function createRegistrationPage(config) {
                 ${config.sourceNotes.map((note) => `<li><i class="bi bi-check2-circle"></i><span>${escapeHtml(note)}</span></li>`).join("")}
               </ul>
               <div class="demo-credentials mt-auto p-4">
-                <h2 class="h5 mb-3">UI-only registration</h2>
-                <p class="small text-white-50 mb-0">This wizard validates input in the browser and prepares the flow for backend integration later.</p>
+                <h2 class="h5 mb-3">Secure registration</h2>
+                <p class="small text-white-50 mb-0">Account details are validated before the profile is created.</p>
               </div>
             </aside>
 
@@ -129,7 +129,7 @@ function createRegistrationPage(config) {
 
                 <fieldset class="registration-step" data-step-panel="${config.steps.length}">
                   <legend class="h5 fw-bold mb-1">Review & Submit</legend>
-                  <p class="page-subtitle mb-4">Confirm the details before submitting this UI-only registration.</p>
+                  <p class="page-subtitle mb-4">Confirm the details before creating the account.</p>
                   <div id="registrationReview" class="registration-review"></div>
                 </fieldset>
 

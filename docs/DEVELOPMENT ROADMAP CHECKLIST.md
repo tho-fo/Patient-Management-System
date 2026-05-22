@@ -86,6 +86,10 @@ Use this document as a working todo list during development.
 - [ ] Define patient fields
 - [ ] Define appointment fields
 - [ ] Define medical record fields
+- [ ] Store `firstName` and `lastName` separately for people collections
+- [ ] Store patient medical demographics under `otherInfo`
+- [ ] Store doctor `specialization` as `list<string>`
+- [ ] Store doctor `availability` as a weekday map of timestamp ranges
 - [ ] Use camelCase field names consistently
 - [ ] Decide which fields are required
 - [ ] Decide which fields are optional
@@ -189,6 +193,7 @@ Use this document as a working todo list during development.
 - [ ] Check receptionists collection for receptionist account
 - [ ] Return consistent session user object
 - [ ] Handle missing profile records safely
+- [ ] Do not expose frontend admin account registration
 
 ---
 
@@ -206,12 +211,13 @@ Use this document as a working todo list during development.
 ## **5.2 Staff Creation**
 
 - [ ] Create staff form page
-- [ ] Add fields for name, role, email, phone, password, and specialization
+- [ ] Add fields for name, role, email, phone, password, specialization, and doctor availability
 - [ ] Validate required fields
 - [ ] Create Firebase Auth account if required
 - [ ] Create Firestore staff profile
 - [ ] Prevent duplicate email accounts
 - [ ] Confirm role-specific fields are saved correctly
+- [ ] Prevent admin account creation from the frontend
 
 ## **5.3 Staff Update**
 
@@ -252,7 +258,7 @@ Use this document as a working todo list during development.
 - [ ] Add contact fields
 - [ ] Add optional medical background fields
 - [ ] Validate required fields
-- [ ] Calculate age from `dateOfBirth`
+- [ ] Calculate age from `otherInfo.dob`
 - [ ] Save patient using camelCase fields
 - [ ] Store `createdAt`
 - [ ] Confirm patient appears in the list after saving
@@ -328,6 +334,8 @@ Use this document as a working todo list during development.
 - [ ] Patient can book their own appointment
 - [ ] Receptionist can book appointments for patients
 - [ ] Doctor can view assigned appointments
+- [ ] Doctor can schedule appointments that are automatically approved
+- [ ] Doctor can approve or decline pending appointments
 - [ ] Admin can view appointment reports
 - [ ] Unauthorized roles cannot modify restricted appointments
 
@@ -361,7 +369,8 @@ Use this document as a working todo list during development.
 
 ## **8.3 Medical Record Update**
 
-- [ ] Allow doctors to edit allowed records
+- [ ] Allow doctors to edit allowed records diagnosed by them.
+- [ ] Restrict doctor edits/deletes to records diagnosed by another doctor
 - [ ] Validate updated diagnosis and treatment
 - [ ] Store `updatedAt`
 - [ ] Preserve original creator information
@@ -687,4 +696,3 @@ Use this document as a working todo list during development.
 - [ ] Documentation is updated
 - [ ] Final deployment works
 - [ ] Project is ready for presentation or submission
-

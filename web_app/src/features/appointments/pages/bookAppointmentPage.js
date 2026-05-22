@@ -19,7 +19,7 @@ function buildPatientOptions(patients) {
 export const bookAppointmentPage = {
   title: "Book Appointment",
   subtitle: "Select patient, doctor, date, and time for a new appointment.",
-  allowedRoles: [roles.ADMIN, roles.RECEPTIONIST, roles.PATIENT],
+  allowedRoles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT],
 
   async render(context) {
     const [patients, doctors] = await Promise.all([
@@ -28,6 +28,7 @@ export const bookAppointmentPage = {
     ]);
 
     const scopedPatientId = context.currentUser.role === roles.PATIENT ? context.currentUser.id : "";
+    const scopedDoctorId = context.currentUser.role === roles.DOCTOR ? context.currentUser.id : "";
 
     return {
       title: "Book Appointment",
@@ -58,7 +59,7 @@ export const bookAppointmentPage = {
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-semibold" for="doctorId">Doctor</label>
-                    <select class="form-select" id="doctorId" name="doctorId">
+                    <select class="form-select" id="doctorId" name="doctorId" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
                       <option value="">Select doctor</option>
                       ${buildDoctorOptions(doctors)}
                     </select>
@@ -74,8 +75,15 @@ export const bookAppointmentPage = {
                     <input class="form-control" id="appointmentTime" name="appointmentTime" type="time">
                     <div class="invalid-feedback" data-error-for="appointmentTime"></div>
                   </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold" for="otherInfo">Additional info</label>
+                    <textarea class="form-control" id="otherInfo" name="otherInfo" rows="3"></textarea>
+                  </div>
                 </div>
                 ${scopedPatientId ? `<input type="hidden" name="patientId" value="${scopedPatientId}">` : ""}
+                ${scopedDoctorId ? `<input type="hidden" name="doctorId" value="${scopedDoctorId}">` : ""}
+                <input type="hidden" name="status" value="${context.currentUser.role === roles.DOCTOR ? "Approved" : "Pending"}">
+                ${context.currentUser.role === roles.RECEPTIONIST ? `<input type="hidden" name="receptionistId" value="${context.currentUser.id}">` : ""}
                 <div class="d-flex gap-2 mt-4">
                   <button class="btn btn-primary" id="appointmentSubmit" type="submit"><i class="bi bi-save me-2"></i>Save appointment</button>
                   <a class="btn btn-outline-secondary" href="#${routePaths.appointments}">Cancel</a>
@@ -120,6 +128,16 @@ export const bookAppointmentPage = {
     const doctorSelect = qs("#doctorId", root);
     const dateInput = qs("#appointmentDate", root);
 
+    if (context.currentUser.role === roles.PATIENT && patientSelect) {
+      patientSelect.value = context.currentUser.id;
+    } else if (context.query.patientId && patientSelect) {
+      patientSelect.value = context.query.patientId;
+    }
+
+    if (context.currentUser.role === roles.DOCTOR) {
+      doctorSelect.value = context.currentUser.id;
+    }
+
     const syncPatientCard = async () => {
       const patientId = context.currentUser.role === roles.PATIENT ? context.currentUser.id : patientSelect.value;
       if (!patientId) {
@@ -135,7 +153,7 @@ export const bookAppointmentPage = {
     };
 
     const syncAvailability = async () => {
-      const doctorId = doctorSelect.value?.split("-")[1];
+      const doctorId = context.currentUser.role === roles.DOCTOR ? context.currentUser.id : doctorSelect.value;
       const appointmentDate = dateInput.value;
 
       if (!doctorId || !appointmentDate) {
@@ -180,9 +198,6 @@ export const bookAppointmentPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(form);
-      if (payload.doctorId) {
-        payload.doctorId = payload.doctorId.split("-")[1];
-      }
       const errors = validateAppointment(payload);
 
       if (Object.keys(errors).length > 0) {

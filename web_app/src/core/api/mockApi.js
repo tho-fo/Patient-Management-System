@@ -12,61 +12,99 @@ function getTimestamp(offsetDays = 0, time = "09:00:00") {
   return `${day}T${time}`;
 }
 
+function getAvailabilityTimestamp(dayOffset, time = "09:00:00") {
+  return getTimestamp(dayOffset, time);
+}
+
 function seedDatabase() {
   return {
     admins: [
       {
-        adminId: 1,
-        fullName: "System Administrator",
+        adminId: "admin-1",
+        firstName: "System",
+        lastName: "Administrator",
         email: "admin@hospital.local",
-        password: "admin123"
+        phone: "555-0001",
+        password: "admin123",
+        createdAt: getTimestamp(-10, "08:00:00"),
+        updatedAt: getTimestamp(-10, "08:00:00")
       }
     ],
     doctors: [
       {
-        doctorId: 1,
-        fullName: "Dr. Miriam Kato",
-        specialization: "Cardiology",
+        doctorId: "doctor-1",
+        firstName: "Miriam",
+        lastName: "Kato",
+        specialization: ["Cardiology"],
+        availability: {
+          monday: [{ start: getAvailabilityTimestamp(3, "06:00:00"), end: getAvailabilityTimestamp(3, "08:00:00") }],
+          tuesday: [],
+          wednesday: [{ start: getAvailabilityTimestamp(5, "12:00:00"), end: getAvailabilityTimestamp(5, "18:00:00") }]
+        },
         phone: "555-0111",
         email: "miriam.kato@hospital.local",
-        password: "doctor123"
+        password: "doctor123",
+        createdAt: getTimestamp(-9, "08:00:00"),
+        updatedAt: getTimestamp(-9, "08:00:00")
       },
       {
-        doctorId: 2,
-        fullName: "Dr. James Okoye",
-        specialization: "Pediatrics",
+        doctorId: "doctor-2",
+        firstName: "James",
+        lastName: "Okoye",
+        specialization: ["Pediatrics"],
+        availability: {
+          monday: [{ start: getAvailabilityTimestamp(3, "10:00:00"), end: getAvailabilityTimestamp(3, "14:00:00") }],
+          tuesday: [{ start: getAvailabilityTimestamp(4, "09:00:00"), end: getAvailabilityTimestamp(4, "12:00:00") }],
+          wednesday: []
+        },
         phone: "555-0112",
         email: "james.okoye@hospital.local",
-        password: "doctor123"
+        password: "doctor123",
+        createdAt: getTimestamp(-9, "08:10:00"),
+        updatedAt: getTimestamp(-9, "08:10:00")
       },
       {
-        doctorId: 3,
-        fullName: "Dr. Linda Chen",
-        specialization: "General Medicine",
+        doctorId: "doctor-3",
+        firstName: "Linda",
+        lastName: "Chen",
+        specialization: ["General Medicine"],
+        availability: {
+          monday: [],
+          tuesday: [{ start: getAvailabilityTimestamp(4, "13:00:00"), end: getAvailabilityTimestamp(4, "17:00:00") }],
+          wednesday: [{ start: getAvailabilityTimestamp(5, "08:00:00"), end: getAvailabilityTimestamp(5, "11:00:00") }]
+        },
         phone: "555-0113",
         email: "linda.chen@hospital.local",
-        password: "doctor123"
+        password: "doctor123",
+        createdAt: getTimestamp(-9, "08:20:00"),
+        updatedAt: getTimestamp(-9, "08:20:00")
       }
     ],
     receptionists: [
       {
-        receptionistId: 1,
-        fullName: "Grace Njeri",
+        receptionistId: "receptionist-1",
+        firstName: "Grace",
+        lastName: "Njeri",
         phone: "555-0201",
         email: "grace.njeri@hospital.local",
-        password: "desk123"
+        password: "desk123",
+        createdAt: getTimestamp(-8, "08:00:00"),
+        updatedAt: getTimestamp(-8, "08:00:00")
       },
       {
-        receptionistId: 2,
-        fullName: "Daniel Mensah",
+        receptionistId: "receptionist-2",
+        firstName: "Daniel",
+        lastName: "Mensah",
         phone: "555-0202",
         email: "daniel.mensah@hospital.local",
-        password: "desk123"
+        password: "desk123",
+        createdAt: getTimestamp(-8, "08:10:00"),
+        updatedAt: getTimestamp(-8, "08:10:00")
       }
     ],
     patients: [
       {
-        patientId: 1,
+        patientId: "patient-1",
         fullName: "Alice Mumo",
         age: 29,
         gender: "Female",
@@ -77,7 +115,7 @@ function seedDatabase() {
         password: "patient123"
       },
       {
-        patientId: 2,
+        patientId: "patient-2",
         fullName: "Brian Owino",
         age: 41,
         gender: "Male",
@@ -88,7 +126,7 @@ function seedDatabase() {
         password: "patient123"
       },
       {
-        patientId: 3,
+        patientId: "patient-3",
         fullName: "Chloe Banda",
         age: 35,
         gender: "Female",
@@ -99,7 +137,7 @@ function seedDatabase() {
         password: "patient123"
       },
       {
-        patientId: 4,
+        patientId: "patient-4",
         fullName: "David Kimani",
         age: 52,
         gender: "Male",
@@ -110,7 +148,7 @@ function seedDatabase() {
         password: "patient123"
       },
       {
-        patientId: 5,
+        patientId: "patient-5",
         fullName: "Eva Ncube",
         age: 23,
         gender: "Female",
@@ -121,7 +159,7 @@ function seedDatabase() {
         password: "patient123"
       },
       {
-        patientId: 6,
+        patientId: "patient-6",
         fullName: "Frank Adebayo",
         age: 47,
         gender: "Male",
@@ -135,82 +173,98 @@ function seedDatabase() {
     appointments: [
       {
         appointmentId: 1,
-        patientId: 1,
-        doctorId: 2,
+        patientId: "patient-1",
+        doctorId: "doctor-2",
         appointmentDate: getTodayDate(),
         appointmentTime: "09:30",
-        status: "Pending"
+        status: "Pending",
+        receptionistId: "receptionist-1",
+        otherInfo: ""
       },
       {
         appointmentId: 2,
-        patientId: 2,
-        doctorId: 1,
+        patientId: "patient-2",
+        doctorId: "doctor-1",
         appointmentDate: getTodayDate(),
         appointmentTime: "11:00",
-        status: "Completed"
+        status: "Approved",
+        receptionistId: "",
+        otherInfo: ""
       },
       {
         appointmentId: 3,
-        patientId: 3,
-        doctorId: 3,
+        patientId: "patient-3",
+        doctorId: "doctor-3",
         appointmentDate: getTodayDate(),
         appointmentTime: "14:30",
-        status: "Pending"
+        status: "Pending",
+        receptionistId: "receptionist-2",
+        otherInfo: ""
       },
       {
         appointmentId: 4,
-        patientId: 4,
-        doctorId: 1,
+        patientId: "patient-4",
+        doctorId: "doctor-1",
         appointmentDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
         appointmentTime: "10:00",
-        status: "Pending"
+        status: "Pending",
+        receptionistId: "",
+        otherInfo: ""
       },
       {
         appointmentId: 5,
-        patientId: 5,
-        doctorId: 3,
+        patientId: "patient-5",
+        doctorId: "doctor-3",
         appointmentDate: new Date(Date.now() - 86400000).toISOString().slice(0, 10),
         appointmentTime: "13:00",
-        status: "Completed"
+        status: "Completed",
+        receptionistId: "receptionist-1",
+        otherInfo: ""
       },
       {
         appointmentId: 6,
-        patientId: 1,
-        doctorId: 1,
+        patientId: "patient-1",
+        doctorId: "doctor-1",
         appointmentDate: new Date(Date.now() + 172800000).toISOString().slice(0, 10),
         appointmentTime: "15:00",
-        status: "Cancelled"
+        status: "Declined",
+        receptionistId: "",
+        otherInfo: ""
       }
     ],
     medicalRecords: [
       {
         recordId: 1,
-        patientId: 1,
-        doctorId: 2,
+        patientId: "patient-1",
+        doctorId: "doctor-2",
+        diagnosedBy: "doctor-2",
         diagnosis: "Seasonal respiratory infection",
         treatment: "Prescribed antibiotics and hydration guidance.",
         recordDate: getTimestamp(-4, "12:00:00")
       },
       {
         recordId: 2,
-        patientId: 2,
-        doctorId: 1,
+        patientId: "patient-2",
+        doctorId: "doctor-1",
+        diagnosedBy: "doctor-1",
         diagnosis: "Blood pressure review",
         treatment: "Medication dosage adjusted and follow-up booked.",
         recordDate: getTimestamp(-3, "15:10:00")
       },
       {
         recordId: 3,
-        patientId: 3,
-        doctorId: 3,
+        patientId: "patient-3",
+        doctorId: "doctor-3",
+        diagnosedBy: "doctor-3",
         diagnosis: "Routine general consultation",
         treatment: "Lifestyle advice and lab follow-up recommended.",
         recordDate: getTimestamp(-2, "10:20:00")
       },
       {
         recordId: 4,
-        patientId: 4,
-        doctorId: 1,
+        patientId: "patient-4",
+        doctorId: "doctor-1",
+        diagnosedBy: "doctor-1",
         diagnosis: "Chest pain assessment",
         treatment: "ECG requested and observation started.",
         recordDate: getTimestamp(-1, "09:35:00")
@@ -242,31 +296,42 @@ function delay() {
 }
 
 function normalizeUser(record, role) {
+  const fullName = record.fullName ?? `${record.firstName ?? ""} ${record.lastName ?? ""}`.trim();
   const map = {
     [roles.ADMIN]: {
       id: record.adminId,
-      fullName: record.fullName,
+      firstName: record.firstName ?? "",
+      lastName: record.lastName ?? "",
+      fullName,
       email: record.email,
+      phone: record.phone ?? "",
       role
     },
     [roles.DOCTOR]: {
       id: record.doctorId,
-      fullName: record.fullName,
+      firstName: record.firstName ?? "",
+      lastName: record.lastName ?? "",
+      fullName,
       email: record.email,
       phone: record.phone,
-      specialization: record.specialization,
+      specialization: Array.isArray(record.specialization) ? record.specialization.join(", ") : record.specialization,
+      availability: record.availability ?? {},
       role
     },
     [roles.RECEPTIONIST]: {
       id: record.receptionistId,
-      fullName: record.fullName,
+      firstName: record.firstName ?? "",
+      lastName: record.lastName ?? "",
+      fullName,
       email: record.email,
       phone: record.phone,
       role
     },
     [roles.PATIENT]: {
       id: record.patientId,
-      fullName: record.fullName,
+      firstName: record.firstName ?? "",
+      lastName: record.lastName ?? "",
+      fullName,
       email: record.email,
       phone: record.phone,
       role
@@ -276,8 +341,21 @@ function normalizeUser(record, role) {
   return map[role];
 }
 
+function getFullName(record) {
+  return record.fullName ?? `${record.firstName ?? ""} ${record.lastName ?? ""}`.trim();
+}
+
+function normalizeSpecialization(value) {
+  return Array.isArray(value) ? value.join(", ") : value ?? "";
+}
+
 function nextId(items, key) {
-  return items.reduce((max, item) => Math.max(max, Number(item[key])), 0) + 1;
+  const max = items.reduce((currentMax, item) => {
+    const parts = String(item[key]).match(/\d+$/);
+    return Math.max(currentMax, Number(parts?.[0] ?? 0));
+  }, 0);
+
+  return max + 1;
 }
 
 function sortByDateTime(items, dateKey, timeKey, direction = "asc") {
@@ -303,11 +381,11 @@ function createHttpError(message, status = 400) {
 }
 
 function findDoctor(database, doctorId) {
-  return database.doctors.find((doctor) => Number(doctor.doctorId) === Number(doctorId));
+  return database.doctors.find((doctor) => String(doctor.doctorId) === String(doctorId));
 }
 
 function findPatient(database, patientId) {
-  return database.patients.find((patient) => Number(patient.patientId) === Number(patientId));
+  return database.patients.find((patient) => String(patient.patientId) === String(patientId));
 }
 
 function joinAppointment(database, appointment) {
@@ -316,8 +394,8 @@ function joinAppointment(database, appointment) {
 
   return {
     ...appointment,
-    patientName: patient?.fullName ?? "Unknown patient",
-    doctorName: doctor?.fullName ?? "Unknown doctor"
+    patientName: patient ? getFullName(patient) : "Unknown patient",
+    doctorName: doctor ? getFullName(doctor) : "Unknown doctor"
   };
 }
 
@@ -327,8 +405,8 @@ function joinMedicalRecord(database, record) {
 
   return {
     ...record,
-    patientName: patient?.fullName ?? "Unknown patient",
-    doctorName: doctor?.fullName ?? "Unknown doctor"
+    patientName: patient ? getFullName(patient) : "Unknown patient",
+    doctorName: doctor ? getFullName(doctor) : "Unknown doctor"
   };
 }
 
@@ -358,13 +436,17 @@ function listPatients(database, searchParams) {
   const search = searchParams.get("search")?.toLowerCase().trim() ?? "";
   const createdDate = searchParams.get("createdDate");
 
-  return sortByTimestamp(database.patients, "createdAt").filter((patient) => {
+  return sortByTimestamp(database.patients.map(normalizePatient), "createdAt").filter((patient) => {
     const matchesSearch =
       !search ||
       patient.fullName.toLowerCase().includes(search) ||
-      String(patient.patientId).includes(search);
+      String(patient.patientId).includes(search) ||
+      String(patient.email ?? "").toLowerCase().includes(search) ||
+      String(patient.phone ?? "").toLowerCase().includes(search);
+    const matchesGender = !searchParams.get("gender") || patient.gender === searchParams.get("gender");
+    const matchesBloodGroup = !searchParams.get("bloodGroup") || patient.bloodGroup === searchParams.get("bloodGroup");
     const matchesDate = !createdDate || patient.createdAt.startsWith(createdDate);
-    return matchesSearch && matchesDate;
+    return matchesSearch && matchesGender && matchesBloodGroup && matchesDate;
   });
 }
 
@@ -377,7 +459,7 @@ function getPatientDetails(database, patientId) {
 
   const appointments = sortByDateTime(
     database.appointments
-      .filter((appointment) => Number(appointment.patientId) === Number(patientId))
+      .filter((appointment) => String(appointment.patientId) === String(patientId))
       .map((appointment) => joinAppointment(database, appointment)),
     "appointmentDate",
     "appointmentTime",
@@ -386,13 +468,13 @@ function getPatientDetails(database, patientId) {
 
   const medicalRecords = sortByTimestamp(
     database.medicalRecords
-      .filter((record) => Number(record.patientId) === Number(patientId))
+      .filter((record) => String(record.patientId) === String(patientId))
       .map((record) => joinMedicalRecord(database, record)),
     "recordDate"
   );
 
   return {
-    ...patient,
+    ...normalizePatient(patient),
     appointments,
     medicalRecords
   };
@@ -410,9 +492,9 @@ function listAppointments(database, searchParams) {
     database.appointments
       .filter((appointment) => {
         const matchesDate = !filters.appointmentDate || appointment.appointmentDate === filters.appointmentDate;
-        const matchesDoctor = !filters.doctorId || Number(appointment.doctorId) === Number(filters.doctorId);
+        const matchesDoctor = !filters.doctorId || String(appointment.doctorId) === String(filters.doctorId);
         const matchesStatus = !filters.status || appointment.status === filters.status;
-        const matchesPatient = !filters.patientId || Number(appointment.patientId) === Number(filters.patientId);
+        const matchesPatient = !filters.patientId || String(appointment.patientId) === String(filters.patientId);
         return matchesDate && matchesDoctor && matchesStatus && matchesPatient;
       })
       .map((appointment) => joinAppointment(database, appointment)),
@@ -423,12 +505,12 @@ function listAppointments(database, searchParams) {
 
 function assertAppointmentAvailability(database, payload, currentAppointmentId = null) {
   const hasConflict = database.appointments.some((appointment) => {
-    if (currentAppointmentId && Number(appointment.appointmentId) === Number(currentAppointmentId)) {
+    if (currentAppointmentId && String(appointment.appointmentId) === String(currentAppointmentId)) {
       return false;
     }
 
     return (
-      Number(appointment.doctorId) === Number(payload.doctorId) &&
+      String(appointment.doctorId) === String(payload.doctorId) &&
       appointment.appointmentDate === payload.appointmentDate &&
       appointment.appointmentTime === payload.appointmentTime &&
       appointment.status !== "Cancelled"
@@ -447,8 +529,8 @@ function listMedicalRecords(database, searchParams) {
   return sortByTimestamp(
     database.medicalRecords
       .filter((record) => {
-        const matchesPatient = !patientId || Number(record.patientId) === Number(patientId);
-        const matchesDoctor = !doctorId || Number(record.doctorId) === Number(doctorId);
+        const matchesPatient = !patientId || String(record.patientId) === String(patientId);
+        const matchesDoctor = !doctorId || String(record.doctorId ?? record.diagnosedBy) === String(doctorId);
         return matchesPatient && matchesDoctor;
       })
       .map((record) => joinMedicalRecord(database, record)),
@@ -462,24 +544,25 @@ function buildStaffList(database, searchParams) {
 
   const staff = [
     ...database.admins.map((admin) => ({
-      staffKey: `admin-${admin.adminId}`,
-      fullName: admin.fullName,
+      staffKey: admin.adminId,
+      fullName: getFullName(admin),
       role: roles.ADMIN,
-      phone: "",
+      phone: admin.phone ?? "",
       email: admin.email,
       specialization: ""
     })),
     ...database.doctors.map((doctor) => ({
-      staffKey: `doctor-${doctor.doctorId}`,
-      fullName: doctor.fullName,
+      staffKey: doctor.doctorId,
+      fullName: getFullName(doctor),
       role: roles.DOCTOR,
       phone: doctor.phone,
       email: doctor.email,
-      specialization: doctor.specialization
+      specialization: normalizeSpecialization(doctor.specialization),
+      availability: doctor.availability ?? {}
     })),
     ...database.receptionists.map((receptionist) => ({
-      staffKey: `receptionist-${receptionist.receptionistId}`,
-      fullName: receptionist.fullName,
+      staffKey: receptionist.receptionistId,
+      fullName: getFullName(receptionist),
       role: roles.RECEPTIONIST,
       phone: receptionist.phone,
       email: receptionist.email,
@@ -498,48 +581,50 @@ function buildStaffList(database, searchParams) {
 }
 
 function getStaffMember(database, staffKey) {
-  const [role, id] = staffKey.split("-");
+  const role = staffKey.split("-")[0];
+  const id = staffKey;
 
   if (role === roles.ADMIN) {
-    const admin = database.admins.find((item) => Number(item.adminId) === Number(id));
+    const admin = database.admins.find((item) => String(item.adminId) === String(id));
     if (!admin) {
       throw createHttpError("Staff member not found.", 404);
     }
 
     return {
       staffKey: staffKey,
-      fullName: admin.fullName,
+      fullName: getFullName(admin),
       role,
-      phone: "",
+      phone: admin.phone ?? "",
       email: admin.email,
       specialization: ""
     };
   }
 
   if (role === roles.DOCTOR) {
-    const doctor = database.doctors.find((item) => Number(item.doctorId) === Number(id));
+    const doctor = database.doctors.find((item) => String(item.doctorId) === String(id));
     if (!doctor) {
       throw createHttpError("Staff member not found.", 404);
     }
 
     return {
       staffKey: staffKey,
-      fullName: doctor.fullName,
+      fullName: getFullName(doctor),
       role,
       phone: doctor.phone,
       email: doctor.email,
-      specialization: doctor.specialization
+      specialization: normalizeSpecialization(doctor.specialization),
+      availability: doctor.availability ?? {}
     };
   }
 
-  const receptionist = database.receptionists.find((item) => Number(item.receptionistId) === Number(id));
+  const receptionist = database.receptionists.find((item) => String(item.receptionistId) === String(id));
   if (!receptionist) {
     throw createHttpError("Staff member not found.", 404);
   }
 
   return {
     staffKey: staffKey,
-    fullName: receptionist.fullName,
+    fullName: getFullName(receptionist),
     role,
     phone: receptionist.phone,
     email: receptionist.email,
@@ -572,7 +657,7 @@ function buildReports(database, searchParams) {
   }));
   const doctorLoad = database.doctors.map((doctor) => ({
     label: doctor.fullName,
-    value: appointments.filter((appointment) => Number(appointment.doctorId) === Number(doctor.doctorId)).length
+    value: appointments.filter((appointment) => String(appointment.doctorId) === String(doctor.doctorId)).length
   }));
   const patientGrowth = Array.from({ length: 7 }, (_, index) => {
     const date = new Date();
@@ -601,7 +686,7 @@ function buildReports(database, searchParams) {
 
 function getProfile(database, searchParams) {
   const role = searchParams.get("role");
-  const id = Number(searchParams.get("id"));
+  const id = searchParams.get("id");
 
   if (role === roles.ADMIN) {
     return normalizeUser(database.admins.find((item) => item.adminId === id), role);
@@ -618,9 +703,45 @@ function getProfile(database, searchParams) {
   return normalizeUser(database.patients.find((item) => item.patientId === id), role);
 }
 
+function calculateAgeFromDob(dob) {
+  if (!dob) {
+    return "";
+  }
+
+  const birthDate = new Date(dob);
+  if (Number.isNaN(birthDate.getTime())) {
+    return "";
+  }
+
+  const diff = Date.now() - birthDate.getTime();
+  const ageDate = new Date(diff);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
+
+function normalizePatient(patient) {
+  const otherInfo = patient.otherInfo ?? {};
+  const fullName = getFullName(patient);
+  const dob = otherInfo.dob ?? patient.dateOfBirth ?? "";
+
+  return {
+    ...patient,
+    fullName,
+    gender: otherInfo.gender ?? patient.gender ?? "",
+    dateOfBirth: dob,
+    dob,
+    age: dob ? calculateAgeFromDob(dob) : patient.age ?? "",
+    bloodType: otherInfo.bloodType ?? patient.bloodType ?? "",
+    bloodGroup: otherInfo.bloodGroup ?? patient.bloodGroup ?? "",
+    weight: otherInfo.weight ?? "",
+    height: otherInfo.height ?? "",
+    emergencyContact: otherInfo.emergencyContact ?? patient.emergencyContact ?? "",
+    medicalCondition: otherInfo.medicalCondition ?? patient.medicalCondition ?? ""
+  };
+}
+
 function updateProfile(database, payload) {
   const role = payload.role;
-  const id = Number(payload.id);
+  const id = payload.id;
 
   if (role === roles.ADMIN) {
     const admin = database.admins.find((item) => item.adminId === id);
@@ -655,7 +776,7 @@ function updateProfile(database, payload) {
 
 function updatePassword(database, payload) {
   const role = payload.role;
-  const id = Number(payload.id);
+  const id = payload.id;
   let target;
 
   if (role === roles.ADMIN) {
@@ -677,6 +798,59 @@ function updatePassword(database, payload) {
 }
 
 async function handleAuth(method, database, pathname, payload) {
+  if (method === "POST" && (pathname === "/auth/register-patient" || pathname === "/auth/register-doctor")) {
+    const role = pathname.endsWith("patient") ? roles.PATIENT : roles.DOCTOR;
+    const collectionName = role === roles.PATIENT ? "patients" : "doctors";
+    const idKey = role === roles.PATIENT ? "patientId" : "doctorId";
+
+    const existingEmail = [
+      ...database.admins,
+      ...database.doctors,
+      ...database.receptionists,
+      ...database.patients
+    ].some((record) => record.email.toLowerCase() === payload.email.toLowerCase());
+
+    if (existingEmail) {
+      throw createHttpError("This email is already registered.");
+    }
+
+    const id = `${role}-${nextId(database[collectionName], idKey)}`;
+    const record = {
+      [idKey]: id,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      fullName: `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim(),
+      phone: payload.phone,
+      email: payload.email,
+      password: payload.password,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (role === roles.PATIENT) {
+      record.address = payload.address ?? "";
+      record.otherInfo = {
+        bloodType: payload.bloodType ?? "",
+        bloodGroup: payload.bloodGroup ?? "",
+        weight: Number(payload.weight ?? 0),
+        height: Number(payload.height ?? 0),
+        gender: payload.gender ?? "",
+        dob: payload.dateOfBirth ?? payload.dob ?? ""
+      };
+    } else {
+      record.specialization = [payload.specialization].filter(Boolean);
+      record.availability = {};
+    }
+
+    database[collectionName].push(record);
+    writeDatabase(database);
+
+    return {
+      token: `mock-token-${role}-${Date.now()}`,
+      user: normalizeUser(record, role)
+    };
+  }
+
   if (method === "POST" && pathname === "/auth/login") {
     const candidates = [
       ...database.admins.map((item) => ({ record: item, role: roles.ADMIN })),
@@ -709,14 +883,18 @@ async function handleAuth(method, database, pathname, payload) {
 }
 
 function updateStaffRecord(database, staffKey, payload) {
-  const [currentRole, currentIdText] = staffKey.split("-");
-  const currentId = Number(currentIdText);
+  const currentRole = staffKey.split("-")[0];
+  const currentId = staffKey;
 
   if (currentRole === payload.role) {
     if (currentRole === roles.ADMIN) {
       const admin = database.admins.find((item) => item.adminId === currentId);
+      const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
+      admin.firstName = firstName;
+      admin.lastName = lastNameParts.join(" ");
       admin.fullName = payload.fullName;
       admin.email = payload.email;
+      admin.phone = payload.phone;
       if (payload.password) {
         admin.password = payload.password;
       }
@@ -725,10 +903,13 @@ function updateStaffRecord(database, staffKey, payload) {
 
     if (currentRole === roles.DOCTOR) {
       const doctor = database.doctors.find((item) => item.doctorId === currentId);
+      const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
+      doctor.firstName = firstName;
+      doctor.lastName = lastNameParts.join(" ");
       doctor.fullName = payload.fullName;
       doctor.email = payload.email;
       doctor.phone = payload.phone;
-      doctor.specialization = payload.specialization;
+      doctor.specialization = payload.specialization.split(",").map((item) => item.trim()).filter(Boolean);
       if (payload.password) {
         doctor.password = payload.password;
       }
@@ -736,6 +917,9 @@ function updateStaffRecord(database, staffKey, payload) {
     }
 
     const receptionist = database.receptionists.find((item) => item.receptionistId === currentId);
+    const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
+    receptionist.firstName = firstName;
+    receptionist.lastName = lastNameParts.join(" ");
     receptionist.fullName = payload.fullName;
     receptionist.email = payload.email;
     receptionist.phone = payload.phone;
@@ -746,46 +930,46 @@ function updateStaffRecord(database, staffKey, payload) {
   }
 
   if (currentRole === roles.ADMIN) {
-    database.admins = database.admins.filter((item) => item.adminId !== currentId);
+    throw createHttpError("Admin role changes are not available from the frontend.");
   } else if (currentRole === roles.DOCTOR) {
     database.doctors = database.doctors.filter((item) => item.doctorId !== currentId);
   } else {
     database.receptionists = database.receptionists.filter((item) => item.receptionistId !== currentId);
   }
 
-  if (payload.role === roles.ADMIN) {
-    const adminId = nextId(database.admins, "adminId");
-    database.admins.push({
-      adminId: adminId,
-      fullName: payload.fullName,
-      email: payload.email,
-      password: payload.password || "admin123"
-    });
-    return { staffKey: `admin-${adminId}` };
-  }
-
   if (payload.role === roles.DOCTOR) {
-    const doctorId = nextId(database.doctors, "doctorId");
+    const doctorId = `doctor-${nextId(database.doctors, "doctorId")}`;
+    const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
     database.doctors.push({
-      doctorId: doctorId,
+      doctorId,
+      firstName,
+      lastName: lastNameParts.join(" "),
       fullName: payload.fullName,
-      specialization: payload.specialization,
+      specialization: payload.specialization.split(",").map((item) => item.trim()).filter(Boolean),
+      availability: {},
       phone: payload.phone,
       email: payload.email,
-      password: payload.password || "doctor123"
+      password: payload.password || "doctor123",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     });
-    return { staffKey: `doctor-${doctorId}` };
+    return { staffKey: doctorId };
   }
 
-  const receptionistId = nextId(database.receptionists, "receptionistId");
+  const receptionistId = `receptionist-${nextId(database.receptionists, "receptionistId")}`;
+  const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
   database.receptionists.push({
-    receptionistId: receptionistId,
+    receptionistId,
+    firstName,
+    lastName: lastNameParts.join(" "),
     fullName: payload.fullName,
     phone: payload.phone,
     email: payload.email,
-    password: payload.password || "desk123"
+    password: payload.password || "desk123",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   });
-  return { staffKey: `receptionist-${receptionistId}` };
+  return { staffKey: receptionistId };
 }
 
 export const mockApi = {
@@ -810,14 +994,16 @@ export const mockApi = {
     }
 
     if (method === "POST" && pathname === "/patients") {
-      const newId = nextId(database.patients, "patientId");
+      const newId = `patient-${nextId(database.patients, "patientId")}`;
       const patient = {
         patientId: newId,
-        fullName: payload.fullName,
-        age: Number(payload.age),
-        gender: payload.gender,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        fullName: payload.fullName ?? `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim(),
         phone: payload.phone,
+        email: payload.email,
         address: payload.address,
+        otherInfo: payload.otherInfo ?? {},
         createdAt: new Date().toISOString()
       };
       database.patients.push(patient);
@@ -837,18 +1023,21 @@ export const mockApi = {
         if (!patient) {
           throw createHttpError("Patient not found.", 404);
         }
-        patient.fullName = payload.fullName;
-        patient.age = Number(payload.age);
-        patient.gender = payload.gender;
+        patient.firstName = payload.firstName;
+        patient.lastName = payload.lastName;
+        patient.fullName = payload.fullName ?? `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim();
         patient.phone = payload.phone;
+        patient.email = payload.email;
         patient.address = payload.address;
+        patient.otherInfo = payload.otherInfo ?? {};
+        patient.updatedAt = new Date().toISOString();
         writeDatabase(database);
         return getPatientDetails(database, patientId);
       }
 
       if (method === "DELETE") {
         const hasHistory = database.medicalRecords.some(
-          (record) => Number(record.patientId) === Number(patientId)
+          (record) => String(record.patientId) === String(patientId)
         );
 
         if (hasHistory) {
@@ -856,10 +1045,10 @@ export const mockApi = {
         }
 
         database.patients = database.patients.filter(
-          (patient) => Number(patient.patientId) !== Number(patientId)
+          (patient) => String(patient.patientId) !== String(patientId)
         );
         database.appointments = database.appointments.filter(
-          (appointment) => Number(appointment.patientId) !== Number(patientId)
+          (appointment) => String(appointment.patientId) !== String(patientId)
         );
         writeDatabase(database);
         return { success: true };
@@ -875,11 +1064,15 @@ export const mockApi = {
       const newId = nextId(database.appointments, "appointmentId");
       const appointment = {
         appointmentId: newId,
-        patientId: Number(payload.patientId),
-        doctorId: Number(payload.doctorId),
+        patientId: payload.patientId,
+        doctorId: payload.doctorId,
         appointmentDate: payload.appointmentDate,
         appointmentTime: payload.appointmentTime,
-        status: payload.status || "Pending"
+        status: payload.status || "Pending",
+        receptionistId: payload.receptionistId ?? "",
+        otherInfo: payload.otherInfo ?? "",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       database.appointments.push(appointment);
       writeDatabase(database);
@@ -887,8 +1080,8 @@ export const mockApi = {
     }
 
     if (pathname.startsWith("/appointments/")) {
-      const appointmentId = Number(pathname.split("/")[2]);
-      const appointment = database.appointments.find((item) => Number(item.appointmentId) === appointmentId);
+      const appointmentId = pathname.split("/")[2];
+      const appointment = database.appointments.find((item) => String(item.appointmentId) === String(appointmentId));
 
       if (!appointment) {
         throw createHttpError("Appointment not found.", 404);
@@ -896,11 +1089,13 @@ export const mockApi = {
 
       if (method === "PUT") {
         assertAppointmentAvailability(database, payload, appointmentId);
-        appointment.patientId = Number(payload.patientId);
-        appointment.doctorId = Number(payload.doctorId);
+        appointment.patientId = payload.patientId;
+        appointment.doctorId = payload.doctorId;
         appointment.appointmentDate = payload.appointmentDate;
         appointment.appointmentTime = payload.appointmentTime;
         appointment.status = payload.status;
+        appointment.otherInfo = payload.otherInfo ?? appointment.otherInfo ?? "";
+        appointment.updatedAt = new Date().toISOString();
         writeDatabase(database);
         return joinAppointment(database, appointment);
       }
@@ -921,11 +1116,15 @@ export const mockApi = {
       const newId = nextId(database.medicalRecords, "recordId");
       const record = {
         recordId: newId,
-        patientId: Number(payload.patientId),
-        doctorId: Number(payload.doctorId),
+        patientId: payload.patientId,
+        doctorId: payload.doctorId,
+        diagnosedBy: payload.doctorId,
         diagnosis: payload.diagnosis,
         treatment: payload.treatment,
-        recordDate: new Date().toISOString()
+        status: payload.status || "Active",
+        recordDate: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       database.medicalRecords.push(record);
       writeDatabase(database);
@@ -933,18 +1132,21 @@ export const mockApi = {
     }
 
     if (pathname.startsWith("/medical-records/")) {
-      const recordId = Number(pathname.split("/")[2]);
-      const record = database.medicalRecords.find((item) => Number(item.recordId) === recordId);
+      const recordId = pathname.split("/")[2];
+      const record = database.medicalRecords.find((item) => String(item.recordId) === String(recordId));
 
       if (!record) {
         throw createHttpError("Medical record not found.", 404);
       }
 
       if (method === "PUT") {
-        record.patientId = Number(payload.patientId);
-        record.doctorId = Number(payload.doctorId);
+        record.patientId = payload.patientId;
+        record.doctorId = payload.doctorId;
+        record.diagnosedBy = payload.doctorId;
         record.diagnosis = payload.diagnosis;
         record.treatment = payload.treatment;
+        record.status = payload.status || record.status || "Active";
+        record.updatedAt = new Date().toISOString();
         writeDatabase(database);
         return joinMedicalRecord(database, record);
       }
@@ -960,41 +1162,44 @@ export const mockApi = {
       }
 
       if (payload.role === roles.ADMIN) {
-        const adminId = nextId(database.admins, "adminId");
-        database.admins.push({
-          adminId: adminId,
-          fullName: payload.fullName,
-          email: payload.email,
-          password: payload.password
-        });
-        writeDatabase(database);
-        return getStaffMember(database, `admin-${adminId}`);
+        throw createHttpError("Admin accounts cannot be created from the frontend.");
       }
 
       if (payload.role === roles.DOCTOR) {
-        const doctorId = nextId(database.doctors, "doctorId");
+        const doctorId = `doctor-${nextId(database.doctors, "doctorId")}`;
+        const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
         database.doctors.push({
-          doctorId: doctorId,
+          doctorId,
+          firstName,
+          lastName: lastNameParts.join(" "),
           fullName: payload.fullName,
-          specialization: payload.specialization,
+          specialization: payload.specialization.split(",").map((item) => item.trim()).filter(Boolean),
+          availability: {},
           phone: payload.phone,
           email: payload.email,
-          password: payload.password
+          password: payload.password,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
         writeDatabase(database);
-        return getStaffMember(database, `doctor-${doctorId}`);
+        return getStaffMember(database, doctorId);
       }
 
-      const receptionistId = nextId(database.receptionists, "receptionistId");
+      const receptionistId = `receptionist-${nextId(database.receptionists, "receptionistId")}`;
+      const [firstName = "", ...lastNameParts] = payload.fullName.split(" ");
       database.receptionists.push({
-        receptionistId: receptionistId,
+        receptionistId,
+        firstName,
+        lastName: lastNameParts.join(" "),
         fullName: payload.fullName,
         phone: payload.phone,
         email: payload.email,
-        password: payload.password
+        password: payload.password,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       });
       writeDatabase(database);
-      return getStaffMember(database, `receptionist-${receptionistId}`);
+      return getStaffMember(database, receptionistId);
     }
 
     if (pathname.startsWith("/staff/")) {
@@ -1015,8 +1220,8 @@ export const mockApi = {
       }
 
       if (method === "DELETE") {
-        const [role, idText] = staffKey.split("-");
-        const id = Number(idText);
+        const role = staffKey.split("-")[0];
+        const id = staffKey;
 
         if (role === roles.ADMIN) {
           if (database.admins.length === 1) {
@@ -1025,8 +1230,8 @@ export const mockApi = {
           database.admins = database.admins.filter((item) => item.adminId !== id);
         } else if (role === roles.DOCTOR) {
           const hasLinks =
-            database.appointments.some((appointment) => Number(appointment.doctorId) === id) ||
-            database.medicalRecords.some((record) => Number(record.doctorId) === id);
+            database.appointments.some((appointment) => String(appointment.doctorId) === String(id)) ||
+            database.medicalRecords.some((record) => String(record.doctorId ?? record.diagnosedBy) === String(id));
           if (hasLinks) {
             throw createHttpError("Doctors with appointments or medical records cannot be deleted.");
           }

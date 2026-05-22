@@ -72,11 +72,11 @@ export function getInitials(value = "") {
 export function getStatusTone(status = "") {
   const normalized = status.toLowerCase();
 
-  if (normalized === "completed") {
+  if (normalized === "completed" || normalized === "approved") {
     return "completed";
   }
 
-  if (normalized === "cancelled") {
+  if (normalized === "cancelled" || normalized === "declined") {
     return "cancelled";
   }
 

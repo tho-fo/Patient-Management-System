@@ -71,17 +71,18 @@ Stores system administrators who manage the system.
 
 **Fields**
 
-* adminId - String, Document ID
-* authUid - String, Not Null
-* fullName - String, Not Null
+* adminId - String, Firebase Auth UID / Document ID
+* firstName - String, Not Null
+* lastName - String, Not Null
+* phone - String
 * email - String, Not Null
 * createdAt - Timestamp
+* updatedAt - Timestamp
 
 **Constraints**
 
-* `authUid` must map to a valid Firebase Authentication user
 * `email` should match the authenticated user's email
-* `fullName` must not be empty
+* Admin accounts are not created through public frontend registration
 
 ---
 
@@ -92,19 +93,21 @@ Stores all doctors in the hospital.
 
 **Fields**
 
-* doctorId - String, Document ID
-* authUid - String, Not Null
-* fullName - String, Not Null
-* specialization - String
+* doctorId - String, Firebase Auth UID / Document ID
+* firstName - String, Not Null
+* lastName - String, Not Null
 * phone - String
 * email - String
 * createdAt - Timestamp
+* updatedAt - Timestamp
+* specialization - List<String>
+* availability - Map<List<Map<Timestamp>>> grouped by weekday, for example `monday: [{ start: Timestamp, end: Timestamp }]`
 
 **Constraints**
 
 * `doctorId` must be unique
-* `authUid` must map to a valid Firebase Authentication user
-* `fullName` must not be empty
+* `doctorId` maps to a valid Firebase Authentication user
+* Doctor availability is used when booking appointments
 
 ---
 
@@ -115,17 +118,17 @@ Stores staff responsible for patient registration and appointment scheduling.
 
 **Fields**
 
-* receptionistId - String, Document ID
-* authUid - String, Not Null
-* fullName - String, Not Null
+* receptionistId - String, Firebase Auth UID / Document ID
+* firstName - String, Not Null
+* lastName - String, Not Null
 * phone - String
 * email - String
 * createdAt - Timestamp
+* updatedAt - Timestamp
 
 **Constraints**
 
-* `authUid` must map to a valid Firebase Authentication user
-* `fullName` must not be empty
+* `receptionistId` maps to a valid Firebase Authentication user
 
 ---
 
@@ -136,22 +139,25 @@ Stores all registered patient information.
 
 **Fields**
 
-* patientId - String, Document ID
-* authUid - String, Optional
-* fullName - String, Not Null
-* age - Number
-* gender - String
+* patientId - String, Firebase Auth UID / Document ID
+* firstName - String, Not Null
+* lastName - String, Not Null
 * phone - String
 * email - String
 * address - String
 * createdAt - Timestamp
+* updatedAt - Timestamp
+* otherInfo - Map:
+  * bloodType - String
+  * bloodGroup - String
+  * weight - Double
+  * height - Double
+  * gender - String
+  * dob - String
 
 **Constraints**
 
-* `patientId` must be unique
-* `fullName` must not be empty
-* `age` must be a positive number
-* `authUid` is optional but must be valid when present
+* `patientId` maps to a Firebase Authentication user when the patient has self-service login
 
 ---
 
@@ -165,21 +171,25 @@ Stores all appointment scheduling records between patients and doctors.
 * appointmentId - String, Document ID
 * patientId - String, Reference ID
 * doctorId - String, Reference ID
+* receptionistId - String, Optional Reference ID
 * appointmentDate - String, Not Null
 * appointmentTime - String, Not Null
 * status - String, Default `Pending`
+* otherInfo - String
 * createdAt - Timestamp
+* updatedAt - Timestamp
 
 **Constraints**
 
 * `patientId` must reference an existing patient document
 * `doctorId` must reference an existing doctor document
-* `status` values can be: Pending, Completed, Cancelled
+* `status` values can be: Pending, Approved, Declined, Completed
 
 **Notes**
 
 * A patient can have multiple appointments
 * A doctor can attend multiple appointments
+* A Receptions can book multiple appointments
 
 ---
 
@@ -192,15 +202,18 @@ Stores diagnosis and treatment details for patients.
 
 * recordId - String, Document ID
 * patientId - String, Reference ID
-* doctorId - String, Reference ID
+* diagnosedBy - String, Doctor Reference ID
 * diagnosis - String
 * treatment - String
-* recordDate - Timestamp
+* status - String
+* createdAt - Timestamp
+* updatedAt - Timestamp
 
 **Constraints**
 
 * `patientId` must reference an existing patient document
-* `doctorId` must reference an existing doctor document
+* `diagnosedBy` must reference an existing doctor document
+* Only the diagnosing doctor can edit or delete their own medical records
 
 **Notes**
 
@@ -215,8 +228,11 @@ Stores diagnosis and treatment details for patients.
 
 * One patient -> many appointments
 * One doctor -> many appointments
+* One receptionist -> many appointments
+* One appointment -> one patient, one doctor, and zero or one receptionist
 * One patient -> many medicalRecords
 * One doctor -> many medicalRecords
+* One medicalRecord -> one patient and one diagnosing doctor
 
 ---
 
@@ -253,8 +269,9 @@ receptionists
 Allowed values:
 
 * Pending
+* Approved
+* Declined
 * Completed
-* Cancelled
 
 ### **7.2 gender**
 
@@ -355,34 +372,42 @@ This schema can be expanded to include:
 
 ```text
 patients/{patientId}
-  fullName: string
-  age: number
-  gender: string
+  firstName: string
+  lastName: string
   phone: string
+  email: string
   address: string
+  otherInfo: map
   createdAt: timestamp
+  updatedAt: timestamp
 
 doctors/{doctorId}
-  authUid: string
-  fullName: string
-  specialization: string
+  firstName: string
+  lastName: string
+  specialization: list<string>
+  availability: map
   phone: string
   email: string
 
 appointments/{appointmentId}
   patientId: string
   doctorId: string
+  receptionistId: string
   appointmentDate: string
   appointmentTime: string
   status: string
+  otherInfo: string
   createdAt: timestamp
+  updatedAt: timestamp
 
 medicalRecords/{recordId}
   patientId: string
-  doctorId: string
+  diagnosedBy: string
   diagnosis: string
   treatment: string
-  recordDate: timestamp
+  status: string
+  createdAt: timestamp
+  updatedAt: timestamp
 ```
 
 ---

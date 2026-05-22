@@ -63,23 +63,31 @@ Admin
 * Login
 * Manage Doctors
 * Manage Receptionists
+* Manage Patients
+* Monitor System Activity
 * View Reports
 
 Receptionist
 
 * Register Patient
 * Schedule Appointment
-* Manage Patient Records
+* View Pending, Approved, and Declined Appointments
+* Update Patient Information
 
 Doctor
 
 * View Appointments
+* Schedule Approved Appointments
+* Approve or Decline Appointment Requests
 * View Patient Records
 * Add Diagnosis
-* Update Medical Records
+* Prescribe Treatment
+* Update Own Medical Records
+* Update Availability
 
 Patient
 
+* Book Appointments
 * View Appointments
 * View Medical Records
 
@@ -116,55 +124,70 @@ classDiagram
 
    class Admin {
        +string adminId
-       +string authUid
-       +string fullName
+       +string firstName
+       +string lastName
+       +string phone
        +string email
        +datetime createdAt
+       +datetime updatedAt
    }
 
    class Doctor {
        +string doctorId
-       +string authUid
-       +string fullName
-       +string specialization
+       +string firstName
+       +string lastName
+       +list~string~ specialization
+       +map availability
        +string phone
+       +string email
+       +datetime createdAt
+       +datetime updatedAt
    }
 
    class Receptionist {
        +string receptionistId
-       +string authUid
-       +string fullName
+       +string firstName
+       +string lastName
        +string phone
+       +string email
+       +datetime createdAt
+       +datetime updatedAt
    }
 
    class Patient {
        +string patientId
-       +string authUid
-       +string fullName
-       +number age
-       +string gender
+       +string firstName
+       +string lastName
        +string phone
+       +string email
        +string address
+       +map otherInfo
        +datetime createdAt
+       +datetime updatedAt
    }
 
    class Appointment {
        +string appointmentId
        +string patientId
        +string doctorId
+       +string receptionistId
        +string appointmentDate
        +string appointmentTime
        +string status
+       +string otherInfo
        +datetime createdAt
+       +datetime updatedAt
    }
 
    class MedicalRecord {
        +string recordId
        +string patientId
-       +string doctorId
+       +string diagnosedBy
        +text diagnosis
        +text treatment
-       +datetime recordDate
+       +string status
+       +datetime createdAt
+       +datetime updatedAt
    }
 
    AuthAccount "1" --> "0..1" Admin : maps_to
@@ -174,7 +197,8 @@ classDiagram
    Patient "1" --> "0..*" Appointment : books
    Doctor "1" --> "0..*" Appointment : attends
    Patient "1" --> "0..*" MedicalRecord : has
-   Doctor "1" --> "0..*" MedicalRecord : writes
+   Receptionist "1" --> "0..*" Appointment : books
+   Doctor "1" --> "0..*" MedicalRecord : diagnoses
 ```
 
 ---
@@ -353,8 +377,9 @@ flowchart LR
 
 Appointments move through these states:
 
-* Scheduled -> Completed
-* Scheduled -> Cancelled
+* Pending -> Approved
+* Pending -> Declined
+* Approved -> Completed
 
 ---
 

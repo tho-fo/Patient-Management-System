@@ -8,7 +8,7 @@ import { qs, formToObject, clearFormErrors, applyFormErrors, renderInlineAlert, 
 import { validateAppointment } from "../../../utils/validators.js";
 
 function canManageAppointments(role) {
-  return role === roles.ADMIN || role === roles.RECEPTIONIST;
+  return role === roles.ADMIN || role === roles.DOCTOR || role === roles.RECEPTIONIST;
 }
 
 function getScopedFilters(role, currentUser) {
@@ -88,8 +88,9 @@ export const appointmentListPage = {
                   <select class="form-select" id="status" name="status">
                     <option value="">All statuses</option>
                     <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Declined">Declined</option>
                     <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
                   </select>
                 </div>
                 <div class="col-lg-2 d-flex gap-2">
@@ -146,8 +147,9 @@ export const appointmentListPage = {
                   <label class="form-label fw-semibold" for="modal_status">Status</label>
                   <select class="form-select" id="modal_status" name="status">
                     <option value="Pending">Pending</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Declined">Declined</option>
                     <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
                   </select>
                 </div>
               </div>
@@ -170,10 +172,6 @@ export const appointmentListPage = {
 
     const loadTable = async (extraFilters = {}) => {
       const filters = { ...scopedFilters, ...extraFilters };
-
-      if (filters.doctorId && String(filters.doctorId).startsWith("doctor-")) {
-        filters.doctorId = filters.doctorId.split("-")[1];
-      }
 
       const appointments = await appointmentService.list(filters);
       tableRegion.innerHTML = renderDataTable({
@@ -206,7 +204,7 @@ export const appointmentListPage = {
 
     const openModal = async (appointmentId) => {
       const appointments = await loadTable(formToObject(form));
-      const appointment = appointments.find((item) => Number(item.appointmentId) === Number(appointmentId));
+      const appointment = appointments.find((item) => String(item.appointmentId) === String(appointmentId));
       if (!appointment) {
         return;
       }
@@ -215,7 +213,7 @@ export const appointmentListPage = {
       renderInlineAlert(alertContainer, "");
       qs("#modal_appointmentId", modalForm).value = appointment.appointmentId;
       qs("#modal_patientId", modalForm).value = appointment.patientId;
-      qs("#modal_doctorId", modalForm).value = `doctor-${appointment.doctorId}`;
+      qs("#modal_doctorId", modalForm).value = appointment.doctorId;
       qs("#modal_appointmentDate", modalForm).value = appointment.appointmentDate;
       qs("#modal_appointmentTime", modalForm).value = appointment.appointmentTime;
       qs("#modal_status", modalForm).value = appointment.status;
@@ -237,7 +235,6 @@ export const appointmentListPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(modalForm);
-      payload.doctorId = payload.doctorId.split("-")[1];
       const errors = validateAppointment(payload);
 
       if (Object.keys(errors).length > 0) {

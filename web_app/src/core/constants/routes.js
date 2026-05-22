@@ -60,7 +60,7 @@ export const navigationItems = [
     label: "Profile",
     path: routePaths.profile,
     icon: "bi-person-circle",
-    roles: [roles.DOCTOR, roles.PATIENT]
+    roles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT]
   },
   {
     label: "Settings",

@@ -1,21 +1,20 @@
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  serverTimestamp,
-  updateDoc,
-  where
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-import { db } from "../../../services/firebase_config.js";
+import { appConfig } from "../../../config/appConfig.js";
+import { httpClient } from "../../../core/api/httpClient.js";
 
-const patientsCollection = collection(db, "patients");
+function buildFullName(patient) {
+  return patient.fullName ?? `${patient.firstName ?? ""} ${patient.lastName ?? ""}`.trim();
+}
 
 function calculateAge(dob) {
+  if (!dob) {
+    return "";
+  }
+
   const birthDate = new Date(dob);
+  if (Number.isNaN(birthDate.getTime())) {
+    return "";
+  }
+
   const diff = Date.now() - birthDate.getTime();
   const ageDate = new Date(diff);
   return Math.abs(ageDate.getUTCFullYear() - 1970);
@@ -37,101 +36,75 @@ function timestampToDateString(value) {
   return "";
 }
 
-function buildFullName(patient) {
-  const firstName = patient.firstName ?? "";
-  const lastName = patient.lastName ?? "";
-  return patient.fullName ?? `${firstName} ${lastName}`.trim();
-}
-
-function normalizePatient(snapshot) {
-  const data = snapshot.data();
+function normalizePatientRecord(data, id) {
+  const otherInfo = data.otherInfo ?? {};
   const fullName = buildFullName(data);
   const [fallbackFirstName = "", ...fallbackLastNameParts] = fullName.split(" ");
-  const firstName = data.firstName ?? fallbackFirstName;
-  const lastName = data.lastName ?? fallbackLastNameParts.join(" ");
-  const dateOfBirth = data.dateOfBirth ?? "";
-  const createdAt = timestampToDateString(data.createdAt);
-  const patientId = data.patientId ?? snapshot.id;
-  const authUid = data.authUid ?? data.uid ?? "";
+  const dob = otherInfo.dob ?? data.dateOfBirth ?? data.dob ?? "";
 
   return {
-    id: snapshot.id,
-    patientId,
-    uid: data.uid ?? authUid,
-    authUid,
-    firstName,
-    lastName,
+    id,
+    patientId: data.patientId ?? id,
+    firstName: data.firstName ?? fallbackFirstName,
+    lastName: data.lastName ?? fallbackLastNameParts.join(" "),
     fullName,
-    gender: data.gender ?? "",
-    dateOfBirth,
-    age: Number(data.age ?? (dateOfBirth ? calculateAge(dateOfBirth) : 0)),
     phone: data.phone ?? "",
     email: data.email ?? "",
     address: data.address ?? "",
-    bloodGroup: data.bloodGroup ?? "",
-    emergencyContact: data.emergencyContact ?? "",
-    medicalCondition: data.medicalCondition ?? "",
-    createdAt,
-    createdAtRaw: data.createdAt ?? null,
-    appointments: [],
-    medicalRecords: []
+    otherInfo,
+    gender: otherInfo.gender ?? data.gender ?? "",
+    dob,
+    dateOfBirth: dob,
+    age: dob ? calculateAge(dob) : Number(data.age ?? 0),
+    bloodType: otherInfo.bloodType ?? data.bloodType ?? "",
+    bloodGroup: otherInfo.bloodGroup ?? data.bloodGroup ?? "",
+    weight: otherInfo.weight ?? "",
+    height: otherInfo.height ?? "",
+    emergencyContact: otherInfo.emergencyContact ?? data.emergencyContact ?? "",
+    medicalCondition: otherInfo.medicalCondition ?? data.medicalCondition ?? "",
+    createdAt: timestampToDateString(data.createdAt),
+    updatedAt: timestampToDateString(data.updatedAt),
+    appointments: data.appointments ?? [],
+    medicalRecords: data.medicalRecords ?? []
   };
 }
 
-function normalizeFilters(filters = {}) {
-  return {
-    search: filters.search?.trim().toLowerCase() ?? "",
-    gender: filters.gender ?? "",
-    bloodGroup: filters.bloodGroup ?? "",
-    createdDate: filters.createdDate ?? ""
-  };
-}
-
-function matchesFilters(patient, filters) {
-  const normalized = normalizeFilters(filters);
-  const searchable = [
-    patient.fullName,
-    patient.firstName,
-    patient.lastName,
-    patient.phone,
-    patient.email,
-    patient.patientId
-  ].join(" ").toLowerCase();
-
-  const matchesSearch = !normalized.search || searchable.includes(normalized.search);
-  const matchesGender = !normalized.gender || patient.gender === normalized.gender;
-  const matchesBloodGroup = !normalized.bloodGroup || patient.bloodGroup === normalized.bloodGroup;
-  const matchesDate = !normalized.createdDate || patient.createdAt.startsWith(normalized.createdDate);
-
-  return matchesSearch && matchesGender && matchesBloodGroup && matchesDate;
-}
-
-function buildPatientPayload(payload, currentUser = null) {
+function buildPatientPayload(payload) {
   const firstName = payload.firstName?.trim() ?? "";
   const lastName = payload.lastName?.trim() ?? "";
-  const fullName = `${firstName} ${lastName}`.trim();
-  const age = payload.dateOfBirth ? calculateAge(payload.dateOfBirth) : Number(payload.age ?? 0);
-  const ownerUid = payload.uid?.trim() ?? "";
+  const dob = payload.dateOfBirth ?? payload.dob ?? "";
 
   return {
-    uid: ownerUid,
-    authUid: ownerUid,
     firstName,
     lastName,
-    fullName,
-    gender: payload.gender,
-    dateOfBirth: payload.dateOfBirth,
-    age,
+    fullName: `${firstName} ${lastName}`.trim(),
     phone: payload.phone?.trim() ?? "",
     email: payload.email?.trim() ?? "",
     address: payload.address?.trim() ?? "",
-    bloodGroup: payload.bloodGroup ?? "",
-    emergencyContact: payload.emergencyContact?.trim() ?? "",
-    medicalCondition: payload.medicalCondition?.trim() ?? ""
+    otherInfo: {
+      bloodType: payload.bloodType?.trim() ?? "",
+      bloodGroup: payload.bloodGroup ?? "",
+      weight: Number(payload.weight ?? 0),
+      height: Number(payload.height ?? 0),
+      gender: payload.gender ?? "",
+      dob,
+      emergencyContact: payload.emergencyContact?.trim() ?? "",
+      medicalCondition: payload.medicalCondition?.trim() ?? ""
+    }
   };
 }
 
-async function getLinkedRecords(collectionName, patientId) {
+async function loadFirestore() {
+  const [{ db }, firestoreSdk] = await Promise.all([
+    import("../../../services/firebase_config.js"),
+    import("https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js")
+  ]);
+
+  return { db, ...firestoreSdk };
+}
+
+async function getLinkedRecords(firestore, collectionName, patientId) {
+  const { db, collection, getDocs, query, where } = firestore;
   const recordsQuery = query(collection(db, collectionName), where("patientId", "==", patientId));
   const recordsSnapshot = await getDocs(recordsQuery);
 
@@ -141,11 +114,15 @@ async function getLinkedRecords(collectionName, patientId) {
     return {
       id: recordSnapshot.id,
       ...data,
+      appointmentId: data.appointmentId ?? recordSnapshot.id,
+      recordId: data.recordId ?? recordSnapshot.id,
       patientId: data.patientId ?? patientId,
       patientName: data.patientName ?? "Selected patient",
-      doctorName: data.doctorName ?? data.doctorId ?? "-",
+      doctorId: data.doctorId ?? data.diagnosedBy ?? "",
+      doctorName: data.doctorName ?? data.diagnosedBy ?? "-",
       createdAt: timestampToDateString(data.createdAt),
-      recordDate: timestampToDateString(data.recordDate) || data.recordDate || "",
+      updatedAt: timestampToDateString(data.updatedAt),
+      recordDate: timestampToDateString(data.createdAt ?? data.recordDate),
       appointmentDate: data.appointmentDate ?? "",
       appointmentTime: data.appointmentTime ?? "",
       status: data.status ?? "Pending"
@@ -153,27 +130,50 @@ async function getLinkedRecords(collectionName, patientId) {
   });
 }
 
+async function firestoreList(filters = {}) {
+  const firestore = await loadFirestore();
+  const { db, collection, getDocs } = firestore;
+  const snapshot = await getDocs(collection(db, "patients"));
+  const search = filters.search?.trim().toLowerCase() ?? "";
+
+  return snapshot.docs
+    .map((patientSnapshot) => normalizePatientRecord(patientSnapshot.data(), patientSnapshot.id))
+    .sort((left, right) => new Date(right.createdAt || 0) - new Date(left.createdAt || 0))
+    .filter((patient) => {
+      const searchable = [patient.fullName, patient.phone, patient.email, patient.patientId].join(" ").toLowerCase();
+      const matchesSearch = !search || searchable.includes(search);
+      const matchesGender = !filters.gender || patient.gender === filters.gender;
+      const matchesBloodGroup = !filters.bloodGroup || patient.bloodGroup === filters.bloodGroup;
+      return matchesSearch && matchesGender && matchesBloodGroup;
+    });
+}
+
 export const patientService = {
   async list(filters = {}) {
-    const snapshot = await getDocs(patientsCollection);
+    if (appConfig.useMockApi) {
+      return httpClient.get("/patients", filters);
+    }
 
-    return snapshot.docs
-      .map(normalizePatient)
-      .sort((left, right) => new Date(right.createdAt || 0) - new Date(left.createdAt || 0))
-      .filter((patient) => matchesFilters(patient, filters));
+    return firestoreList(filters);
   },
 
   async getById(id) {
+    if (appConfig.useMockApi) {
+      return httpClient.get(`/patients/${id}`);
+    }
+
+    const firestore = await loadFirestore();
+    const { db, doc, getDoc } = firestore;
     const patientSnapshot = await getDoc(doc(db, "patients", id));
 
     if (!patientSnapshot.exists()) {
       throw new Error("Patient record was not found.");
     }
 
-    const patient = normalizePatient(patientSnapshot);
+    const patient = normalizePatientRecord(patientSnapshot.data(), patientSnapshot.id);
     const [appointments, medicalRecords] = await Promise.all([
-      getLinkedRecords("appointments", patient.patientId),
-      getLinkedRecords("medicalRecords", patient.patientId)
+      getLinkedRecords(firestore, "appointments", patient.patientId),
+      getLinkedRecords(firestore, "medicalRecords", patient.patientId)
     ]);
 
     return {
@@ -184,40 +184,52 @@ export const patientService = {
   },
 
   async create(payload, currentUser = null) {
+    if (appConfig.useMockApi) {
+      return httpClient.post("/patients", buildPatientPayload(payload));
+    }
+
+    const firestore = await loadFirestore();
+    const { db, addDoc, collection, serverTimestamp, updateDoc } = firestore;
     const patientData = {
-      ...buildPatientPayload(payload, currentUser),
-      createdBy: currentUser?.id ?? currentUser?.uid ?? currentUser?.authUid ?? "",
+      ...buildPatientPayload(payload),
+      createdBy: currentUser?.id ?? "",
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };
-    const documentReference = await addDoc(patientsCollection, patientData);
+    const documentReference = await addDoc(collection(db, "patients"), patientData);
     await updateDoc(documentReference, { patientId: documentReference.id });
 
     return this.getById(documentReference.id);
   },
 
   async update(id, payload, currentUser = null) {
+    if (appConfig.useMockApi) {
+      return httpClient.put(`/patients/${id}`, buildPatientPayload(payload));
+    }
+
+    const firestore = await loadFirestore();
+    const { db, doc, getDoc, serverTimestamp, updateDoc } = firestore;
     const existingSnapshot = await getDoc(doc(db, "patients", id));
 
     if (!existingSnapshot.exists()) {
       throw new Error("Patient record was not found.");
     }
 
-    const existingPatient = normalizePatient(existingSnapshot);
-    const patientData = {
-      ...buildPatientPayload(payload, currentUser),
-      uid: payload.uid?.trim() || existingPatient.uid,
-      authUid: payload.uid?.trim() || existingPatient.authUid,
-      createdBy: existingSnapshot.data().createdBy ?? "",
-      updatedBy: currentUser?.id ?? currentUser?.uid ?? currentUser?.authUid ?? "",
+    await updateDoc(doc(db, "patients", id), {
+      ...buildPatientPayload(payload),
+      updatedBy: currentUser?.id ?? "",
       updatedAt: serverTimestamp()
-    };
-    await updateDoc(doc(db, "patients", id), patientData);
+    });
 
     return this.getById(id);
   },
 
   async remove(id) {
+    if (appConfig.useMockApi) {
+      return httpClient.delete(`/patients/${id}`);
+    }
+
+    const { db, deleteDoc, doc } = await loadFirestore();
     await deleteDoc(doc(db, "patients", id));
     return { success: true };
   }

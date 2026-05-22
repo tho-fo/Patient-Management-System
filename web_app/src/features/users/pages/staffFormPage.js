@@ -46,7 +46,7 @@ export const staffFormPage = {
                   <label class="form-label fw-semibold" for="role">Role</label>
                   <select class="form-select" id="role" name="role">
                     <option value="">Select role</option>
-                    <option value="admin" ${staff?.role === "admin" ? "selected" : ""}>Admin</option>
+                    ${isEdit && staff?.role === "admin" ? `<option value="admin" selected>Admin</option>` : ""}
                     <option value="doctor" ${staff?.role === "doctor" ? "selected" : ""}>Doctor</option>
                     <option value="receptionist" ${staff?.role === "receptionist" ? "selected" : ""}>Receptionist</option>
                   </select>
@@ -55,6 +55,7 @@ export const staffFormPage = {
                 <div class="col-md-6 ${specializationClass(staff?.role)}" id="specializationGroup">
                   <label class="form-label fw-semibold" for="specialization">Specialization</label>
                   <input class="form-control" id="specialization" name="specialization" type="text" value="${staff?.specialization ?? ""}">
+                  <div class="form-note">Separate multiple specializations with commas.</div>
                   <div class="invalid-feedback" data-error-for="specialization"></div>
                 </div>
                 <div class="col-md-6">

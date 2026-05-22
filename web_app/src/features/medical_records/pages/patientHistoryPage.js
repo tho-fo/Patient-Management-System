@@ -8,7 +8,7 @@ import { qs, formToObject, clearFormErrors, applyFormErrors, renderInlineAlert, 
 import { validateMedicalRecord } from "../../../utils/validators.js";
 
 function canEditRecords(role) {
-  return role === roles.ADMIN || role === roles.DOCTOR;
+  return role === roles.DOCTOR;
 }
 
 function buildPatientOptions(patients) {
@@ -19,7 +19,7 @@ function buildDoctorOptions(doctors) {
   return doctors.map((doctor) => `<option value="${doctor.staffKey}">${doctor.fullName} - ${doctor.specialization}</option>`).join("");
 }
 
-function buildRows(records, role) {
+function buildRows(records, context) {
   return records.map((record) => `
     <tr>
       <td>${record.patientName}</td>
@@ -28,7 +28,9 @@ function buildRows(records, role) {
       <td>${record.treatment}</td>
       <td>${new Date(record.recordDate).toLocaleDateString()}</td>
       <td class="text-end">
-        ${canEditRecords(role) ? `<button class="btn btn-sm btn-outline-primary" type="button" data-edit-record="${record.recordId}">Edit</button>` : ""}
+        ${canEditRecords(context.currentUser.role) && String(record.doctorId ?? record.diagnosedBy) === String(context.currentUser.id)
+          ? `<button class="btn btn-sm btn-outline-primary" type="button" data-edit-record="${record.recordId}">Edit</button>`
+          : ""}
       </td>
     </tr>
   `);
@@ -83,7 +85,7 @@ export const patientHistoryPage = {
             <div id="historyTableRegion">
               ${renderDataTable({
                 headers: ["Patient", "Doctor", "Diagnosis", "Treatment", "Date", "Actions"],
-                rows: buildRows(records, context.currentUser.role),
+                rows: buildRows(records, context),
                 emptyMessage: "No medical records matched the current selection."
               })}
             </div>
@@ -146,7 +148,7 @@ export const patientHistoryPage = {
       const records = await medicalRecordService.list({ ...scopedFilter, ...extra });
       tableRegion.innerHTML = renderDataTable({
         headers: ["Patient", "Doctor", "Diagnosis", "Treatment", "Date", "Actions"],
-        rows: buildRows(records, context.currentUser.role),
+        rows: buildRows(records, context),
         emptyMessage: "No medical records matched the current selection."
       });
       return records;
@@ -188,7 +190,7 @@ export const patientHistoryPage = {
       renderInlineAlert(alertContainer, "");
       qs("#modal_recordId", modalForm).value = record.recordId;
       qs("#modal_record_patientId", modalForm).value = record.patientId;
-      qs("#modal_record_doctorId", modalForm).value = `doctor-${record.doctorId}`;
+      qs("#modal_record_doctorId", modalForm).value = record.doctorId ?? record.diagnosedBy;
       qs("#modal_diagnosis", modalForm).value = record.diagnosis;
       qs("#modal_treatment", modalForm).value = record.treatment;
       modalInstance.show();
@@ -200,7 +202,6 @@ export const patientHistoryPage = {
       renderInlineAlert(alertContainer, "");
 
       const payload = formToObject(modalForm);
-      payload.doctorId = payload.doctorId.split("-")[1];
       const errors = validateMedicalRecord(payload);
       if (Object.keys(errors).length > 0) {
         applyFormErrors(modalForm, errors);

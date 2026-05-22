@@ -1,19 +1,48 @@
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  limit,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { appConfig } from "../../../config/appConfig.js";
+import { httpClient } from "../../../core/api/httpClient.js";
 import { roles } from "../../../core/constants/roles.js";
-import { auth, db } from "../../../services/firebase_config.js";
+import { store } from "../../../shared/state/store.js";
 
-function waitForCurrentUser() {
+function buildFullName(data) {
+  return data.fullName ?? `${data.firstName ?? ""} ${data.lastName ?? ""}`.trim();
+}
+
+function normalizeProfile(snapshot, role) {
+  const data = snapshot.data();
+  const otherInfo = data.otherInfo ?? {};
+
+  return {
+    id: data.adminId ?? data.patientId ?? data.doctorId ?? data.receptionistId ?? snapshot.id,
+    role,
+    firstName: data.firstName ?? "",
+    lastName: data.lastName ?? "",
+    fullName: buildFullName(data),
+    email: data.email ?? "",
+    phone: data.phone ?? "",
+    gender: otherInfo.gender ?? data.gender ?? "",
+    dateOfBirth: otherInfo.dob ?? data.dateOfBirth ?? "",
+    age: data.age ?? "",
+    address: data.address ?? "",
+    specialization: Array.isArray(data.specialization) ? data.specialization.join(", ") : data.specialization ?? "",
+    availability: data.availability ?? {}
+  };
+}
+
+async function loadFirebase() {
+  const [{ auth, db }, authSdk, firestoreSdk] = await Promise.all([
+    import("../../../services/firebase_config.js"),
+    import("https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js"),
+    import("https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js")
+  ]);
+
+  return { auth, db, ...authSdk, ...firestoreSdk };
+}
+
+async function waitForCurrentUser(firebase) {
+  const { auth, onAuthStateChanged } = firebase;
+
   if (auth.currentUser) {
-    return Promise.resolve(auth.currentUser);
+    return auth.currentUser;
   }
 
   return new Promise((resolve, reject) => {
@@ -29,48 +58,6 @@ function waitForCurrentUser() {
       }
     );
   });
-}
-
-async function findProfile(collectionName, uid) {
-  const directSnapshot = await getDoc(doc(db, collectionName, uid));
-
-  if (directSnapshot.exists()) {
-    return directSnapshot;
-  }
-
-  const authUidQuery = query(collection(db, collectionName), where("authUid", "==", uid), limit(1));
-  const authUidSnapshot = await getDocs(authUidQuery);
-
-  if (!authUidSnapshot.empty) {
-    return authUidSnapshot.docs[0];
-  }
-
-  const uidQuery = query(collection(db, collectionName), where("uid", "==", uid), limit(1));
-  const uidSnapshot = await getDocs(uidQuery);
-
-  return uidSnapshot.empty ? null : uidSnapshot.docs[0];
-}
-
-function normalizeProfile(snapshot, role) {
-  const data = snapshot.data();
-  const authUid = data.authUid ?? data.uid ?? snapshot.id;
-
-  return {
-    id: data.patientId ?? data.doctorId ?? snapshot.id,
-    uid: data.uid ?? authUid,
-    authUid,
-    role,
-    fullName: data.fullName ?? "",
-    email: data.email ?? "",
-    phone: data.phone ?? "",
-    gender: data.gender ?? "",
-    dateOfBirth: data.dateOfBirth ?? "",
-    age: data.age ?? "",
-    address: data.address ?? "",
-    specialization: data.specialization ?? "",
-    licenseNumber: data.licenseNumber ?? "",
-    yearsOfExperience: data.yearsOfExperience ?? ""
-  };
 }
 
 export function calculateAge(dob) {
@@ -91,23 +78,43 @@ export function calculateAge(dob) {
 
 export const profileService = {
   async getCurrentProfile() {
-    const user = await waitForCurrentUser();
-    const patientSnapshot = await findProfile("patients", user.uid);
+    const currentUser = store.getCurrentUser();
 
-    if (patientSnapshot) {
-      return normalizeProfile(patientSnapshot, roles.PATIENT);
+    if (appConfig.useMockApi && currentUser) {
+      return httpClient.get("/settings/profile", {
+        role: currentUser.role,
+        id: currentUser.id
+      });
     }
 
-    const doctorSnapshot = await findProfile("doctors", user.uid);
+    const firebase = await loadFirebase();
+    const { db, doc, getDoc } = firebase;
+    const user = await waitForCurrentUser(firebase);
+    const collectionByRole = {
+      [roles.ADMIN]: "admins",
+      [roles.DOCTOR]: "doctors",
+      [roles.RECEPTIONIST]: "receptionists",
+      [roles.PATIENT]: "patients"
+    };
 
-    if (doctorSnapshot) {
-      return normalizeProfile(doctorSnapshot, roles.DOCTOR);
+    for (const [role, collectionName] of Object.entries(collectionByRole)) {
+      const snapshot = await getDoc(doc(db, collectionName, user.uid));
+
+      if (snapshot.exists()) {
+        return normalizeProfile(snapshot, role);
+      }
     }
 
-    throw new Error("No patient or doctor profile was found for this account.");
+    throw new Error("No role profile was found for this account.");
   },
 
   async logout() {
+    if (appConfig.useMockApi) {
+      return httpClient.post("/auth/logout");
+    }
+
+    const { auth, signOut } = await loadFirebase();
     await signOut(auth);
+    return { success: true };
   }
 };
