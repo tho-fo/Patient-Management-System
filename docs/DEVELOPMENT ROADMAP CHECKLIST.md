@@ -178,6 +178,7 @@ Use this document as a working todo list during development.
 
 - [ ] Create patient registration page
 - [ ] Create doctor registration page if needed
+- [ ] Create receptionist registration page
 - [ ] Validate registration steps
 - [ ] Create Firebase Authentication account
 - [ ] Create related Firestore profile document
@@ -194,6 +195,7 @@ Use this document as a working todo list during development.
 - [ ] Return consistent session user object
 - [ ] Handle missing profile records safely
 - [ ] Do not expose frontend admin account registration
+- [ ] Allow receptionist account creation from the frontend
 
 ---
 

@@ -144,6 +144,19 @@ async function registerWithProfile(payload, role) {
       });
     }
 
+    if (role === roles.RECEPTIONIST) {
+      await setDoc(doc(db, "receptionists", uid), {
+        receptionistId: uid,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        fullName,
+        phone: payload.phone,
+        email: payload.email,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp()
+      });
+    }
+
     return buildSession(userCredential, { db, doc, getDoc });
   } catch (error) {
     throw formatAuthError(error);
@@ -157,6 +170,10 @@ export const authService = {
 
   async registerDoctor(payload) {
     return registerWithProfile(payload, roles.DOCTOR);
+  },
+
+  async registerReceptionist(payload) {
+    return registerWithProfile(payload, roles.RECEPTIONIST);
   },
 
   async login(payload) {

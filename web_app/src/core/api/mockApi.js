@@ -18,258 +18,12 @@ function getAvailabilityTimestamp(dayOffset, time = "09:00:00") {
 
 function seedDatabase() {
   return {
-    admins: [
-      {
-        adminId: "admin-1",
-        firstName: "System",
-        lastName: "Administrator",
-        email: "admin@hospital.local",
-        phone: "555-0001",
-        password: "admin123",
-        createdAt: getTimestamp(-10, "08:00:00"),
-        updatedAt: getTimestamp(-10, "08:00:00")
-      }
-    ],
-    doctors: [
-      {
-        doctorId: "doctor-1",
-        firstName: "Miriam",
-        lastName: "Kato",
-        specialization: ["Cardiology"],
-        availability: {
-          monday: [{ start: getAvailabilityTimestamp(3, "06:00:00"), end: getAvailabilityTimestamp(3, "08:00:00") }],
-          tuesday: [],
-          wednesday: [{ start: getAvailabilityTimestamp(5, "12:00:00"), end: getAvailabilityTimestamp(5, "18:00:00") }]
-        },
-        phone: "555-0111",
-        email: "miriam.kato@hospital.local",
-        password: "doctor123",
-        createdAt: getTimestamp(-9, "08:00:00"),
-        updatedAt: getTimestamp(-9, "08:00:00")
-      },
-      {
-        doctorId: "doctor-2",
-        firstName: "James",
-        lastName: "Okoye",
-        specialization: ["Pediatrics"],
-        availability: {
-          monday: [{ start: getAvailabilityTimestamp(3, "10:00:00"), end: getAvailabilityTimestamp(3, "14:00:00") }],
-          tuesday: [{ start: getAvailabilityTimestamp(4, "09:00:00"), end: getAvailabilityTimestamp(4, "12:00:00") }],
-          wednesday: []
-        },
-        phone: "555-0112",
-        email: "james.okoye@hospital.local",
-        password: "doctor123",
-        createdAt: getTimestamp(-9, "08:10:00"),
-        updatedAt: getTimestamp(-9, "08:10:00")
-      },
-      {
-        doctorId: "doctor-3",
-        firstName: "Linda",
-        lastName: "Chen",
-        specialization: ["General Medicine"],
-        availability: {
-          monday: [],
-          tuesday: [{ start: getAvailabilityTimestamp(4, "13:00:00"), end: getAvailabilityTimestamp(4, "17:00:00") }],
-          wednesday: [{ start: getAvailabilityTimestamp(5, "08:00:00"), end: getAvailabilityTimestamp(5, "11:00:00") }]
-        },
-        phone: "555-0113",
-        email: "linda.chen@hospital.local",
-        password: "doctor123",
-        createdAt: getTimestamp(-9, "08:20:00"),
-        updatedAt: getTimestamp(-9, "08:20:00")
-      }
-    ],
-    receptionists: [
-      {
-        receptionistId: "receptionist-1",
-        firstName: "Grace",
-        lastName: "Njeri",
-        phone: "555-0201",
-        email: "grace.njeri@hospital.local",
-        password: "desk123",
-        createdAt: getTimestamp(-8, "08:00:00"),
-        updatedAt: getTimestamp(-8, "08:00:00")
-      },
-      {
-        receptionistId: "receptionist-2",
-        firstName: "Daniel",
-        lastName: "Mensah",
-        phone: "555-0202",
-        email: "daniel.mensah@hospital.local",
-        password: "desk123",
-        createdAt: getTimestamp(-8, "08:10:00"),
-        updatedAt: getTimestamp(-8, "08:10:00")
-      }
-    ],
-    patients: [
-      {
-        patientId: "patient-1",
-        fullName: "Alice Mumo",
-        age: 29,
-        gender: "Female",
-        phone: "555-1001",
-        address: "12 Riverside Avenue",
-        createdAt: getTimestamp(-5, "08:10:00"),
-        email: "alice.mumo@patients.local",
-        password: "patient123"
-      },
-      {
-        patientId: "patient-2",
-        fullName: "Brian Owino",
-        age: 41,
-        gender: "Male",
-        phone: "555-1002",
-        address: "44 Palm Street",
-        createdAt: getTimestamp(-4, "11:20:00"),
-        email: "brian.owino@patients.local",
-        password: "patient123"
-      },
-      {
-        patientId: "patient-3",
-        fullName: "Chloe Banda",
-        age: 35,
-        gender: "Female",
-        phone: "555-1003",
-        address: "9 Westview Close",
-        createdAt: getTimestamp(-3, "10:45:00"),
-        email: "chloe.banda@patients.local",
-        password: "patient123"
-      },
-      {
-        patientId: "patient-4",
-        fullName: "David Kimani",
-        age: 52,
-        gender: "Male",
-        phone: "555-1004",
-        address: "71 Kingsway Road",
-        createdAt: getTimestamp(-2, "09:15:00"),
-        email: "david.kimani@patients.local",
-        password: "patient123"
-      },
-      {
-        patientId: "patient-5",
-        fullName: "Eva Ncube",
-        age: 23,
-        gender: "Female",
-        phone: "555-1005",
-        address: "27 Cedar Court",
-        createdAt: getTimestamp(-1, "15:30:00"),
-        email: "eva.ncube@patients.local",
-        password: "patient123"
-      },
-      {
-        patientId: "patient-6",
-        fullName: "Frank Adebayo",
-        age: 47,
-        gender: "Male",
-        phone: "555-1006",
-        address: "63 Garden Lane",
-        createdAt: getTimestamp(0, "08:50:00"),
-        email: "frank.adebayo@patients.local",
-        password: "patient123"
-      }
-    ],
-    appointments: [
-      {
-        appointmentId: 1,
-        patientId: "patient-1",
-        doctorId: "doctor-2",
-        appointmentDate: getTodayDate(),
-        appointmentTime: "09:30",
-        status: "Pending",
-        receptionistId: "receptionist-1",
-        otherInfo: ""
-      },
-      {
-        appointmentId: 2,
-        patientId: "patient-2",
-        doctorId: "doctor-1",
-        appointmentDate: getTodayDate(),
-        appointmentTime: "11:00",
-        status: "Approved",
-        receptionistId: "",
-        otherInfo: ""
-      },
-      {
-        appointmentId: 3,
-        patientId: "patient-3",
-        doctorId: "doctor-3",
-        appointmentDate: getTodayDate(),
-        appointmentTime: "14:30",
-        status: "Pending",
-        receptionistId: "receptionist-2",
-        otherInfo: ""
-      },
-      {
-        appointmentId: 4,
-        patientId: "patient-4",
-        doctorId: "doctor-1",
-        appointmentDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
-        appointmentTime: "10:00",
-        status: "Pending",
-        receptionistId: "",
-        otherInfo: ""
-      },
-      {
-        appointmentId: 5,
-        patientId: "patient-5",
-        doctorId: "doctor-3",
-        appointmentDate: new Date(Date.now() - 86400000).toISOString().slice(0, 10),
-        appointmentTime: "13:00",
-        status: "Completed",
-        receptionistId: "receptionist-1",
-        otherInfo: ""
-      },
-      {
-        appointmentId: 6,
-        patientId: "patient-1",
-        doctorId: "doctor-1",
-        appointmentDate: new Date(Date.now() + 172800000).toISOString().slice(0, 10),
-        appointmentTime: "15:00",
-        status: "Declined",
-        receptionistId: "",
-        otherInfo: ""
-      }
-    ],
-    medicalRecords: [
-      {
-        recordId: 1,
-        patientId: "patient-1",
-        doctorId: "doctor-2",
-        diagnosedBy: "doctor-2",
-        diagnosis: "Seasonal respiratory infection",
-        treatment: "Prescribed antibiotics and hydration guidance.",
-        recordDate: getTimestamp(-4, "12:00:00")
-      },
-      {
-        recordId: 2,
-        patientId: "patient-2",
-        doctorId: "doctor-1",
-        diagnosedBy: "doctor-1",
-        diagnosis: "Blood pressure review",
-        treatment: "Medication dosage adjusted and follow-up booked.",
-        recordDate: getTimestamp(-3, "15:10:00")
-      },
-      {
-        recordId: 3,
-        patientId: "patient-3",
-        doctorId: "doctor-3",
-        diagnosedBy: "doctor-3",
-        diagnosis: "Routine general consultation",
-        treatment: "Lifestyle advice and lab follow-up recommended.",
-        recordDate: getTimestamp(-2, "10:20:00")
-      },
-      {
-        recordId: 4,
-        patientId: "patient-4",
-        doctorId: "doctor-1",
-        diagnosedBy: "doctor-1",
-        diagnosis: "Chest pain assessment",
-        treatment: "ECG requested and observation started.",
-        recordDate: getTimestamp(-1, "09:35:00")
-      }
-    ]
+    admins: [],
+    doctors: [],
+    receptionists: [],
+    patients: [],
+    appointments: [],
+    medicalRecords: []
   };
 }
 
@@ -798,10 +552,25 @@ function updatePassword(database, payload) {
 }
 
 async function handleAuth(method, database, pathname, payload) {
-  if (method === "POST" && (pathname === "/auth/register-patient" || pathname === "/auth/register-doctor")) {
-    const role = pathname.endsWith("patient") ? roles.PATIENT : roles.DOCTOR;
-    const collectionName = role === roles.PATIENT ? "patients" : "doctors";
-    const idKey = role === roles.PATIENT ? "patientId" : "doctorId";
+  if (
+    method === "POST" &&
+    ["/auth/register-patient", "/auth/register-doctor", "/auth/register-receptionist"].includes(pathname)
+  ) {
+    const role = pathname.endsWith("patient")
+      ? roles.PATIENT
+      : pathname.endsWith("doctor")
+        ? roles.DOCTOR
+        : roles.RECEPTIONIST;
+    const collectionName = {
+      [roles.PATIENT]: "patients",
+      [roles.DOCTOR]: "doctors",
+      [roles.RECEPTIONIST]: "receptionists"
+    }[role];
+    const idKey = {
+      [roles.PATIENT]: "patientId",
+      [roles.DOCTOR]: "doctorId",
+      [roles.RECEPTIONIST]: "receptionistId"
+    }[role];
 
     const existingEmail = [
       ...database.admins,
@@ -949,7 +718,7 @@ function updateStaffRecord(database, staffKey, payload) {
       availability: {},
       phone: payload.phone,
       email: payload.email,
-      password: payload.password || "doctor123",
+      password: payload.password || "",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
@@ -965,7 +734,7 @@ function updateStaffRecord(database, staffKey, payload) {
     fullName: payload.fullName,
     phone: payload.phone,
     email: payload.email,
-    password: payload.password || "desk123",
+    password: payload.password || "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   });

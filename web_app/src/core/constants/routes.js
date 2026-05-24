@@ -4,6 +4,7 @@ export const routePaths = {
   login: "/login",
   registerPatient: "/register/patient",
   registerDoctor: "/register/doctor",
+  registerReceptionist: "/register/receptionist",
   dashboard: "/dashboard",
   patients: "/patients",
   addPatient: "/patients/new",

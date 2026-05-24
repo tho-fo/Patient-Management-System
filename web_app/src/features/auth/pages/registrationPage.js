@@ -283,7 +283,7 @@ export const patientRegistrationPage = createRegistrationPage({
     {
       title: "Account Setup",
       shortTitle: "Account",
-      description: "Set the password fields for the future authentication connection.",
+      description: "Set the password fields for account authentication.",
       fields: [
         { name: "password", label: "Password", type: "password", placeholder: "Enter password", className: "col-md-6", required: true, secret: true },
         { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
@@ -338,7 +338,51 @@ export const doctorRegistrationPage = createRegistrationPage({
     {
       title: "Account Setup",
       shortTitle: "Account",
-      description: "Set password fields for the future authentication connection.",
+      description: "Set password fields for account authentication.",
+      fields: [
+        { name: "password", label: "Password", type: "password", placeholder: "Enter password", className: "col-md-6", required: true, secret: true },
+        { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }
+      ]
+    }
+  ]
+});
+
+export const receptionistRegistrationPage = createRegistrationPage({
+  title: "Receptionist Registration",
+  eyebrow: "Receptionist Registration",
+  icon: "bi-headset",
+  subtitle: "Create a receptionist account for patient registration and appointment scheduling workflows.",
+  showcaseText: "Receptionist access supports front desk workflows: register patients, schedule visits, and update patient information.",
+  sourceNotes: [
+    "Receptionists can register patients and schedule appointments.",
+    "Appointment views include pending, approved, and declined requests.",
+    "Authentication screens use email and password."
+  ],
+  successMessage: "Receptionist account created successfully.",
+  register: authService.registerReceptionist,
+  steps: [
+    {
+      title: "Personal Information",
+      shortTitle: "Personal",
+      description: "Capture the receptionist identity details needed for a staff profile.",
+      fields: [
+        { name: "firstName", label: "First Name", type: "text", placeholder: "Enter first name", className: "col-md-6", required: true },
+        { name: "lastName", label: "Last Name", type: "text", placeholder: "Enter last name", className: "col-md-6", required: true }
+      ]
+    },
+    {
+      title: "Contact Information",
+      shortTitle: "Contact",
+      description: "Add the contact details used by the front desk workflow.",
+      fields: [
+        { name: "phone", label: "Phone Number", type: "tel", placeholder: "Enter phone number", className: "col-md-6", required: true },
+        { name: "email", label: "Email", type: "email", placeholder: "reception@hospital.local", className: "col-md-6", required: true }
+      ]
+    },
+    {
+      title: "Account Setup",
+      shortTitle: "Account",
+      description: "Set password fields for receptionist authentication.",
       fields: [
         { name: "password", label: "Password", type: "password", placeholder: "Enter password", className: "col-md-6", required: true, secret: true },
         { name: "confirmPassword", label: "Confirm Password", type: "password", placeholder: "Confirm password", className: "col-md-6", required: true, secret: true }

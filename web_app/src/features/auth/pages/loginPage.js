@@ -27,13 +27,8 @@ export const loginPage = {
               <li><i class="bi bi-check2-circle"></i><span>Bootstrap-based, desktop-first UI with mobile support.</span></li>
             </ul>
             <div class="demo-credentials mt-auto p-4">
-              <h2 class="h5 mb-3">Demo credentials</h2>
-              <div class="small text-white-50 d-grid gap-2">
-                <div><strong>Admin:</strong> admin@hospital.local / admin123</div>
-                <div><strong>Doctor:</strong> theodore.kato@hospital.local / doctor123</div>
-                <div><strong>Receptionist:</strong> grace.njeri@hospital.local / desk123</div>
-                <div><strong>Patient:</strong> alice.mumo@patients.local / patient123</div>
-              </div>
+              <h2 class="h5 mb-3">Account access</h2>
+              <p class="small text-white-50 mb-0">Create a patient, doctor, or receptionist account to sign in. Admin accounts are provisioned outside public registration.</p>
             </div>
           </aside>
 
@@ -68,6 +63,9 @@ export const loginPage = {
                 </a>
                 <a class="btn btn-outline-secondary w-100" href="#${routePaths.registerDoctor}">
                   <i class="bi bi-person-badge me-2"></i>Register as Doctor
+                </a>
+                <a class="btn btn-outline-secondary w-100" href="#${routePaths.registerReceptionist}">
+                  <i class="bi bi-headset me-2"></i>Register as Receptionist
                 </a>
               </div>
             </form>

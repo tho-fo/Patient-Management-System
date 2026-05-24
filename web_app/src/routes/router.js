@@ -1,6 +1,6 @@
 import { routePaths } from "../core/constants/routes.js";
 import { loginPage } from "../features/auth/pages/loginPage.js";
-import { patientRegistrationPage, doctorRegistrationPage } from "../features/auth/pages/registrationPage.js";
+import { patientRegistrationPage, doctorRegistrationPage, receptionistRegistrationPage } from "../features/auth/pages/registrationPage.js";
 import { dashboardPage } from "../features/dashboard/pages/dashboardPage.js";
 import { patientListPage } from "../features/patients/pages/patientListPage.js";
 import { patientEditPage, patientFormPage } from "../features/patients/pages/patientFormPage.js";
@@ -19,6 +19,7 @@ const routes = [
   { pattern: /^\/login$/, page: loginPage, params: [] },
   { pattern: /^\/register\/patient$/, page: patientRegistrationPage, params: [] },
   { pattern: /^\/register\/doctor$/, page: doctorRegistrationPage, params: [] },
+  { pattern: /^\/register\/receptionist$/, page: receptionistRegistrationPage, params: [] },
   { pattern: /^\/dashboard$/, page: dashboardPage, params: [] },
   { pattern: /^\/patients$/, page: patientListPage, params: [] },
   { pattern: /^\/patients\/new$/, page: patientFormPage, params: [] },

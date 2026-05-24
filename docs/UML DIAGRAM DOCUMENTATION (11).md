@@ -69,6 +69,7 @@ Admin
 
 Receptionist
 
+* Register Account
 * Register Patient
 * Schedule Appointment
 * View Pending, Approved, and Declined Appointments

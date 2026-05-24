@@ -44,6 +44,7 @@ The system will:
 * Support admin management of doctors, receptionists, and patients
 * Support doctor diagnosis, treatment, medical record management, appointment approval, and availability updates
 * Support receptionist patient registration and appointment scheduling
+* Allow receptionist account creation through the frontend registration flow
 * Support patient appointment booking and medical record viewing
 * Treat billing and laboratory modules as future enhancements
 * Support centralized data access for hospital staff
