@@ -96,7 +96,15 @@ function renderPatientForm(patient = null) {
                 ${bloodGroups.map((group) => `<option value="${group}" ${selected(patient?.bloodGroup, group)}>${group}</option>`).join("")}
               </select>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="weight">Weight (kg)</label>
+              <input class="form-control" id="weight" name="weight" type="number" min="0" step="0.1" value="${value(patient, "weight")}">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="height">Height (cm)</label>
+              <input class="form-control" id="height" name="height" type="number" min="0" step="0.1" value="${value(patient, "height")}">
+            </div>
+            <div class="col-12">
               <label class="form-label fw-semibold" for="emergencyContact">Emergency contact</label>
               <input class="form-control" id="emergencyContact" name="emergencyContact" type="text" value="${value(patient, "emergencyContact")}">
             </div>

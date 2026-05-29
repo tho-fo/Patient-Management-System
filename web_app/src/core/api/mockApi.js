@@ -17,11 +17,99 @@ function getAvailabilityTimestamp(dayOffset, time = "09:00:00") {
 }
 
 function seedDatabase() {
+  const today = getTodayDate();
+  
   return {
-    admins: [],
-    doctors: [],
-    receptionists: [],
-    patients: [],
+    admins: [
+      {
+        adminId: "admin-001",
+        firstName: "Admin",
+        lastName: "User",
+        email: "admin@hospital.local",
+        password: "admin123",
+        phone: "+1-555-0101",
+        createdAt: today,
+        updatedAt: today
+      }
+    ],
+    doctors: [
+      {
+        doctorId: "doctor-001",
+        firstName: "John",
+        lastName: "Smith",
+        email: "john.smith@hospital.local",
+        password: "doctor123",
+        phone: "+1-555-0102",
+        specialization: ["Cardiology"],
+        availability: {},
+        createdAt: today,
+        updatedAt: today
+      },
+      {
+        doctorId: "doctor-002",
+        firstName: "Sarah",
+        lastName: "Johnson",
+        email: "sarah.johnson@hospital.local",
+        password: "doctor123",
+        phone: "+1-555-0103",
+        specialization: ["Neurology"],
+        availability: {},
+        createdAt: today,
+        updatedAt: today
+      }
+    ],
+    receptionists: [
+      {
+        receptionistId: "receptionist-001",
+        firstName: "Emma",
+        lastName: "Wilson",
+        email: "emma.wilson@hospital.local",
+        password: "receptionist123",
+        phone: "+1-555-0104",
+        createdAt: today,
+        updatedAt: today
+      }
+    ],
+    patients: [
+      {
+        patientId: "patient-001",
+        firstName: "Michael",
+        lastName: "Brown",
+        email: "michael.brown@hospital.local",
+        password: "patient123",
+        phone: "+1-555-0105",
+        gender: "Male",
+        address: "123 Main St, City, State 12345",
+        otherInfo: {
+          bloodType: "O",
+          bloodGroup: "O+",
+          weight: 75,
+          height: 180,
+          dob: "1990-05-15"
+        },
+        createdAt: today,
+        updatedAt: today
+      },
+      {
+        patientId: "patient-002",
+        firstName: "Jennifer",
+        lastName: "Davis",
+        email: "jennifer.davis@hospital.local",
+        password: "patient123",
+        phone: "+1-555-0106",
+        gender: "Female",
+        address: "456 Oak Ave, Town, State 54321",
+        otherInfo: {
+          bloodType: "A",
+          bloodGroup: "A+",
+          weight: 65,
+          height: 165,
+          dob: "1992-08-22"
+        },
+        createdAt: today,
+        updatedAt: today
+      }
+    ],
     appointments: [],
     medicalRecords: []
   };
@@ -239,7 +327,8 @@ function listAppointments(database, searchParams) {
     appointmentDate: searchParams.get("appointmentDate"),
     doctorId: searchParams.get("doctorId"),
     status: searchParams.get("status"),
-    patientId: searchParams.get("patientId")
+    patientId: searchParams.get("patientId"),
+    receptionistId: searchParams.get("receptionistId")
   };
 
   return sortByDateTime(
@@ -249,7 +338,8 @@ function listAppointments(database, searchParams) {
         const matchesDoctor = !filters.doctorId || String(appointment.doctorId) === String(filters.doctorId);
         const matchesStatus = !filters.status || appointment.status === filters.status;
         const matchesPatient = !filters.patientId || String(appointment.patientId) === String(filters.patientId);
-        return matchesDate && matchesDoctor && matchesStatus && matchesPatient;
+        const matchesReceptionist = !filters.receptionistId || String(appointment.receptionistId) === String(filters.receptionistId);
+        return matchesDate && matchesDoctor && matchesStatus && matchesPatient && matchesReceptionist;
       })
       .map((appointment) => joinAppointment(database, appointment)),
     "appointmentDate",

@@ -2,6 +2,8 @@ import { routePaths } from "../core/constants/routes.js";
 import { loginPage } from "../features/auth/pages/loginPage.js";
 import { patientRegistrationPage, doctorRegistrationPage, receptionistRegistrationPage } from "../features/auth/pages/registrationPage.js";
 import { dashboardPage } from "../features/dashboard/pages/dashboardPage.js";
+import { adminPage } from "../features/admin/pages/adminPage.js";
+import { receptionistPage } from "../features/receptionist/pages/receptionistPage.js";
 import { patientListPage } from "../features/patients/pages/patientListPage.js";
 import { patientEditPage, patientFormPage } from "../features/patients/pages/patientFormPage.js";
 import { patientDetailsPage } from "../features/patients/pages/patientDetailsPage.js";
@@ -21,6 +23,8 @@ const routes = [
   { pattern: /^\/register\/doctor$/, page: doctorRegistrationPage, params: [] },
   { pattern: /^\/register\/receptionist$/, page: receptionistRegistrationPage, params: [] },
   { pattern: /^\/dashboard$/, page: dashboardPage, params: [] },
+  { pattern: /^\/admin$/, page: adminPage, params: [] },
+  { pattern: /^\/receptionist$/, page: receptionistPage, params: [] },
   { pattern: /^\/patients$/, page: patientListPage, params: [] },
   { pattern: /^\/patients\/new$/, page: patientFormPage, params: [] },
   { pattern: /^\/patients\/([^/]+)\/edit$/, page: patientEditPage, params: ["id"] },

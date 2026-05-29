@@ -2,7 +2,7 @@ export const appConfig = {
   appName: "Patient Management System",
   appSubtitle: "Hospital Management & Patient Care Platform",
   apiBaseUrl: "http://localhost:8000/api",
-  useMockApi: true,
+  useMockApi: false,
   storageKeys: {
     session: "pms-session-v3",
     flash: "pms-flash-v3",

@@ -281,6 +281,18 @@ export const patientRegistrationPage = createRegistrationPage({
       ]
     },
     {
+      title: "Health Details",
+      shortTitle: "Health",
+      description: "Capture optional medical and emergency contact details for the patient record.",
+      fields: [
+        { name: "bloodGroup", label: "Blood Group", type: "select", placeholder: "Select blood group", options: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"], className: "col-md-4" },
+        { name: "weight", label: "Weight (kg)", type: "number", placeholder: "Enter weight", className: "col-md-4" },
+        { name: "height", label: "Height (cm)", type: "number", placeholder: "Enter height", className: "col-md-4" },
+        { name: "emergencyContact", label: "Emergency Contact", type: "text", placeholder: "Enter emergency contact", className: "col-12" },
+        { name: "medicalCondition", label: "Medical Condition", type: "textarea", placeholder: "Enter any existing medical conditions", className: "col-12" }
+      ]
+    },
+    {
       title: "Account Setup",
       shortTitle: "Account",
       description: "Set the password fields for account authentication.",
@@ -319,11 +331,9 @@ export const doctorRegistrationPage = createRegistrationPage({
     {
       title: "Professional Information",
       shortTitle: "Professional",
-      description: "Add professional details before contact and account setup.",
+      description: "Add the doctor specialization used for appointment assignment and treatment workflows.",
       fields: [
-        { name: "specialization", label: "Specialization", type: "select", placeholder: "Select specialization", options: specializationOptions, required: true },
-        { name: "licenseNumber", label: "License Number", type: "text", placeholder: "Enter license number", className: "col-md-6", required: true },
-        { name: "yearsOfExperience", label: "Years of Experience", type: "number", placeholder: "Enter years", className: "col-md-6", required: true }
+        { name: "specialization", label: "Specialization", type: "select", placeholder: "Select specialization", options: specializationOptions, required: true }
       ]
     },
     {

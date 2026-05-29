@@ -6,6 +6,8 @@ export const routePaths = {
   registerDoctor: "/register/doctor",
   registerReceptionist: "/register/receptionist",
   dashboard: "/dashboard",
+  admin: "/admin",
+  receptionist: "/receptionist",
   patients: "/patients",
   addPatient: "/patients/new",
   editPatient: "/patients/:id/edit",
@@ -26,6 +28,18 @@ export const navigationItems = [
     path: routePaths.dashboard,
     icon: "bi-grid",
     roles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT]
+  },
+  {
+    label: "Admin panel",
+    path: routePaths.admin,
+    icon: "bi-speedometer2",
+    roles: [roles.ADMIN]
+  },
+  {
+    label: "Receptionist workspace",
+    path: routePaths.receptionist,
+    icon: "bi-person-lines-fill",
+    roles: [roles.RECEPTIONIST]
   },
   {
     label: "Patients",
@@ -86,6 +100,14 @@ export function getBaseSection(pathname) {
 
   if (pathname.startsWith("/staff")) {
     return routePaths.staff;
+  }
+
+  if (pathname.startsWith("/admin")) {
+    return routePaths.admin;
+  }
+
+  if (pathname.startsWith("/receptionist")) {
+    return routePaths.receptionist;
   }
 
   if (pathname.startsWith("/profile")) {

@@ -8,13 +8,14 @@ function buildFullName(payload) {
 
 function formatAuthError(error) {
   const messages = {
-    "auth/email-already-in-use": "This email is already registered. Please use another email or sign in.",
+    "auth/email-already-exists": "This email is already registered. Please use another email or sign in.",
     "auth/invalid-email": "Enter a valid email address.",
     "auth/weak-password": "Password is too weak. Use at least 6 characters.",
     "auth/invalid-credential": "Invalid email or password.",
-    "auth/user-not-found": "Invalid email or password.",
+    "auth/user-not-found": "User doesn't exist. Please Register",
     "auth/wrong-password": "Invalid email or password.",
-    "auth/network-request-failed": "Network error. Check your connection and try again."
+    "auth/network-request-failed": "Network error. Check your connection and try again.",
+    "auth/too-many-requests": "Too many failed attempts. Please wait and try again later.",
   };
 
   return new Error(messages[error.code] ?? error.message ?? "Authentication failed. Please try again.");
@@ -49,7 +50,7 @@ async function loadFirebase() {
 
 async function resolveUserRole(uid, firestore) {
   const { db, doc, getDoc } = firestore;
-  const adminSnapshot = await getDoc(doc(db, "admins", uid));
+  const adminSnapshot = await getDoc(doc(db, "admin", uid));
 
   if (adminSnapshot.exists()) {
     return normalizeProfile(adminSnapshot, roles.ADMIN);
@@ -177,16 +178,19 @@ export const authService = {
   },
 
   async login(payload) {
+    console.log("Attempting login with payload:", payload);
     try {
       if (appConfig.useMockApi) {
         return httpClient.post("/auth/login", payload);
       }
 
+      console.log("Loading Firebase modules...");
       const firebase = await loadFirebase();
       const { auth, signInWithEmailAndPassword } = firebase;
       const userCredential = await signInWithEmailAndPassword(auth, payload.email, payload.password);
       return buildSession(userCredential, firebase);
     } catch (error) {
+      console.error("Login error details:", error);
       throw formatAuthError(error);
     }
   },
