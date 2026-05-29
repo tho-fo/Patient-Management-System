@@ -226,3 +226,118 @@ export function renderRecentAppointmentTimeline(appointment) {
     body: appointment.status === "Pending" ? "Awaiting consultation." : "Updated in the appointment workflow."
   });
 }
+
+export function renderAuditLogTimeline(log) {
+  return renderTimelineItem({
+    title: log.action,
+    subtitle: log.userEmail,
+    meta: formatDateTime(log.timestamp),
+    body: log.details
+  });
+}
+
+export function renderLineChart(items, label = "Trend") {
+  if (!items.length) {
+    return renderEmptyState({
+      title: "No chart data",
+      description: "Adjust the date range to load more data."
+    });
+  }
+
+  const max = Math.max(...items.map((item) => item.value), 1);
+  const points = items
+    .map((item, index) => {
+      const height = (item.value / max) * 100;
+      return `
+        <div class="chart-point" title="${escapeHtml(item.label)}: ${formatNumber(item.value)}">
+          <div class="chart-bar-mini" style="height: ${height}%"></div>
+          <span class="text-soft x-axis-label">${escapeHtml(item.label)}</span>
+        </div>
+      `;
+    })
+    .join("");
+
+  return `
+    <div class="chart-line">
+      <div class="chart-container">
+        ${points}
+      </div>
+    </div>
+  `;
+}
+
+export function renderPieChart(items) {
+  if (!items.length) {
+    return renderEmptyState({
+      title: "No chart data",
+      description: "Staff distribution will appear once data is available."
+    });
+  }
+
+  const total = items.reduce((sum, item) => sum + item.value, 0);
+  const colors = ["#0d6efd", "#198754", "#fd7e14", "#dc3545", "#6f42c1", "#17a2b8"];
+
+  const segments = items
+    .map((item, index) => {
+      const percentage = (item.value / total) * 100;
+      return {
+        label: item.label,
+        value: item.value,
+        percentage: percentage.toFixed(1),
+        color: colors[index % colors.length]
+      };
+    })
+    .sort((a, b) => b.percentage - a.percentage);
+
+  const legend = segments
+    .map(
+      (seg, index) =>
+        `
+    <div class="pie-legend-item">
+      <span class="pie-legend-color" style="background-color: ${seg.color}"></span>
+      <span class="pie-legend-label">${escapeHtml(seg.label)}</span>
+      <span class="pie-legend-value">${formatNumber(seg.value)} (${seg.percentage}%)</span>
+    </div>
+  `
+    )
+    .join("");
+
+  return `
+    <div class="chart-pie-container">
+      <div class="pie-legend">
+        ${legend}
+      </div>
+    </div>
+  `;
+}
+
+export function renderAdminQuickActions() {
+  return `
+    <div class="quick-actions-grid">
+      ${renderQuickAction({
+        title: "Add New Staff",
+        description: "Register a new doctor or receptionist to the system.",
+        href: "/staff/add",
+        icon: "bi-person-plus-fill"
+      })}
+      ${renderQuickAction({
+        title: "System Settings",
+        description: "Configure app settings and manage role permissions.",
+        href: "/settings",
+        icon: "bi-gear-fill"
+      })}
+      ${renderQuickAction({
+        title: "Generate Report",
+        description: "Download analytics and appointment summaries.",
+        href: "/reports",
+        icon: "bi-file-earmark-pdf"
+      })}
+      ${renderQuickAction({
+        title: "View Audit Logs",
+        description: "Monitor user activity and system security events.",
+        href: "/audit-logs",
+        icon: "bi-shield-check"
+      })}
+    </div>
+  `;
+}

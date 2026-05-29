@@ -18,7 +18,7 @@ function formatAuthError(error) {
     "auth/too-many-requests": "Too many failed attempts. Please wait and try again later.",
   };
 
-  return new Error(messages[error.code] ?? error.message ?? "Authentication failed. Please try again.");
+  return new Error(messages[error?.code] ?? error?.message ?? "Authentication failed. Please try again.");
 }
 
 function normalizeProfile(documentSnapshot, role) {
@@ -50,28 +50,30 @@ async function loadFirebase() {
 
 async function resolveUserRole(uid, firestore) {
   const { db, doc, getDoc } = firestore;
-  const adminSnapshot = await getDoc(doc(db, "admin", uid));
 
-  if (adminSnapshot.exists()) {
-    return normalizeProfile(adminSnapshot, roles.ADMIN);
-  }
+  // Optimized: Check all collections in parallel for better performance
+  const [patientSnapshot, doctorSnapshot, receptionistSnapshot, adminSnapshot] = await Promise.all([
+    getDoc(doc(db, "patients", uid)),
+    getDoc(doc(db, "doctors", uid)),
+    getDoc(doc(db, "receptionists", uid)),
+    getDoc(doc(db, "admin", uid))
+  ]);
 
-  const patientSnapshot = await getDoc(doc(db, "patients", uid));
-
+  // Check most common roles first (statistically: patient > doctor > receptionist > admin)
   if (patientSnapshot.exists()) {
     return normalizeProfile(patientSnapshot, roles.PATIENT);
   }
-
-  const doctorSnapshot = await getDoc(doc(db, "doctors", uid));
 
   if (doctorSnapshot.exists()) {
     return normalizeProfile(doctorSnapshot, roles.DOCTOR);
   }
 
-  const receptionistSnapshot = await getDoc(doc(db, "receptionists", uid));
-
   if (receptionistSnapshot.exists()) {
     return normalizeProfile(receptionistSnapshot, roles.RECEPTIONIST);
+  }
+
+  if (adminSnapshot.exists()) {
+    return normalizeProfile(adminSnapshot, roles.ADMIN);
   }
 
   throw new Error("No role profile was found for this account.");
