@@ -60,7 +60,7 @@ export const navigationItems = [
     roles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT]
   },
   {
-    label: "Users",
+    label: "Staff",
     path: routePaths.staff,
     icon: "bi-person-badge",
     roles: [roles.ADMIN]

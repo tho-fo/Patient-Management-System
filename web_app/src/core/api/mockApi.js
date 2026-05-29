@@ -387,14 +387,6 @@ function buildStaffList(database, searchParams) {
   const search = searchParams.get("search")?.toLowerCase().trim() ?? "";
 
   const staff = [
-    ...database.admins.map((admin) => ({
-      staffKey: admin.adminId,
-      fullName: getFullName(admin),
-      role: roles.ADMIN,
-      phone: admin.phone ?? "",
-      email: admin.email,
-      specialization: ""
-    })),
     ...database.doctors.map((doctor) => ({
       staffKey: doctor.doctorId,
       fullName: getFullName(doctor),
@@ -429,19 +421,7 @@ function getStaffMember(database, staffKey) {
   const id = staffKey;
 
   if (role === roles.ADMIN) {
-    const admin = database.admins.find((item) => String(item.adminId) === String(id));
-    if (!admin) {
-      throw createHttpError("Staff member not found.", 404);
-    }
-
-    return {
-      staffKey: staffKey,
-      fullName: getFullName(admin),
-      role,
-      phone: admin.phone ?? "",
-      email: admin.email,
-      specialization: ""
-    };
+    throw createHttpError("Admin profiles are not managed from the staff module.", 403);
   }
 
   if (role === roles.DOCTOR) {
@@ -477,7 +457,12 @@ function getStaffMember(database, staffKey) {
 }
 
 function emailExists(database, email, ignoreKey = null) {
-  return buildStaffList(database, new URLSearchParams())
+  const accounts = [
+    ...database.admins.map((admin) => ({ staffKey: admin.adminId, email: admin.email })),
+    ...buildStaffList(database, new URLSearchParams())
+  ];
+
+  return accounts
     .filter((member) => member.staffKey !== ignoreKey)
     .some((member) => member.email.toLowerCase() === email.toLowerCase());
 }
@@ -1083,10 +1068,7 @@ export const mockApi = {
         const id = staffKey;
 
         if (role === roles.ADMIN) {
-          if (database.admins.length === 1) {
-            throw createHttpError("At least one admin account must remain in the system.");
-          }
-          database.admins = database.admins.filter((item) => item.adminId !== id);
+          throw createHttpError("Admin profiles are not managed from the staff module.", 403);
         } else if (role === roles.DOCTOR) {
           const hasLinks =
             database.appointments.some((appointment) => String(appointment.doctorId) === String(id)) ||

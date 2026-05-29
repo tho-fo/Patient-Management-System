@@ -5,6 +5,7 @@ import { renderPageHero, renderSectionCard } from "../../../shared/components/ui
 import { qs, formToObject, clearFormErrors, applyFormErrors, renderInlineAlert, setBusyState } from "../../../utils/dom.js";
 import { validateStaff } from "../../../utils/validators.js";
 import { store } from "../../../shared/state/store.js";
+import { escapeHtml } from "../../../utils/formatters.js";
 
 function specializationClass(role) {
   return role === roles.DOCTOR ? "" : "d-none";
@@ -26,7 +27,7 @@ export const staffFormPage = {
         ${renderPageHero({
           eyebrow: "Staff Account",
           title: isEdit ? "Edit staff account" : "Create staff account",
-          subtitle: "Doctor, receptionist, and admin accounts follow the user/staff module documentation.",
+          subtitle: "Doctor and receptionist profiles are managed by admins from this staff module.",
           actions: `<a class="btn btn-outline-secondary" href="#${routePaths.staff}">Back to staff</a>`
         })}
 
@@ -39,14 +40,13 @@ export const staffFormPage = {
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="fullName">Full name</label>
-                  <input class="form-control" id="fullName" name="fullName" type="text" value="${staff?.fullName ?? ""}">
+                  <input class="form-control" id="fullName" name="fullName" type="text" value="${escapeHtml(staff?.fullName ?? "")}">
                   <div class="invalid-feedback" data-error-for="fullName"></div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="role">Role</label>
                   <select class="form-select" id="role" name="role">
                     <option value="">Select role</option>
-                    ${isEdit && staff?.role === "admin" ? `<option value="admin" selected>Admin</option>` : ""}
                     <option value="doctor" ${staff?.role === "doctor" ? "selected" : ""}>Doctor</option>
                     <option value="receptionist" ${staff?.role === "receptionist" ? "selected" : ""}>Receptionist</option>
                   </select>
@@ -54,25 +54,27 @@ export const staffFormPage = {
                 </div>
                 <div class="col-md-6 ${specializationClass(staff?.role)}" id="specializationGroup">
                   <label class="form-label fw-semibold" for="specialization">Specialization</label>
-                  <input class="form-control" id="specialization" name="specialization" type="text" value="${staff?.specialization ?? ""}">
+                  <input class="form-control" id="specialization" name="specialization" type="text" value="${escapeHtml(staff?.specialization ?? "")}">
                   <div class="form-note">Separate multiple specializations with commas.</div>
                   <div class="invalid-feedback" data-error-for="specialization"></div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="phone">Phone</label>
-                  <input class="form-control" id="phone" name="phone" type="tel" value="${staff?.phone ?? ""}">
+                  <input class="form-control" id="phone" name="phone" type="tel" value="${escapeHtml(staff?.phone ?? "")}">
                   <div class="invalid-feedback" data-error-for="phone"></div>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="email">Email</label>
-                  <input class="form-control" id="email" name="email" type="email" value="${staff?.email ?? ""}">
+                  <input class="form-control" id="email" name="email" type="email" value="${escapeHtml(staff?.email ?? "")}">
                   <div class="invalid-feedback" data-error-for="email"></div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label fw-semibold" for="password">${isEdit ? "New password (optional)" : "Password"}</label>
-                  <input class="form-control" id="password" name="password" type="password">
-                  <div class="invalid-feedback" data-error-for="password"></div>
-                </div>
+                ${isEdit ? "" : `
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="password">Password</label>
+                    <input class="form-control" id="password" name="password" type="password">
+                    <div class="invalid-feedback" data-error-for="password"></div>
+                  </div>
+                `}
               </div>
               <div class="d-flex gap-2 mt-4">
                 <button class="btn btn-primary" id="staffSubmit" type="submit"><i class="bi bi-save me-2"></i>${isEdit ? "Save changes" : "Create staff"}</button>

@@ -3,7 +3,7 @@ import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/12
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyCJKeUHK-n9gXbm5dV2QPnBZWQmqLNY734",
   authDomain: "patient-management-portas.firebaseapp.com",
   projectId: "patient-management-portas",

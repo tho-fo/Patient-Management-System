@@ -46,7 +46,7 @@ function getQuickActions(role) {
     actions.push(
       renderQuickAction({
         title: "Manage Staff",
-        description: "Create, edit, or review doctors, receptionists, and admin users.",
+        description: "Create, edit, or review doctor and receptionist profiles.",
         href: routePaths.staff,
         icon: "bi-person-badge"
       }),

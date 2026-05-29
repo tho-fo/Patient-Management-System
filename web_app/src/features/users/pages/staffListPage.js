@@ -3,25 +3,30 @@ import { roles } from "../../../core/constants/roles.js";
 import { userService } from "../services/userService.js";
 import { renderDataTable, renderPageHero, renderSectionCard } from "../../../shared/components/ui.js";
 import { qs, formToObject } from "../../../utils/dom.js";
+import { escapeHtml } from "../../../utils/formatters.js";
 
 function buildRows(staff) {
-  return staff.map((member) => `
-    <tr>
-      <td><strong>${member.fullName}</strong></td>
-      <td class="text-capitalize">${member.role}</td>
-      <td>${member.specialization || member.phone || "-"}</td>
-      <td>${member.email}</td>
-      <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary me-2" href="#/staff/${member.staffKey}/edit">Edit</a>
-        <button class="btn btn-sm btn-outline-danger" type="button" data-delete-staff="${member.staffKey}">Delete</button>
-      </td>
-    </tr>
-  `);
+  return staff.map((member) => {
+    const staffKey = encodeURIComponent(member.staffKey);
+
+    return `
+      <tr>
+        <td><strong>${escapeHtml(member.fullName)}</strong></td>
+        <td class="text-capitalize">${escapeHtml(member.role)}</td>
+        <td>${escapeHtml(member.specialization || member.phone || "-")}</td>
+        <td>${escapeHtml(member.email)}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary me-2" href="#/staff/${staffKey}/edit">Edit</a>
+          <button class="btn btn-sm btn-outline-danger" type="button" data-delete-staff="${escapeHtml(member.staffKey)}">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
 }
 
 export const staffListPage = {
   title: "Staff",
-  subtitle: "Staff list and user administration for doctors, receptionists, and admins.",
+  subtitle: "Staff profile administration for doctors and receptionists.",
   allowedRoles: [roles.ADMIN],
 
   async render() {
@@ -29,12 +34,12 @@ export const staffListPage = {
 
     return {
       title: "Staff Management",
-      subtitle: "Add, edit, filter, and remove staff accounts by role.",
+      subtitle: "Add, edit, filter, and remove doctor and receptionist profiles.",
       content: `
         ${renderPageHero({
-          eyebrow: "User / Staff Module",
+          eyebrow: "Staff Module",
           title: "Staff accounts",
-          subtitle: "Manage doctors, receptionists, and admin users from one documented staff module.",
+          subtitle: "Manage the system doctors and receptionists from one admin-only staff module.",
           actions: `<a class="btn btn-primary" href="#${routePaths.addStaff}"><i class="bi bi-person-plus me-2"></i>Add staff</a>`
         })}
 
@@ -52,7 +57,6 @@ export const staffListPage = {
                   <label class="form-label fw-semibold" for="role">Role</label>
                   <select class="form-select" id="role" name="role">
                     <option value="">All roles</option>
-                    <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
                     <option value="receptionist">Receptionist</option>
                   </select>

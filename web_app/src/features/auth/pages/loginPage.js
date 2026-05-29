@@ -28,7 +28,7 @@ export const loginPage = {
             </ul>
             <div class="demo-credentials mt-auto p-4">
               <h2 class="h5 mb-3">Account access</h2>
-              <p class="small text-white-50 mb-0">Create a patient, doctor, or receptionist account to sign in. Admin accounts are provisioned outside public registration.</p>
+              <p class="small text-white-50 mb-0">Patients can create an account here. Staff accounts are managed by admins.</p>
             </div>
           </aside>
 
@@ -60,12 +60,6 @@ export const loginPage = {
               <div class="auth-register-actions mt-4">
                 <a class="btn btn-outline-primary w-100" href="#${routePaths.registerPatient}">
                   <i class="bi bi-person-plus me-2"></i>Register as Patient
-                </a>
-                <a class="btn btn-outline-secondary w-100" href="#${routePaths.registerDoctor}">
-                  <i class="bi bi-person-badge me-2"></i>Register as Doctor
-                </a>
-                <a class="btn btn-outline-secondary w-100" href="#${routePaths.registerReceptionist}">
-                  <i class="bi bi-headset me-2"></i>Register as Receptionist
                 </a>
               </div>
             </form>

@@ -317,7 +317,7 @@ export function renderAdminQuickActions() {
       ${renderQuickAction({
         title: "Add New Staff",
         description: "Register a new doctor or receptionist to the system.",
-        href: "/staff/add",
+        href: "/staff/new",
         icon: "bi-person-plus-fill"
       })}
       ${renderQuickAction({

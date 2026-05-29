@@ -57,11 +57,6 @@ function renderPatientForm(patient = null) {
               <input class="form-control" id="dateOfBirth" name="dateOfBirth" type="date" value="${value(patient, "dateOfBirth")}">
               <div class="invalid-feedback" data-error-for="dateOfBirth"></div>
             </div>
-            <div class="col-md-4">
-              <label class="form-label fw-semibold" for="age">Age</label>
-              <input class="form-control" id="age" name="age" type="number" min="0" value="${value(patient, "age")}" readonly>
-              <div class="invalid-feedback" data-error-for="age"></div>
-            </div>
           </div>
         </fieldset>
 
