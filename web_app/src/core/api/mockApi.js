@@ -661,6 +661,8 @@ async function handleAuth(method, database, pathname, payload) {
     const id = `${role}-${nextId(database[collectionName], idKey)}`;
     const record = {
       [idKey]: id,
+      authUid: id,
+      role,
       firstName: payload.firstName,
       lastName: payload.lastName,
       fullName: `${payload.firstName ?? ""} ${payload.lastName ?? ""}`.trim(),
@@ -673,15 +675,24 @@ async function handleAuth(method, database, pathname, payload) {
 
     if (role === roles.PATIENT) {
       record.address = payload.address ?? "";
+      record.gender = payload.gender ?? "";
+      record.dateOfBirth = payload.dateOfBirth ?? payload.dob ?? "";
+      record.emergencyContact = payload.emergencyContact ?? "";
+      record.medicalCondition = payload.medicalCondition ?? "";
       record.otherInfo = {
         bloodType: payload.bloodType ?? "",
         bloodGroup: payload.bloodGroup ?? "",
         weight: Number(payload.weight ?? 0),
         height: Number(payload.height ?? 0),
         gender: payload.gender ?? "",
-        dob: payload.dateOfBirth ?? payload.dob ?? ""
+        dob: payload.dateOfBirth ?? payload.dob ?? "",
+        emergencyContact: payload.emergencyContact ?? "",
+        medicalCondition: payload.medicalCondition ?? ""
       };
-    } else {
+    }
+
+    if (role === roles.DOCTOR) {
+      record.gender = payload.gender ?? "";
       record.specialization = [payload.specialization].filter(Boolean);
       record.availability = {};
     }

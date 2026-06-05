@@ -8,6 +8,7 @@ function buildFullName(payload) {
 
 function formatAuthError(error) {
   const messages = {
+    "auth/email-already-in-use": "This email is already registered. Please use another email or sign in.",
     "auth/email-already-exists": "This email is already registered. Please use another email or sign in.",
     "auth/invalid-email": "Enter a valid email address.",
     "auth/weak-password": "Password is too weak. Use at least 6 characters.",
@@ -16,6 +17,7 @@ function formatAuthError(error) {
     "auth/wrong-password": "Invalid email or password.",
     "auth/network-request-failed": "Network error. Check your connection and try again.",
     "auth/too-many-requests": "Too many failed attempts. Please wait and try again later.",
+    "permission-denied": "The account was created, but the profile could not be saved. Check Firestore permissions."
   };
 
   return new Error(messages[error?.code] ?? error?.message ?? "Authentication failed. Please try again.");
@@ -105,58 +107,62 @@ async function registerWithProfile(payload, role) {
       serverTimestamp,
       setDoc
     } = await loadFirebase();
-    const userCredential = await createUserWithEmailAndPassword(auth, payload.email, payload.password);
+    const firstName = payload.firstName?.trim() ?? "";
+    const lastName = payload.lastName?.trim() ?? "";
+    const email = payload.email?.trim().toLowerCase() ?? "";
+    const phone = payload.phone?.trim() ?? "";
+    const userCredential = await createUserWithEmailAndPassword(auth, email, payload.password);
     const uid = userCredential.user.uid;
-    const fullName = buildFullName(payload);
+    const fullName = buildFullName({ firstName, lastName });
     const dob = payload.dateOfBirth ?? payload.dob ?? "";
+    const baseProfile = {
+      authUid: uid,
+      role,
+      firstName,
+      lastName,
+      fullName,
+      phone,
+      email,
+      updatedAt: serverTimestamp(),
+      createdAt: serverTimestamp()
+    };
 
     if (role === roles.PATIENT) {
       await setDoc(doc(db, "patients", uid), {
+        ...baseProfile,
         patientId: uid,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        fullName,
-        phone: payload.phone,
-        email: payload.email,
-        address: payload.address,
+        gender: payload.gender ?? "",
+        dateOfBirth: dob,
+        address: payload.address?.trim() ?? "",
+        emergencyContact: payload.emergencyContact?.trim() ?? "",
+        medicalCondition: payload.medicalCondition?.trim() ?? "",
         otherInfo: {
           bloodType: payload.bloodType ?? "",
           bloodGroup: payload.bloodGroup ?? "",
           weight: Number(payload.weight ?? 0),
           height: Number(payload.height ?? 0),
-          gender: payload.gender,
-          dob
-        },
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp()
+          gender: payload.gender ?? "",
+          dob,
+          emergencyContact: payload.emergencyContact?.trim() ?? "",
+          medicalCondition: payload.medicalCondition?.trim() ?? ""
+        }
       });
     }
 
     if (role === roles.DOCTOR) {
       await setDoc(doc(db, "doctors", uid), {
+        ...baseProfile,
         doctorId: uid,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        fullName,
+        gender: payload.gender ?? "",
         specialization: [payload.specialization].filter(Boolean),
-        availability: {},
-        phone: payload.phone,
-        email: payload.email,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp()
+        availability: {}
       });
     }
 
     if (role === roles.RECEPTIONIST) {
       await setDoc(doc(db, "receptionists", uid), {
+        ...baseProfile,
         receptionistId: uid,
-        firstName: payload.firstName,
-        lastName: payload.lastName,
-        fullName,
-        phone: payload.phone,
-        email: payload.email,
-        updatedAt: serverTimestamp(),
-        createdAt: serverTimestamp()
       });
     }
 

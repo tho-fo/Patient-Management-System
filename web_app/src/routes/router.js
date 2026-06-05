@@ -1,6 +1,10 @@
 import { routePaths } from "../core/constants/routes.js";
 import { loginPage } from "../features/auth/pages/loginPage.js";
-import { patientRegistrationPage } from "../features/auth/pages/registrationPage.js";
+import {
+  doctorRegistrationPage,
+  patientRegistrationPage,
+  receptionistRegistrationPage
+} from "../features/auth/pages/registrationPage.js";
 import { dashboardPage } from "../features/dashboard/pages/dashboardPage.js";
 import { adminPage } from "../features/admin/pages/adminPage.js";
 import { receptionistPage } from "../features/receptionist/pages/receptionistPage.js";
@@ -20,6 +24,8 @@ import { settingsPage } from "../features/settings/pages/settingsPage.js";
 const routes = [
   { pattern: /^\/login$/, page: loginPage, params: [] },
   { pattern: /^\/register\/patient$/, page: patientRegistrationPage, params: [] },
+  { pattern: /^\/register\/doctor$/, page: doctorRegistrationPage, params: [] },
+  { pattern: /^\/register\/receptionist$/, page: receptionistRegistrationPage, params: [] },
   { pattern: /^\/dashboard$/, page: dashboardPage, params: [] },
   { pattern: /^\/admin$/, page: adminPage, params: [] },
   { pattern: /^\/receptionist$/, page: receptionistPage, params: [] },
