@@ -33,6 +33,22 @@ function getQuickActions(role) {
 
   if (role === roles.DOCTOR || role === roles.ADMIN) {
     actions.push(
+      ...(role === roles.DOCTOR
+        ? [
+            renderQuickAction({
+              title: "Doctor Workspace",
+              description: "Open patients, diagnosis, records, appointments, and availability tools.",
+              href: routePaths.doctor,
+              icon: "bi-clipboard2-pulse"
+            }),
+            renderQuickAction({
+              title: "View Appointments",
+              description: "Review assigned patient bookings, confirm visits, or postpone date and time.",
+              href: routePaths.appointments,
+              icon: "bi-calendar-check"
+            })
+          ]
+        : []),
       renderQuickAction({
         title: "Add Medical Record",
         description: "Record diagnosis and treatment for the selected patient.",

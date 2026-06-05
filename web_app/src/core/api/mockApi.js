@@ -995,6 +995,13 @@ export const mockApi = {
       }
 
       if (method === "PUT") {
+        if (
+          payload.currentUserRole === roles.DOCTOR &&
+          String(record.doctorId ?? record.diagnosedBy) !== String(payload.currentUserId)
+        ) {
+          throw createHttpError("Doctors can only edit medical records diagnosed by them.", 403);
+        }
+
         record.patientId = payload.patientId;
         record.doctorId = payload.doctorId;
         record.diagnosedBy = payload.doctorId;
@@ -1005,6 +1012,28 @@ export const mockApi = {
         writeDatabase(database);
         return joinMedicalRecord(database, record);
       }
+    }
+
+    if (method === "PUT" && pathname.match(/^\/doctors\/[^/]+\/availability$/)) {
+      const doctorId = pathname.split("/")[2];
+      const doctor = findDoctor(database, doctorId);
+
+      if (!doctor) {
+        throw createHttpError("Doctor not found.", 404);
+      }
+
+      doctor.availability = payload.availability ?? {};
+      doctor.updatedAt = new Date().toISOString();
+      writeDatabase(database);
+      return {
+        staffKey: doctor.doctorId,
+        fullName: getFullName(doctor),
+        role: roles.DOCTOR,
+        phone: doctor.phone,
+        email: doctor.email,
+        specialization: normalizeSpecialization(doctor.specialization),
+        availability: doctor.availability
+      };
     }
 
     if (method === "GET" && pathname === "/staff") {

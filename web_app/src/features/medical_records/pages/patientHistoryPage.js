@@ -110,10 +110,11 @@ export const patientHistoryPage = {
                 </div>
                 <div class="col-md-6">
                   <label class="form-label fw-semibold" for="modal_record_doctorId">Doctor</label>
-                  <select class="form-select" id="modal_record_doctorId" name="doctorId">
+                  <select class="form-select" id="modal_record_doctorId" name="${context.currentUser.role === roles.DOCTOR ? "" : "doctorId"}" ${context.currentUser.role === roles.DOCTOR ? "disabled" : ""}>
                     <option value="">Select doctor</option>
                     ${buildDoctorOptions(doctors)}
                   </select>
+                  ${context.currentUser.role === roles.DOCTOR ? `<input type="hidden" id="modal_hidden_record_doctorId" name="doctorId">` : ""}
                   <div class="invalid-feedback" data-error-for="doctorId"></div>
                 </div>
                 <div class="col-12">
@@ -181,7 +182,7 @@ export const patientHistoryPage = {
       }
 
       const records = await loadRecords(filterForm ? formToObject(filterForm) : {});
-      const record = records.find((item) => Number(item.recordId) === Number(button.dataset.editRecord));
+      const record = records.find((item) => String(item.recordId) === String(button.dataset.editRecord));
       if (!record) {
         return;
       }
@@ -191,6 +192,10 @@ export const patientHistoryPage = {
       qs("#modal_recordId", modalForm).value = record.recordId;
       qs("#modal_record_patientId", modalForm).value = record.patientId;
       qs("#modal_record_doctorId", modalForm).value = record.doctorId ?? record.diagnosedBy;
+      const hiddenDoctorInput = qs("#modal_hidden_record_doctorId", modalForm);
+      if (hiddenDoctorInput) {
+        hiddenDoctorInput.value = record.doctorId ?? record.diagnosedBy;
+      }
       qs("#modal_diagnosis", modalForm).value = record.diagnosis;
       qs("#modal_treatment", modalForm).value = record.treatment;
       modalInstance.show();
@@ -211,7 +216,7 @@ export const patientHistoryPage = {
       setBusyState(updateButton, true);
 
       try {
-        await medicalRecordService.update(payload.recordId, payload);
+        await medicalRecordService.update(payload.recordId, payload, context.currentUser);
         modalInstance.hide();
         await loadRecords(filterForm ? formToObject(filterForm) : {});
       } catch (error) {

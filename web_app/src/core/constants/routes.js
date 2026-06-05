@@ -7,6 +7,7 @@ export const routePaths = {
   registerReceptionist: "/register/receptionist",
   dashboard: "/dashboard",
   admin: "/admin",
+  doctor: "/doctor",
   receptionist: "/receptionist",
   patients: "/patients",
   addPatient: "/patients/new",
@@ -34,6 +35,12 @@ export const navigationItems = [
     path: routePaths.admin,
     icon: "bi-speedometer2",
     roles: [roles.ADMIN]
+  },
+  {
+    label: "Doctor workspace",
+    path: routePaths.doctor,
+    icon: "bi-clipboard2-pulse",
+    roles: [roles.DOCTOR]
   },
   {
     label: "Receptionist workspace",
@@ -104,6 +111,10 @@ export function getBaseSection(pathname) {
 
   if (pathname.startsWith("/admin")) {
     return routePaths.admin;
+  }
+
+  if (pathname.startsWith("/doctor")) {
+    return routePaths.doctor;
   }
 
   if (pathname.startsWith("/receptionist")) {

@@ -3,7 +3,7 @@ import { roles } from "../../../core/constants/roles.js";
 import { appointmentService } from "../services/appointmentService.js";
 import { patientService } from "../../patients/services/patientService.js";
 import { userService } from "../../users/services/userService.js";
-import { renderDataTable, renderKeyValueList, renderPageHero, renderSectionCard } from "../../../shared/components/ui.js";
+import { renderAppointmentRow, renderDataTable, renderKeyValueList, renderPageHero, renderSectionCard } from "../../../shared/components/ui.js";
 import { qs, formToObject, clearFormErrors, applyFormErrors, renderInlineAlert, setBusyState } from "../../../utils/dom.js";
 import { validateAppointment } from "../../../utils/validators.js";
 import { store } from "../../../shared/state/store.js";
@@ -144,12 +144,16 @@ export const bookAppointmentPage = {
         return;
       }
 
-      const patient = await patientService.getById(patientId);
-      patientCard.innerHTML = renderKeyValueList([
-        { label: "Patient", value: patient.fullName },
-        { label: "Phone", value: patient.phone },
-        { label: "Address", value: patient.address }
-      ]);
+      try {
+        const patient = await patientService.getById(patientId);
+        patientCard.innerHTML = renderKeyValueList([
+          { label: "Patient", value: patient.fullName },
+          { label: "Phone", value: patient.phone },
+          { label: "Address", value: patient.address }
+        ]);
+      } catch (error) {
+        patientCard.innerHTML = `<div class="alert alert-danger mb-0" role="alert">${error.message}</div>`;
+      }
     };
 
     const syncAvailability = async () => {
@@ -165,25 +169,20 @@ export const bookAppointmentPage = {
         return;
       }
 
-      const appointments = await appointmentService.list({
-        doctorId: doctorId,
-        appointmentDate: appointmentDate
-      });
+      try {
+        const appointments = await appointmentService.list({
+          doctorId: doctorId,
+          appointmentDate: appointmentDate
+        });
 
-      availabilityRegion.innerHTML = renderDataTable({
-        headers: ["Patient", "Doctor", "Date", "Time", "Status", "Actions"],
-        rows: appointments.map((appointment) => `
-          <tr>
-            <td>${appointment.patientName}</td>
-            <td>${appointment.doctorName}</td>
-            <td>${appointment.appointmentDate}</td>
-            <td>${appointment.appointmentTime}</td>
-            <td>${appointment.status}</td>
-            <td class="text-end">Booked</td>
-          </tr>
-        `),
-        emptyMessage: "This doctor has no appointments for the selected date."
-      });
+        availabilityRegion.innerHTML = renderDataTable({
+          headers: ["Patient", "Doctor", "Date", "Time", "Status", "Actions"],
+          rows: appointments.map((appointment) => renderAppointmentRow({ ...appointment, actions: "Booked" })),
+          emptyMessage: "This doctor has no appointments for the selected date."
+        });
+      } catch (error) {
+        availabilityRegion.innerHTML = `<div class="alert alert-danger" role="alert">${error.message}</div>`;
+      }
     };
 
     patientSelect?.addEventListener("change", syncPatientCard);

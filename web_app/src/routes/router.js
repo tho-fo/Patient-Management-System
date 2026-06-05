@@ -7,6 +7,7 @@ import {
 } from "../features/auth/pages/registrationPage.js";
 import { dashboardPage } from "../features/dashboard/pages/dashboardPage.js";
 import { adminPage } from "../features/admin/pages/adminPage.js";
+import { doctorPage } from "../features/doctor/pages/doctorPage.js";
 import { receptionistPage } from "../features/receptionist/pages/receptionistPage.js";
 import { patientListPage } from "../features/patients/pages/patientListPage.js";
 import { patientEditPage, patientFormPage } from "../features/patients/pages/patientFormPage.js";
@@ -28,6 +29,7 @@ const routes = [
   { pattern: /^\/register\/receptionist$/, page: receptionistRegistrationPage, params: [] },
   { pattern: /^\/dashboard$/, page: dashboardPage, params: [] },
   { pattern: /^\/admin$/, page: adminPage, params: [] },
+  { pattern: /^\/doctor$/, page: doctorPage, params: [] },
   { pattern: /^\/receptionist$/, page: receptionistPage, params: [] },
   { pattern: /^\/patients$/, page: patientListPage, params: [] },
   { pattern: /^\/patients\/new$/, page: patientFormPage, params: [] },

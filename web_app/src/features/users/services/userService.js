@@ -262,6 +262,23 @@ async function firestoreRemove(staffKey) {
   return { success: true };
 }
 
+async function firestoreUpdateDoctorAvailability(staffKey, availability) {
+  const firestore = await loadFirebase();
+  const profile = await findStaffProfile(firestore, staffKey);
+
+  if (profile.role !== roles.DOCTOR) {
+    throw new Error("Only doctors can update availability.");
+  }
+
+  const { db, doc, updateDoc, serverTimestamp } = firestore;
+  await updateDoc(doc(db, "doctors", profile.snapshot.id), {
+    availability,
+    updatedAt: serverTimestamp()
+  });
+
+  return firestoreGetByKey(staffKey);
+}
+
 export const userService = {
   async list(filters = {}) {
     if (appConfig.useMockApi) {
@@ -318,6 +335,18 @@ export const userService = {
 
     try {
       return await firestoreRemove(staffKey);
+    } catch (error) {
+      throw formatStaffError(error);
+    }
+  },
+
+  async updateDoctorAvailability(staffKey, availability) {
+    if (appConfig.useMockApi) {
+      return httpClient.put(`/doctors/${staffKey}/availability`, { availability });
+    }
+
+    try {
+      return await firestoreUpdateDoctorAvailability(staffKey, availability);
     } catch (error) {
       throw formatStaffError(error);
     }
