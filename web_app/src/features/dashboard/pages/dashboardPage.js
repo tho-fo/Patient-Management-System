@@ -101,7 +101,7 @@ export const dashboardPage = {
   allowedRoles: [roles.ADMIN, roles.DOCTOR, roles.RECEPTIONIST, roles.PATIENT],
 
   async render(context) {
-    const summary = await dashboardService.getSummary(context.currentUser);
+    const summary = await dashboardService.getSummary();
 
     return {
       title: "Dashboard",

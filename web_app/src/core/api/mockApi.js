@@ -274,90 +274,6 @@ function buildDashboard(database) {
   };
 }
 
-function toDayLabel(value) {
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(`${value}T00:00:00`));
-}
-
-function getDayValue(offsetDays = 0) {
-  const date = new Date();
-  date.setDate(date.getDate() + offsetDays);
-  return date.toISOString().slice(0, 10);
-}
-
-function buildAppointmentTrends(database) {
-  const trends = Array.from({ length: 7 }, (_, index) => {
-    const value = getDayValue(index - 6);
-    return {
-      label: toDayLabel(value),
-      value: database.appointments.filter((appointment) => appointment.appointmentDate === value).length
-    };
-  });
-
-  return { trends };
-}
-
-function buildStaffDistribution(database) {
-  const counts = database.doctors.reduce((summary, doctor) => {
-    const specialization = Array.isArray(doctor.specialization)
-      ? doctor.specialization.join(", ")
-      : doctor.specialization || "General";
-
-    summary.set(specialization, (summary.get(specialization) ?? 0) + 1);
-    return summary;
-  }, new Map());
-
-  return {
-    distribution: [...counts.entries()].map(([label, value]) => ({ label, value }))
-  };
-}
-
-function buildPatientGrowth(database) {
-  const growth = Array.from({ length: 7 }, (_, index) => {
-    const value = getDayValue(index - 6);
-    return {
-      label: toDayLabel(value),
-      value: database.patients.filter((patient) => patient.createdAt.startsWith(value)).length
-    };
-  });
-
-  return { growth };
-}
-
-function buildAuditLogs(limit) {
-  return {
-    logs: sortByTimestamp(
-      [
-        {
-          action: "Dashboard refreshed",
-          userEmail: "system",
-          timestamp: new Date().toISOString(),
-          details: "Admin dashboard metrics were generated from the mock database."
-        }
-      ],
-      "timestamp"
-    ).slice(0, limit)
-  };
-}
-
-function getTodayAppointments(database) {
-  const today = getTodayDate();
-  const appointments = sortByDateTime(
-    database.appointments
-      .filter((appointment) => appointment.appointmentDate === today && appointment.status !== "Cancelled")
-      .map((appointment) => joinAppointment(database, appointment)),
-    "appointmentDate",
-    "appointmentTime"
-  );
-
-  return { appointments };
-}
-
-function getPendingAppointments(database) {
-  return {
-    count: database.appointments.filter((appointment) => appointment.status === "Pending").length
-  };
-}
-
 function listPatients(database, searchParams) {
   const search = searchParams.get("search")?.toLowerCase().trim() ?? "";
   const createdDate = searchParams.get("createdDate");
@@ -926,31 +842,6 @@ export const mockApi = {
 
     if (method === "GET" && pathname === "/dashboard/summary") {
       return buildDashboard(database);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/appointment-trends") {
-      return buildAppointmentTrends(database);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/staff-distribution") {
-      return buildStaffDistribution(database);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/patient-growth") {
-      return buildPatientGrowth(database);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/audit-logs") {
-      const limit = Number(searchParams.get("limit") || 10);
-      return buildAuditLogs(limit);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/today-appointments") {
-      return getTodayAppointments(database);
-    }
-
-    if (method === "GET" && pathname === "/dashboard/pending-appointments") {
-      return getPendingAppointments(database);
     }
 
     if (method === "GET" && pathname === "/patients") {
