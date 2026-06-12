@@ -1,4 +1,5 @@
 import { escapeHtml, formatDate, formatDateTime, formatNumber, formatTime, getStatusTone } from "../../utils/formatters.js";
+import { routePaths } from "../../core/constants/routes.js";
 
 export function renderStatusPill(status) {
   const tone = getStatusTone(status);
@@ -317,26 +318,20 @@ export function renderAdminQuickActions() {
       ${renderQuickAction({
         title: "Add New Staff",
         description: "Register a new doctor or receptionist to the system.",
-        href: "/staff/new",
+        href: `#${routePaths.addStaff}`,
         icon: "bi-person-plus-fill"
       })}
       ${renderQuickAction({
         title: "System Settings",
         description: "Configure app settings and manage role permissions.",
-        href: "/settings",
+        href: `#${routePaths.settings}`,
         icon: "bi-gear-fill"
       })}
       ${renderQuickAction({
         title: "Generate Report",
         description: "Download analytics and appointment summaries.",
-        href: "/reports",
+        href: `#${routePaths.reports}`,
         icon: "bi-file-earmark-pdf"
-      })}
-      ${renderQuickAction({
-        title: "View Audit Logs",
-        description: "Monitor user activity and system security events.",
-        href: "/audit-logs",
-        icon: "bi-shield-check"
       })}
     </div>
   `;

@@ -23,7 +23,7 @@ export const receptionistPage = {
 
   async render(context) {
     const [summary, appointments] = await Promise.all([
-      dashboardService.getSummary(),
+      dashboardService.getSummary(context.currentUser),
       appointmentService.list({ receptionistId: context.currentUser.id })
     ]);
 

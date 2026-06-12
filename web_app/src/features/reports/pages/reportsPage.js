@@ -5,9 +5,11 @@ import {
   renderDataTable,
   renderMetricCard,
   renderPageHero,
-  renderSectionCard
+  renderSectionCard,
+  renderEmptyState
 } from "../../../shared/components/ui.js";
 import { qs, formToObject } from "../../../utils/dom.js";
+import { escapeHtml } from "../../../utils/formatters.js";
 
 function renderReportBlocks(data) {
   return `
@@ -91,7 +93,20 @@ export const reportsPage = {
   allowedRoles: [roles.ADMIN],
 
   async render() {
-    const data = await reportService.getAnalytics();
+    let data = {
+      totals: { patients: 0, appointments: 0, completed: 0, pending: 0 },
+      statusSummary: [],
+      doctorLoad: [],
+      patientGrowth: [],
+      latestAppointments: []
+    };
+    let errorMessage = "";
+
+    try {
+      data = await reportService.getAnalytics();
+    } catch (error) {
+      errorMessage = error?.message || "Unable to load report data.";
+    }
 
     return {
       title: "Reports & Analytics",
@@ -107,6 +122,7 @@ export const reportsPage = {
           title: "Report filters",
           subtitle: "Filter analytics by date range and appointment status.",
           content: `
+            ${errorMessage ? `<div class="alert alert-danger">${escapeHtml(errorMessage)}</div>` : ""}
             <form id="reportsFilterForm" class="filter-bar mb-4">
               <div class="row g-3 align-items-end">
                 <div class="col-lg-4">
@@ -147,8 +163,15 @@ export const reportsPage = {
     const region = qs("#reportsRegion", root);
 
     const refreshReports = async (filters = {}) => {
-      const data = await reportService.getAnalytics(filters);
-      region.innerHTML = renderReportBlocks(data);
+      try {
+        const data = await reportService.getAnalytics(filters);
+        region.innerHTML = renderReportBlocks(data);
+      } catch (error) {
+        region.innerHTML = renderEmptyState({
+          title: "Unable to load reports",
+          description: error?.message || "Could not fetch report data."
+        });
+      }
     };
 
     form.addEventListener("submit", async (event) => {

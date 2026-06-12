@@ -75,6 +75,9 @@ function renderDoctorAppointmentActions(appointment) {
 
   return `
     <div class="d-flex justify-content-end gap-2 flex-wrap">
+      <button class="btn btn-sm btn-outline-secondary" data-view-appointment="${escapeHtml(appointment.appointmentId)}" type="button">
+        <i class="bi bi-eye me-1"></i>View
+      </button>
       ${pendingActions}
       <button class="btn btn-sm btn-outline-primary" data-postpone-appointment="${escapeHtml(appointment.appointmentId)}" type="button">
         <i class="bi bi-calendar2-plus me-1"></i>Postpone
@@ -88,6 +91,19 @@ function renderAppointmentRows(appointments) {
     ...appointment,
     actions: renderDoctorAppointmentActions(appointment)
   }));
+}
+
+function renderAppointmentDetails(appointment) {
+  return renderKeyValueList([
+    { label: "Patient", value: appointment.patientName },
+    { label: "Doctor", value: appointment.doctorName },
+    { label: "Date", value: formatDate(appointment.appointmentDate) },
+    { label: "Time", value: formatTime(appointment.appointmentTime) },
+    { label: "Status", value: appointment.status },
+    { label: "Notes", value: appointment.otherInfo || "-" },
+    { label: "Created", value: appointment.createdAt ? formatDate(appointment.createdAt) : "-" },
+    { label: "Updated", value: appointment.updatedAt ? formatDate(appointment.updatedAt) : "-" }
+  ]);
 }
 
 function getAvailability(profile) {
@@ -319,6 +335,15 @@ export const doctorPage = {
             <button type="submit" form="doctorAppointmentForm" class="btn btn-primary" id="appointmentSubmitButton">Save appointment</button>
           `
         })}
+
+        ${renderModal({
+          id: "doctorAppointmentDetailsModal",
+          title: "Appointment details",
+          body: `<div id="doctorAppointmentDetailsContainer"></div>`,
+          footer: `
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          `
+        })}
       `
     };
   },
@@ -357,6 +382,10 @@ export const doctorPage = {
     const appointmentSubmitButton = qs("#appointmentSubmitButton", root);
     const appointmentModalAlert = qs("#doctorAppointmentModalAlert", root);
     const appointmentModal = new window.bootstrap.Modal(appointmentModalElement);
+
+    const appointmentDetailsModalElement = qs("#doctorAppointmentDetailsModal", root);
+    const appointmentDetailsContainer = qs("#doctorAppointmentDetailsContainer", root);
+    const appointmentDetailsModal = new window.bootstrap.Modal(appointmentDetailsModalElement);
 
     const refreshAppointments = async () => {
       appointments = await appointmentService.list({ doctorId: context.currentUser.id });
@@ -500,8 +529,21 @@ export const doctorPage = {
     });
 
     appointmentTable.addEventListener("click", async (event) => {
+      const viewButton = event.target.closest("[data-view-appointment]");
       const statusButton = event.target.closest("[data-appointment-status]");
       const postponeButton = event.target.closest("[data-postpone-appointment]");
+
+      if (viewButton) {
+        const appointment = appointments.find((item) => String(item.appointmentId) === String(viewButton.dataset.viewAppointment));
+        if (!appointment) {
+          renderInlineAlert(appointmentAlert, "Appointment not found.");
+          return;
+        }
+
+        appointmentDetailsContainer.innerHTML = renderAppointmentDetails(appointment);
+        appointmentDetailsModal.show();
+        return;
+      }
 
       if (statusButton) {
         const nextStatus = statusButton.dataset.nextStatus;
