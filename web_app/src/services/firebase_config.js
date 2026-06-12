@@ -3,14 +3,16 @@ import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/12
 import { getAuth } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+// Load Firebase config from environment variables (for Vercel/production)
+// or use default values (for local development)
 export const firebaseConfig = {
-  apiKey: "AIzaSyCJKeUHK-n9gXbm5dV2QPnBZWQmqLNY734",
-  authDomain: "patient-management-portas.firebaseapp.com",
-  projectId: "patient-management-portas",
-  storageBucket: "patient-management-portas.firebasestorage.app",
-  messagingSenderId: "989015117582",
-  appId: "1:989015117582:web:f3a0c5e672af6a2f26115f",
-  measurementId: "G-XSJ9L2EZ51"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCJKeUHK-n9gXbm5dV2QPnBZWQmqLNY734",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "patient-management-portas.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "patient-management-portas",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "patient-management-portas.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "989015117582",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:989015117582:web:f3a0c5e672af6a2f26115f",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XSJ9L2EZ51"
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
